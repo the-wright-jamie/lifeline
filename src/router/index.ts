@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import OobeView from '@/views/OobeView.vue'
+import WelcomeView from '../views/WelcomeView.vue'
+import WizardView from '../views/WizardView.vue'
+import ImportView from '../views/ImportView.vue'
+import AboutView from '../views/AboutView.vue'
+import HelpView from '../views/HelpView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,26 +15,48 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/setup',
-      name: 'Setup',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/OobeView.vue')
+      path: '/welcome',
+      name: 'welcome',
+      component: WelcomeView
+    },
+    {
+      path: '/setup/start',
+      name: 'wizard',
+      component: WizardView
+    },
+    {
+      path: '/setup/import',
+      name: 'import',
+      component: ImportView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: AboutView
+    },
+    {
+      path: '/help',
+      name: 'help',
+      component: HelpView
     }
   ]
 })
 
-// Navigation guard to check for setup completion
 router.beforeEach((to, from, next) => {
-  const isSetupComplete = localStorage.getItem('config');
+  const isSetupComplete = localStorage.getItem('config')
 
-  // If setup is not complete and the user is not already on the setup route, redirect to the setup page
-  if (!isSetupComplete && to.name !== 'Setup') {
-    next({ name: 'Setup' });
+  if (
+    to.name !== 'welcome' &&
+    to.name !== 'wizard' &&
+    to.name !== 'import' &&
+    to.name !== 'about' &&
+    to.name !== 'help' &&
+    !isSetupComplete
+  ) {
+    next({ name: 'welcome' })
   } else {
-    next();
+    next()
   }
-});
+})
 
 export default router

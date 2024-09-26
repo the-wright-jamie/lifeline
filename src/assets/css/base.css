@@ -148,3 +148,8 @@ h2 {
 .inline {
   display: inline-block;
 }
+
+.icon-faded {
+  opacity: 75%;
+  margin-left: 0.15em;
+}
