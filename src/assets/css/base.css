@@ -114,6 +114,10 @@ h2 {
   font-weight: 200;
 }
 
+hr {
+  opacity: 60%;
+}
+
 .center {
   text-align: center;
 }
@@ -149,7 +153,39 @@ h2 {
   display: inline-block;
 }
 
-.icon-faded {
+.spinner-faded {
   opacity: 75%;
-  margin-left: 0.15em;
+  margin-left: 1em;
+  margin-top: 0.5em;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.middle {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.same-line {
+  display: flex;
+}
+
+.solid {
+  font-family: 'Roboto Black';
+}
+
+.disabled {
+  opacity: 50%;
+}
+
+.no-click {
+  cursor: not-allowed;
+}
+
+.icon-faded {
+  opacity: 40%;
 }

@@ -8,8 +8,9 @@
     about them in an all-in-one easy-to-use dashboard.
     <RouterLink to="/about">Click here</RouterLink> to learn more.
   </p>
-  <main className="flex min-h-screen flex-col items-center justify-between p-4">
+  <main className="flex flex-col items-center justify-between p-4">
     <h1>Get Started</h1>
+    <br />
     <div className="mb-32 grid lg:grid-cols-1 lg:text-left">
       <RouterLink
         to="/setup/start"
@@ -20,7 +21,7 @@
           <span
             className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
           >
-            →
+            <span class="material-symbols-rounded">&#xe5c8;</span>
           </span>
         </h2>
         <p className="m-0 max-w-[30ch] text-sm opacity-50">
@@ -36,7 +37,7 @@
           <span
             className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
           >
-            →
+            <span class="material-symbols-rounded">&#xe5c8;</span>
           </span>
         </h2>
         <div className="m-0 max-w-[30ch] text-sm opacity-50">
@@ -46,7 +47,7 @@
           </p>
           <div>
             <span class="material-symbols-rounded">&#xE887;</span
-            ><RouterLink to="/help#export-config" className="help-hyperlink vertical-center">
+            ><RouterLink to="/help#export-config" className="help-hyperlink">
               How do I export my config?
             </RouterLink>
           </div>

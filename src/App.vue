@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import MegaHeader from './components/MegaHeader.vue'
+
+const isSetupComplete = localStorage.getItem('config')
 </script>
 
 <template>
-  <MegaHeader />
+  <MegaHeader v-if="!isSetupComplete" />
+  <Header v-if="isSetupComplete" />
   <RouterView />
 </template>
 
