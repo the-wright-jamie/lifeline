@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue' // Import ref for reactivity
+import { ref } from 'vue'
 import Fuse from 'fuse.js'
-
-function titleCase(name: String) {
-  name = name.replace('-', ' ')
-  name = name.replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase())
-  return name
-}
+import { dependencyTitleCase } from '@/assets/ts/utils'
 
 function selectDependency(dependency: String, dependencies: String[]) {
   const found = dependencies.indexOf(dependency)
@@ -20,7 +15,21 @@ function selectDependency(dependency: String, dependencies: String[]) {
   return dependencies
 }
 
-function saveDependencies(dependencies: String[]) {}
+function saveDependencies(dependencies: String[]) {
+  let config = {
+    version: '1',
+    dependencies: [],
+    dashboardConfig: {
+      latestNews: true
+    }
+  }
+
+  dependencies.forEach((dependency) => {
+    config.dependencies.push(dependency)
+  })
+
+  localStorage.setItem('config', JSON.stringify(config))
+}
 
 function search(search: String) {
   search_results = fuse.search(search).map((result) => result.item)
@@ -50,16 +59,14 @@ let dependencies = await getData('https://endoflife.date/api/all.json')
 const fuse = new Fuse(dependencies)
 
 let index = ref(0)
+let index_memory = 0
 let page_size = ref(9)
 let selected = ref([])
 let search_text = ref('')
 let search_results = ref([])
 
 let loaded_dependencies = ref(dependencies)
-console.log(loaded_dependencies)
-console.log(dependencies)
 let total_results = ref(dependencies.length)
-console.log(total_results)
 </script>
 
 <template>
@@ -73,7 +80,7 @@ console.log(total_results)
       <p class="none-selected" v-if="selected.length == 0">None selected</p>
       <ul v-else>
         <template v-for="dependency in selected"
-          ><li>{{ titleCase(dependency) }}</li></template
+          ><li>{{ dependencyTitleCase(dependency) }}</li></template
         >
       </ul>
       <div class="center">
@@ -120,11 +127,11 @@ console.log(total_results)
             <button @click="selected = selectDependency(dependency, selected)">
               <span v-if="selected.indexOf(dependency) > -1"
                 ><span class="material-symbols-rounded">&#xf1fe;</span> {{ ' '
-                }}<span class="solid">{{ titleCase(dependency) }}</span></span
+                }}<span class="solid">{{ dependencyTitleCase(dependency) }}</span></span
               >
               <span v-else
                 ><span class="material-symbols-rounded">&#xe835;</span>
-                {{ titleCase(dependency) }}</span
+                {{ dependencyTitleCase(dependency) }}</span
               >
             </button>
           </li></template
@@ -137,6 +144,15 @@ console.log(total_results)
           {{ total_results }} dependencies
         </p>
         <ul class="inline-flex -space-x-px text-sm">
+          <li>
+            <button
+              @click="index = 0"
+              :class="{ disabled: index <= 1 }"
+              class="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-s-lg not-hyperlink"
+            >
+              <span class="material-symbols-rounded pager">&#xe5dc;</span>
+            </button>
+          </li>
           <li>
             <button
               @click="index <= 1 ? index : (index = index - page_size)"
@@ -159,8 +175,25 @@ console.log(total_results)
               <span class="material-symbols-rounded pager">&#xe5c8;</span>
             </button>
           </li>
+          <li>
+            <button
+              @click="index = total_results - page_size"
+              :class="{ disabled: index / page_size + 1 == Math.ceil(total_results / page_size) }"
+              class="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-s-lg not-hyperlink"
+            >
+              <span class="material-symbols-rounded pager">&#xe5dd;</span>
+            </button>
+          </li>
         </ul>
       </nav>
+      <p class="disabled">
+        Due to how <i>Lifeline</i> parse results from
+        <a href="https://endoflife.date/" target="_blank">endoflife.date</a>
+        <span class="material-symbols-rounded icon-faded">&#xe89e;</span>, some of the name might
+        not look correct. We are working on adding as many exceptions to our parser as possible to
+        improve this experience. <span class="material-symbols-rounded">&#xE887;</span
+        ><RouterLink to="/help#parsing-from-eol-api"> Learn more here. </RouterLink>
+      </p>
     </div>
   </div>
 </template>

@@ -6,7 +6,7 @@ import DependenciesDropdown from '@/components/DependenciesSelector.vue'
   <Suspense>
     <DependenciesDropdown />
     <template #fallback>
-      <Spinner class="middle" msg="Preparing dependencies" />
+      <AnimeSpinner class="middle" msg="Preparing dependencies" />
     </template>
   </Suspense>
 </template>

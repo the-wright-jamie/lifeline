@@ -159,6 +159,12 @@ hr {
   margin-top: 0.5em;
 }
 
+.spinner-faded-normal {
+  opacity: 75%;
+  margin-left: 1em;
+  margin-top: 0.30em;
+}
+
 .hidden {
   visibility: hidden;
 }

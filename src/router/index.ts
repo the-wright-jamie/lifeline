@@ -5,6 +5,7 @@ import WizardView from '../views/WizardView.vue'
 import ImportView from '../views/ImportView.vue'
 import AboutView from '../views/AboutView.vue'
 import HelpView from '../views/HelpView.vue'
+import DashboardView from '@/views/DashboardView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,12 +21,12 @@ const router = createRouter({
       component: WelcomeView
     },
     {
-      path: '/setup/start',
+      path: '/setup',
       name: 'wizard',
       component: WizardView
     },
     {
-      path: '/setup/import',
+      path: '/import',
       name: 'import',
       component: ImportView
     },
@@ -38,6 +39,11 @@ const router = createRouter({
       path: '/help',
       name: 'help',
       component: HelpView
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: DashboardView
     }
   ]
 })
@@ -54,6 +60,9 @@ router.beforeEach((to, from, next) => {
     !isSetupComplete
   ) {
     next({ name: 'welcome' })
+  }
+  if ((to.name == 'welcome' || to.name == 'wizard') && isSetupComplete) {
+    next({ name: 'dashboard' })
   } else {
     next()
   }

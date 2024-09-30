@@ -1,6 +1,31 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
 const props = defineProps({
   msg: String
+})
+
+/*
+Shout out to the following CodePen for the
+wavy font effect: https://codepen.io/zachkrall/pen/MWWGMPx
+*/
+
+onMounted(() => {
+  let h1 = document.getElementById('animated')
+  let text = h1.innerHTML
+
+  h1.innerHTML = text
+    .split('')
+    .map((letter) => {
+      return `<span>` + letter + `</span>`
+    })
+    .join('')
+
+  Array.from(h1.children).forEach((span, index) => {
+    setTimeout(() => {
+      span.classList.add('wavy')
+    }, index * 50)
+  })
 })
 </script>
 
@@ -22,7 +47,35 @@ const props = defineProps({
         fill="currentFill"
       />
     </svg>
-    <p class="spinner-faded-normal">{{ msg }}...</p>
+    <p class="spinner-faded" id="animated">{{ msg }}...</p>
     <span class="sr-only">Loading...</span>
   </div>
 </template>
+
+<style lang="css">
+/*
+Shout out to the following CodePen for the
+wavy font effect: https://codepen.io/zachkrall/pen/MWWGMPx
+*/
+
+.wavy {
+  animation-name: wavy;
+  animation-duration: 1s;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite;
+  position: relative;
+  top: 0;
+  left: 0;
+}
+@keyframes wavy {
+  0% {
+    top: 0px;
+  }
+  50% {
+    top: -0.5em;
+  }
+  100% {
+    top: 0px;
+  }
+}
+</style>

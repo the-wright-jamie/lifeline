@@ -1,8 +1,8 @@
 <template>
-  <h1>Welcome! 👋</h1>
+  <h1 class="center">Welcome! 👋</h1>
   <br />
   <p>
-    Lifeline allows you to select dependencies from
+    <i>Lifeline</i> allows you to select dependencies from
     <a href="https://endoflife.date/" target="_blank">endoflife.date</a>
     <span class="material-symbols-rounded icon-faded">&#xe89e;</span> and view important information
     about them in an all-in-one easy-to-use dashboard.
@@ -10,10 +10,9 @@
   </p>
   <main className="flex flex-col items-center justify-between p-4">
     <h1>Get Started</h1>
-    <br />
     <div className="mb-32 grid lg:grid-cols-1 lg:text-left">
       <RouterLink
-        to="/setup/start"
+        to="/setup"
         className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 not-hyperlink"
       >
         <h2 className="mb-3 text-2xl font-semibold">
@@ -29,7 +28,7 @@
         </p>
       </RouterLink>
       <RouterLink
-        to="/setup/import"
+        to="/import"
         className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 not-hyperlink"
       >
         <h2 className="mb-3 text-2xl font-semibold">
@@ -42,8 +41,8 @@
         </h2>
         <div className="m-0 max-w-[30ch] text-sm opacity-50">
           <p>
-            Import a profile from a JSON file and restore a previous configuration, or from another
-            instance of Lifeline<br /><br />
+            Import a profile from a JSON file and restore a previous configuration from another
+            instance of <i>Lifeline</i><br /><br />
           </p>
           <div>
             <span class="material-symbols-rounded">&#xE887;</span
