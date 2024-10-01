@@ -6,6 +6,7 @@ import ImportView from '../views/ImportView.vue'
 import AboutView from '../views/AboutView.vue'
 import HelpView from '../views/HelpView.vue'
 import DashboardView from '@/views/DashboardView.vue'
+import Settings from '@/views/SettingsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +42,11 @@ const router = createRouter({
       component: HelpView
     },
     {
+      path: '/settings',
+      name: 'settings',
+      component: Settings
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView
@@ -51,17 +57,12 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isSetupComplete = localStorage.getItem('config')
 
-  if (
-    to.name !== 'welcome' &&
-    to.name !== 'wizard' &&
-    to.name !== 'import' &&
-    to.name !== 'about' &&
-    to.name !== 'help' &&
-    !isSetupComplete
-  ) {
+  if (to.name === 'dashboard' && to.name === "settings" && !isSetupComplete) {
+    console.log('not set up yet, going to welcome page')
     next({ name: 'welcome' })
   }
-  if ((to.name == 'welcome' || to.name == 'wizard') && isSetupComplete) {
+  if (to.name == 'welcome' && isSetupComplete) {
+    console.log("set up, don't let them see welcome page")
     next({ name: 'dashboard' })
   } else {
     next()

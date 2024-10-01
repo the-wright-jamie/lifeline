@@ -1,21 +1,50 @@
 <script setup lang="ts">
-import { ref } from 'vue' // Import ref for reactivity
-const config = JSON.parse(localStorage.getItem('config'))
+import { ref } from 'vue'
+import LatestNews from './LatestNews.vue'
+import UpcomingEOL from './UpcomingEOL.vue'
+import GanttChart from './GanttChart.vue'
 
-(async function () {
-  for await (const dependency of config.dependencies) {
-    console.log(dependency)
-    break // Closes iterator, triggers return
-  }
-})()
+// This is an absolute mess 🤣
+// Surely there's a better way to handle multiple waits...
 
-/*await config.dependencies.forEach((dependency) => {
-  let url = `https://endoflife.date/api/${dependency}.json`
-  let response = await fetch(url).then((response) => response.json()) // send response body to next then chain
-  console.log(response)
+async function getData(array) {
+  const res = await Promise.all(array)
+  const data = await Promise.all(
+    res.map((item) => {
+      return item.json()
+    })
+  )
+  return data
+}
+
+const config: Config = JSON.parse(localStorage.getItem('config'))
+const dependencies = config.dependencies
+let fetchArray = []
+
+dependencies.forEach((dependency) => {
+  fetchArray.push(fetch(`https://endoflife.date/api/${dependency}.json`))
 })
 
-console.log('heloo')*/
+let depJson = {}
+const allData = await getData(fetchArray)
+let iter = 0
+allData.forEach((data) => {
+  depJson[`${dependencies[iter]}`] = data
+  iter++
+})
 </script>
 
-<template></template>
+<template>
+  <div class="grid grid-cols-2">
+    <div>
+      <LatestNews :data="JSON.stringify(depJson)" />
+    </div>
+    <div>
+      <UpcomingEOL :data="JSON.stringify(depJson)" />
+    </div>
+  </div>
+  <br />
+  <div>
+    <GanttChart :data="JSON.stringify(depJson)" />
+  </div>
+</template>

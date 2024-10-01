@@ -1,25 +1,12 @@
 <script setup lang="ts">
-import { dependencyTitleCase } from '@/assets/ts/utils';
+import { dependencyTitleCase, getData } from '@/assets/ts/utils'
 const props = defineProps({
   dependency: String
 })
 
 function toLocalDate(date: String) {
-  var date = new Date(date).toLocaleDateString(navigator.language)
+  date = new Date(date).toLocaleDateString(navigator.language)
   return date
-}
-
-async function getData(url: String) {
-  const res = await fetch(url)
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error('Failed to fetch data')
-  }
-
-  return res.json()
 }
 
 let dependency_info = await getData(`https://endoflife.date/api/${props.dependency}.json`)

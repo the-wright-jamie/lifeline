@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import Fuse from 'fuse.js'
 import { dependencyTitleCase } from '@/assets/ts/utils'
+import router from '@/router'
 
 function selectDependency(dependency: String, dependencies: String[]) {
   const found = dependencies.indexOf(dependency)
@@ -29,15 +30,20 @@ function saveDependencies(dependencies: String[]) {
   })
 
   localStorage.setItem('config', JSON.stringify(config))
+
+  router.replace('/dashboard')
+  setTimeout(function () {
+    location.reload()
+  }, 100)
 }
 
 function search(search: String) {
-  search_results = fuse.search(search).map((result) => result.item)
-  if (search_results.length == 0) {
-    total_results = dependencies.length
+  search_results.value = fuse.search(search).map((result) => result.item)
+  if (search_results.value.length == 0) {
+    total_results.value = dependencies.length
     return dependencies
   } else {
-    total_results = search_results.length
+    total_results.value = search_results.value.length
     return search_results
   }
 }
@@ -67,6 +73,12 @@ let search_results = ref([])
 
 let loaded_dependencies = ref(dependencies)
 let total_results = ref(dependencies.length)
+
+let config = JSON.parse(localStorage.getItem('config'))
+
+if (config) {
+  selected = ref(config.dependencies)
+}
 </script>
 
 <template>
@@ -88,14 +100,14 @@ let total_results = ref(dependencies.length)
           v-if="selected.length == 0"
           class="bg-slate-600 text-gray-300 dark:bg-gray-300 dark:text-gray-500 py-2 px-4 rounded-full no-click"
         >
-          Continue
+          Save
         </button>
         <button
           v-else
           @click="saveDependencies(selected)"
           class="bg-black hover:bg-gray-600 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black py-2 px-4 rounded-full"
         >
-          Continue
+          Save
         </button>
       </div>
     </div>
@@ -186,14 +198,21 @@ let total_results = ref(dependencies.length)
           </li>
         </ul>
       </nav>
-      <p class="disabled">
-        Due to how <i>Lifeline</i> parse results from
-        <a href="https://endoflife.date/" target="_blank">endoflife.date</a>
-        <span class="material-symbols-rounded icon-faded">&#xe89e;</span>, some of the name might
-        not look correct. We are working on adding as many exceptions to our parser as possible to
-        improve this experience. <span class="material-symbols-rounded">&#xE887;</span
-        ><RouterLink to="/help#parsing-from-eol-api"> Learn more here. </RouterLink>
-      </p>
+      <div class="grid grid-flow-col gap-4 disabled">
+        <div>
+          <span class="material-symbols-rounded">&#xe88e;</span>
+        </div>
+        <div>
+          <p>
+            Due to how <i>Lifeline</i> parse results from
+            <a href="https://endoflife.date/" target="_blank">endoflife.date</a>
+            <span class="material-symbols-rounded icon-faded">&#xe89e;</span>, some of the name
+            might not look correct. We are working on adding as many exceptions to our parser as
+            possible to improve this experience.
+            <RouterLink to="/help#parsing-from-eol-api"> Learn more here. </RouterLink>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
