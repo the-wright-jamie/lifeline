@@ -10,6 +10,7 @@ import {
 const props = defineProps({
   data: String
 })
+const config = JSON.parse(localStorage.getItem('config'))
 const allData = JSON.parse(props.data)
 let someData = []
 
@@ -25,7 +26,7 @@ for (var dependency in allData) {
 
 someData.sort((a, b) => b[0] - a[0])
 
-let dataToDisplay = someData.slice(0, 9)
+let dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries)
 </script>
 
 <template>

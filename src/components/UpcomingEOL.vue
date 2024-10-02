@@ -7,6 +7,7 @@ import {
   isDateAfterToday
 } from '@/assets/ts/utils'
 
+const config = JSON.parse(localStorage.getItem('config'))
 const props = defineProps({
   data: String
 })
@@ -23,7 +24,7 @@ for (var dependency in allData) {
 
 someData.sort((a, b) => a[0] - b[0])
 
-let dataToDisplay = someData.slice(0, 9)
+let dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries)
 </script>
 
 <template>

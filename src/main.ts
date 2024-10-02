@@ -8,6 +8,7 @@ import AnimeSpinner from './components/AnimeSpinner.vue'
 import MegaHeader from './components/MegaHeader.vue'
 import Header from './components/Header.vue'
 import DependencyInfo from './components/DependencyInfo.vue'
+import ToggleButton from './components/ToggleButton.vue'
 
 const app = createApp(App)
 

@@ -1,20 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import router from '@/router'
-let dropdown = ref(false)
-let reset = ref(false)
 
-function showResetModal() {
-  dropdown.value = !dropdown.value
-  reset.value = !reset.value
-}
+const config: Config = JSON.parse(localStorage.getItem('config'))
 
-function resetLifeline() {
-  localStorage.clear()
-  router.push('/welcome')
-  console.log('reload')
-  location.reload()
-}
+const showAbout = ref(config.headerConfig.showAbout)
+const showHelp = ref(config.headerConfig.showHelp)
 </script>
 
 <template>
@@ -31,6 +21,20 @@ function resetLifeline() {
     </div>
     <div class="col-end-7 col-span-2">
       <div class="grid gap-6 grid-cols-2 same-line">
+        <h2 v-if="showAbout">
+          <RouterLink to="/about" class="not-hyperlink"
+            ><span class="material-symbols-rounded material-symbols-rounded-large"
+              >&#xe766;</span
+            ></RouterLink
+          >
+        </h2>
+        <h2 v-if="showHelp">
+          <RouterLink to="/help" class="not-hyperlink"
+            ><span class="material-symbols-rounded material-symbols-rounded-large"
+              >&#xe887;</span
+            ></RouterLink
+          >
+        </h2>
         <h2>
           <RouterLink to="/dashboard" class="not-hyperlink"
             ><span class="material-symbols-rounded material-symbols-rounded-large"
@@ -61,10 +65,6 @@ h1 {
 
 .material-symbols-rounded-large {
   font-size: 2rem;
-}
-
-.icon-correction {
-  padding-bottom: 0.15em;
 }
 
 .icon {

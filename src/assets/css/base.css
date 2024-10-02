@@ -112,6 +112,14 @@ h2 {
   font-family: 'Roboto Condensed';
   font-size: x-large;
   font-weight: 200;
+  padding-bottom: 0.5em;
+}
+
+h3 {
+  font-family: 'Roboto Condensed';
+  font-size: large;
+  font-weight: 200;
+  padding-bottom: 0.25em;
 }
 
 hr {
@@ -147,6 +155,7 @@ hr {
   white-space: nowrap;
   direction: ltr;
   vertical-align: middle;
+  margin-bottom: 0.12em;
 }
 
 .inline {
@@ -194,4 +203,11 @@ hr {
 
 .icon-faded {
   opacity: 40%;
+}
+
+.error-image {
+  height: 15em;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }

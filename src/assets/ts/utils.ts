@@ -76,3 +76,9 @@ export function isDateAfterToday(date: String) {
 export function generateExternalLink(dependency: String) {
   return `https://endoflife.date/${dependency}`
 }
+
+export function getRandomInt(min, max) {
+  const minCeiled = Math.ceil(min)
+  const maxFloored = Math.floor(max)
+  return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled) // The maximum is exclusive and the minimum is inclusive
+}

@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import LatestNews from './LatestNews.vue'
 import UpcomingEOL from './UpcomingEOL.vue'
 import GanttChart from './GanttChart.vue'
+import { getRandomInt } from '@/assets/ts/utils'
 
 // This is an absolute mess 🤣
 // Surely there's a better way to handle multiple waits...
@@ -18,7 +19,17 @@ async function getData(array) {
 }
 
 const config: Config = JSON.parse(localStorage.getItem('config'))
+const allDisabled = ref(
+  !config.dashboardConfig.latestNews &&
+    !config.dashboardConfig.upcomingEOL &&
+    !config.dashboardConfig.ganttChart
+)
 const dependencies = config.dependencies
+const showBothTopInfo = ref(config.dashboardConfig.latestNews && config.dashboardConfig.upcomingEOL)
+const showLatest = ref(config.dashboardConfig.latestNews)
+const showUpcoming = ref(config.dashboardConfig.upcomingEOL)
+const showGantt = ref(config.dashboardConfig.ganttChart)
+
 let fetchArray = []
 
 dependencies.forEach((dependency) => {
@@ -32,19 +43,38 @@ allData.forEach((data) => {
   depJson[`${dependencies[iter]}`] = data
   iter++
 })
+let depJsonString = JSON.stringify(depJson)
+
+function pickRandomErrorImage() {
+  return `src/assets/img/error/${getRandomInt(1, 4)}.png`
+}
 </script>
 
 <template>
-  <div class="grid grid-cols-2">
+  <div class="grid grid-cols-2" v-if="showBothTopInfo">
     <div>
-      <LatestNews :data="JSON.stringify(depJson)" />
+      <LatestNews :data="depJsonString" />
     </div>
     <div>
-      <UpcomingEOL :data="JSON.stringify(depJson)" />
+      <UpcomingEOL :data="depJsonString" />
+    </div>
+  </div>
+  <div v-else>
+    <div v-if="showLatest">
+      <LatestNews :data="depJsonString" />
+    </div>
+    <div v-if="showUpcoming">
+      <UpcomingEOL :data="depJsonString" />
     </div>
   </div>
   <br />
-  <div>
-    <GanttChart :data="JSON.stringify(depJson)" />
+  <div v-if="showGantt">
+    <GanttChart :data="depJsonString" />
+  </div>
+  <div class="middle center" v-if="allDisabled">
+    <img class="error-image rounded-xl" :src="pickRandomErrorImage()" />
+    <br />
+    <h1>Oops!</h1>
+    <p>There's nothing to show here as you've disabled all toggles under the dashboard section in Settings.</p>
   </div>
 </template>

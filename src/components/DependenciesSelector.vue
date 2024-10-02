@@ -17,12 +17,24 @@ function selectDependency(dependency: String, dependencies: String[]) {
 }
 
 function saveDependencies(dependencies: String[]) {
-  let config = {
-    version: '1',
-    dependencies: [],
-    dashboardConfig: {
-      latestNews: true
+  let config: Config = JSON.parse(localStorage.getItem('config'))
+  if (!config) {
+    config = {
+      version: '1',
+      dependencies: [],
+      dashboardConfig: {
+        latestNews: true,
+        upcomingEOL: true,
+        ganttChart: true,
+        newsEntries: 10
+      },
+      headerConfig: {
+        showAbout: false,
+        showHelp: true
+      }
     }
+  } else {
+    config.dependencies = []
   }
 
   dependencies.forEach((dependency) => {
@@ -204,12 +216,12 @@ if (config) {
         </div>
         <div>
           <p>
-            Due to how <i>Lifeline</i> parse results from
+            Due to how <i>Lifeline</i> parses results from
             <a href="https://endoflife.date/" target="_blank">endoflife.date</a>
             <span class="material-symbols-rounded icon-faded">&#xe89e;</span>, some of the name
             might not look correct. We are working on adding as many exceptions to our parser as
             possible to improve this experience.
-            <RouterLink to="/help#parsing-from-eol-api"> Learn more here. </RouterLink>
+            <RouterLink to="/help#parsing-from-eol-api"> Learn more here</RouterLink>.
           </p>
         </div>
       </div>

@@ -19,8 +19,4 @@ h1 {
 .title {
   margin-left: -0.18em;
 }
-
-.icon-correction {
-  padding-bottom: 0.15em;
-}
 </style>
