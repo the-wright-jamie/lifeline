@@ -7,6 +7,7 @@ import AboutView from '../views/AboutView.vue'
 import HelpView from '../views/HelpView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import Settings from '@/views/SettingsView.vue'
+import PathNotFound from '@/components/PathNotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,6 +51,11 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'fourohfour',
+      component: PathNotFound
     }
   ]
 })

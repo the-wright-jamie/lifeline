@@ -44,10 +44,6 @@ allData.forEach((data) => {
   iter++
 })
 let depJsonString = JSON.stringify(depJson)
-
-function pickRandomErrorImage() {
-  return `src/assets/img/error/${getRandomInt(1, 4)}.png`
-}
 </script>
 
 <template>
@@ -69,12 +65,14 @@ function pickRandomErrorImage() {
   </div>
   <br />
   <div v-if="showGantt">
-    <GanttChart :data="depJsonString" />
+    <h2>Gantt Chart</h2>
+    <!--<GanttChart :tasks="tasks" :data="depJsonString" />-->
   </div>
-  <div class="middle center" v-if="allDisabled">
-    <img class="error-image rounded-xl" :src="pickRandomErrorImage()" />
-    <br />
-    <h1>Oops!</h1>
-    <p>There's nothing to show here as you've disabled all toggles under the dashboard section in Settings.</p>
+  <div v-if="allDisabled">
+    <ErrorMessage
+      header="Oops!"
+      message="There's nothing to show here as you've disabled all toggles under the dashboard section in
+      Settings."
+    />
   </div>
 </template>

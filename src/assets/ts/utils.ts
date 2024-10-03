@@ -19,6 +19,8 @@ export function dependencyTitleCase(name: String) {
     .replace('saMS ', 'sams')
     .replace('cd', 'CD')
     .replace('aws', 'AWS')
+    .replace('bsd', 'BSD')
+    .replace('ibm', 'IBM')
     .replace('devops', 'DevOps')
     .replace('php', 'PHP')
     .replace('APIsix', 'APISIX')
@@ -37,9 +39,14 @@ export function dependencyTitleCase(name: String) {
     .replace('C OS', 'Google Container-Optimized OS (COS)')
     .replace('R OS', 'Robot Operating System (ROS)')
     .replace('Pop OS', 'Pop!_OS')
+    .replace('Cfengine', 'CFEngine')
+    .replace('Argo CD', 'ArgoCD')
     .replace('Pim', 'PIM')
     .replace('Alma Linux', 'AlmaLinux OS')
     .replace('Alpine', 'Alpine Linux')
+    .replace('pro', ' Pro')
+    .replace('Proxl', ' Pro XL')
+    .replace('fold', ' Fold')
   return name
 }
 
@@ -71,6 +78,10 @@ export function unixTimestampToLocalDate(date: String) {
 
 export function isDateAfterToday(date: String) {
   return new Date(date).valueOf() > new Date().valueOf()
+}
+
+export function isDateBeforeToday(date: String) {
+  return new Date(date).valueOf() < new Date().valueOf()
 }
 
 export function generateExternalLink(dependency: String) {

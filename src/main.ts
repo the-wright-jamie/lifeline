@@ -9,6 +9,7 @@ import MegaHeader from './components/MegaHeader.vue'
 import Header from './components/Header.vue'
 import DependencyInfo from './components/DependencyInfo.vue'
 import ToggleButton from './components/ToggleButton.vue'
+import ErrorMessage from './components/ErrorMessage.vue'
 
 const app = createApp(App)
 
@@ -18,6 +19,7 @@ app
   .component('MegaHeader', MegaHeader)
   .component('Header', Header)
   .component('Dependency', DependencyInfo)
+  .component('ErrorMessage', ErrorMessage)
 
 app.use(router)
 
