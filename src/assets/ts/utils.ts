@@ -1,4 +1,4 @@
-export function dependencyTitleCase(name: String) {
+export function dependencyTitleCase(name: string) {
   while (name.includes('-')) {
     name = name.replace('-', ' ')
   }
@@ -47,10 +47,16 @@ export function dependencyTitleCase(name: String) {
     .replace('pro', ' Pro')
     .replace('Proxl', ' Pro XL')
     .replace('fold', ' Fold')
+    .replace('h2', 'H2')
+    .replace('h1', 'H1')
+    .replace('Iot', 'IoT')
+    .replace('Lts', 'LTS')
+    .replace('Dotnet', '.NET')
+    .replace('.NETfx', '.NET Framework')
   return name
 }
 
-export async function getData(url: String) {
+export async function getData(url: string) {
   const res = await fetch(url)
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
@@ -63,28 +69,28 @@ export async function getData(url: String) {
   return res.json()
 }
 
-export function toLocalDate(date: String) {
+export function toLocalDate(date: string) {
   date = new Date(date).toLocaleDateString(navigator.language)
   return date
 }
 
-export function dateToUnixTimestamp(date: String) {
+export function dateToUnixTimestamp(date: string) {
   return Math.floor(new Date(date).getTime() / 1000)
 }
 
-export function unixTimestampToLocalDate(date: String) {
+export function unixTimestampToLocalDate(date: string) {
   return new Date(Number(date) * 1000).toLocaleDateString(navigator.language)
 }
 
-export function isDateAfterToday(date: String) {
+export function isDateAfterToday(date: string) {
   return new Date(date).valueOf() > new Date().valueOf()
 }
 
-export function isDateBeforeToday(date: String) {
+export function isDateBeforeToday(date: string) {
   return new Date(date).valueOf() < new Date().valueOf()
 }
 
-export function generateExternalLink(dependency: String) {
+export function generateExternalLink(dependency: string) {
   return `https://endoflife.date/${dependency}`
 }
 

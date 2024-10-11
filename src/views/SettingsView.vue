@@ -3,10 +3,11 @@ import { ref } from 'vue'
 import router from '@/router'
 import ToggleButton from '@/components/ToggleButton.vue'
 
-let config: Config = JSON.parse(localStorage.getItem('config'))
+let config: Config = JSON.parse(localStorage.getItem('config') || '')
 
 let showLatest = ref(config.dashboardConfig.latestNews)
 let showUpcoming = ref(config.dashboardConfig.upcomingEOL)
+let showPastEOL = ref(config.dashboardConfig.pastEOL)
 let showGantt = ref(config.dashboardConfig.ganttChart)
 let newsEntries = ref(config.dashboardConfig.newsEntries)
 
@@ -18,7 +19,7 @@ let showHelp = ref(config.headerConfig.showHelp)
 let resetting = ref(false)
 
 function updateLatest() {
-  let config = JSON.parse(localStorage.getItem('config'))
+  let config: Config = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.latestNews = !config.dashboardConfig.latestNews
   localStorage.setItem('config', JSON.stringify(config))
   showLatest.value = !showLatest.value
@@ -26,39 +27,47 @@ function updateLatest() {
 }
 
 function updateUpcoming() {
-  let config = JSON.parse(localStorage.getItem('config'))
+  let config: Config = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.upcomingEOL = !config.dashboardConfig.upcomingEOL
   localStorage.setItem('config', JSON.stringify(config))
   showUpcoming.value = !showUpcoming.value
   disabledDashboard.value = checkIfDashboardDisabled()
 }
 
+function updatePastEOL() {
+  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboardConfig.pastEOL = !config.dashboardConfig.pastEOL
+  localStorage.setItem('config', JSON.stringify(config))
+  showPastEOL.value = !showPastEOL.value
+  disabledDashboard.value = checkIfDashboardDisabled()
+}
+
 function updateGantt() {
-  let config = JSON.parse(localStorage.getItem('config'))
+  let config: Config = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.ganttChart = !config.dashboardConfig.ganttChart
   localStorage.setItem('config', JSON.stringify(config))
   showGantt.value = !showGantt.value
   disabledDashboard.value = checkIfDashboardDisabled()
 }
 
-function updateEntries(input: Number) {
+function updateEntries(input: number) {
   if (isNaN(input) || input == 0) {
     input = 10
   }
-  let config = JSON.parse(localStorage.getItem('config'))
+  let config: Config = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.newsEntries = input
   localStorage.setItem('config', JSON.stringify(config))
 }
 
 function updateAbout() {
-  let config = JSON.parse(localStorage.getItem('config'))
+  let config: Config = JSON.parse(localStorage.getItem('config') || '')
   config.headerConfig.showAbout = !config.headerConfig.showAbout
   localStorage.setItem('config', JSON.stringify(config))
   showAbout.value = !showAbout.value
 }
 
 function updateHelp() {
-  let config = JSON.parse(localStorage.getItem('config'))
+  let config: Config = JSON.parse(localStorage.getItem('config') || '')
   config.headerConfig.showHelp = !config.headerConfig.showHelp
   localStorage.setItem('config', JSON.stringify(config))
   showHelp.value = !showHelp.value
@@ -77,12 +86,12 @@ function resetLifeline() {
 }
 
 function checkIfDashboardDisabled() {
-  return !showLatest.value && !showUpcoming.value && !showGantt.value
+  return !showLatest.value && !showUpcoming.value && !showPastEOL.value && !showGantt.value
 }
 
 function exportConfig() {
   var a = document.createElement('a')
-  var file = new Blob([localStorage.getItem('config')], { type: 'application/json' })
+  var file = new Blob([localStorage.getItem('config') || ''], { type: 'application/json' })
   a.href = URL.createObjectURL(file)
   a.download = 'Lifeline.json'
   a.click()
@@ -110,7 +119,12 @@ function exportConfig() {
   </p>
   <p>
     <button @click="updateUpcoming()">
-      <ToggleButton :active="showUpcoming" /> Show upcoming EOL
+      <ToggleButton :active="showUpcoming" /> Show future end-of-life dates
+    </button>
+  </p>
+  <p>
+    <button @click="updatePastEOL()">
+      <ToggleButton :active="showPastEOL" /> Show past end-of-life dates
     </button>
   </p>
   <p>
@@ -128,7 +142,7 @@ function exportConfig() {
         id="entries"
         class="block w-24 rounded-md border-0 py-1.5 pl-4 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
         :value="newsEntries"
-        @input="(event) => updateEntries(event.target.value)"
+        @input="(event) => updateEntries(Number((event.target as HTMLInputElement).value))"
       />
     </div>
   </div>

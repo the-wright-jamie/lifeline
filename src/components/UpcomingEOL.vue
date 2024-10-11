@@ -9,7 +9,7 @@ import {
   generateExternalLink
 } from '@/assets/ts/utils'
 
-const config = JSON.parse(localStorage.getItem('config'))
+const config: Config = JSON.parse(localStorage.getItem('config') || '')
 const props = defineProps({
   data: String
 })
@@ -24,7 +24,12 @@ for (var dependency in allData) {
   })
 }
 someData.sort((a, b) => a[0] - b[0])
-let dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries / 2)
+let dataToDisplay = []
+if (!config.dashboardConfig.pastEOL) {
+  dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries - 1)
+} else {
+  dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries / 2 - 1)
+}
 
 someData = []
 for (var dependency in allData) {
@@ -35,14 +40,52 @@ for (var dependency in allData) {
   })
 }
 someData.sort((a, b) => b[0] - a[0])
-let otherDataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries / 2 - 1)
+let otherDataToDisplay = []
+if (!config.dashboardConfig.upcomingEOL) {
+  otherDataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries - 1)
+} else {
+  otherDataToDisplay = someData.slice(
+    0,
+    config.dashboardConfig.newsEntries / 2 +
+      (config.dashboardConfig.newsEntries / 2 - dataToDisplay.length) -
+      2
+  )
+}
 </script>
 
 <template>
-  <h2>Known upcoming EOL dates</h2>
+  <h2>Known end-of-life dates</h2>
 
-  <p class="disabled" v-if="dataToDisplay.length == 0 && otherDataToDisplay.length == 0">
-    No known dates. The dependencies you are following might not publish upcoming end-of-life dates.
+  <p
+    class="disabled"
+    v-if="
+      !config.dashboardConfig.upcomingEOL && dataToDisplay.length != 0 && otherDataToDisplay.length == 0
+    "
+  >
+    The dependencies you are following don't have any known past end-of-life dates, but there is
+    data about future end-of-life dates. However, you have opted to not see these in the settings
+    and as such they will not be shown here.
+  </p>
+  <p
+    class="disabled"
+    v-else-if="
+      !config.dashboardConfig.pastEOL && otherDataToDisplay.length != 0 && dataToDisplay.length == 0
+    "
+  >
+    The dependencies you are following don't have any published future end-of-life dates, but there
+    is data about past end-of-life dates. However, you have opted to not see these in the settings
+    and as such they will not be shown here.
+  </p>
+  <p
+    class="disabled"
+    v-else-if="
+      !config.dashboardConfig.upcomingEOL &&
+      !config.dashboardConfig.pastEOL &&
+      dataToDisplay.length == 0 &&
+      otherDataToDisplay.length == 0
+    "
+  >
+    The dependencies you are following don't haven't published any past end-of-life dates
   </p>
   <div v-else>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -53,7 +96,23 @@ let otherDataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries / 
           <th scope="col" class="px-6 py-3">EOL Date</th>
         </tr>
       </thead>
-      <tbody v-for="news in dataToDisplay">
+      <thead
+        v-if="config.dashboardConfig.upcomingEOL && dataToDisplay.length != 0"
+        class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-600 dark:text-gray-400"
+      >
+        <tr>
+          <th scope="col" class="px-6 py-2 spacer" colspan="3">Future EOL Dates</th>
+        </tr>
+      </thead>
+      <thead
+        v-if="config.dashboardConfig.upcomingEOL && dataToDisplay.length == 0"
+        class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400"
+      >
+        <tr>
+          <th scope="col" class="px-6 py-2 spacer" colspan="3">No known future EOL dates</th>
+        </tr>
+      </thead>
+      <tbody v-if="config.dashboardConfig.upcomingEOL" v-for="news in dataToDisplay">
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
           <th
             scope="row"
@@ -72,12 +131,24 @@ let otherDataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries / 
           </td>
         </tr>
       </tbody>
-      <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <thead
+        v-if="config.dashboardConfig.pastEOL && otherDataToDisplay.length != 0"
+        class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-600 dark:text-gray-400"
+      >
         <tr>
-          <th scope="col" class="px-6 py-2 spacer" colspan="3">Recently Passed EOL Dates</th>
+          <th scope="col" class="px-6 py-2 spacer" colspan="3">Recently past EOL Dates</th>
         </tr>
       </thead>
-      <tbody v-for="news in otherDataToDisplay">
+
+      <thead
+        v-if="config.dashboardConfig.pastEOL && otherDataToDisplay.length == 0"
+        class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400"
+      >
+        <tr>
+          <th scope="col" class="px-6 py-2 spacer" colspan="3">No known past EOL dates</th>
+        </tr>
+      </thead>
+      <tbody v-if="config.dashboardConfig.pastEOL" v-for="news in otherDataToDisplay">
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
           <th
             scope="row"

@@ -4,7 +4,7 @@ const props = defineProps({
   dependency: String
 })
 
-function toLocalDate(date: String) {
+function toLocalDate(date: string) {
   date = new Date(date).toLocaleDateString(navigator.language)
   return date
 }

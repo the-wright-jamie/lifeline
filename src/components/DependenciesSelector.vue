@@ -4,7 +4,7 @@ import Fuse from 'fuse.js'
 import { dependencyTitleCase } from '@/assets/ts/utils'
 import router from '@/router'
 
-function selectDependency(dependency: String, dependencies: String[]) {
+function selectDependency(dependency: string, dependencies: string[]) {
   const found = dependencies.indexOf(dependency)
 
   if (found < 0) {
@@ -16,24 +16,25 @@ function selectDependency(dependency: String, dependencies: String[]) {
   return dependencies
 }
 
-function saveDependencies(dependencies: String[]) {
-  let config: Config = JSON.parse(localStorage.getItem('config'))
-  if (!config) {
-    config = {
-      version: '1',
-      dependencies: [],
-      dashboardConfig: {
-        latestNews: true,
-        upcomingEOL: true,
-        ganttChart: true,
-        newsEntries: 10
-      },
-      headerConfig: {
-        showAbout: false,
-        showHelp: true
-      }
+function saveDependencies(dependencies: string[]) {
+  let rawConfig = localStorage.getItem('config')
+  let config: Config = {
+    version: 1,
+    dependencies: [],
+    dashboardConfig: {
+      latestNews: true,
+      upcomingEOL: true,
+      pastEOL: true,
+      ganttChart: true,
+      newsEntries: 10
+    },
+    headerConfig: {
+      showAbout: false,
+      showHelp: true
     }
-  } else {
+  }
+  if (rawConfig) {
+    config = JSON.parse(rawConfig)
     config.dependencies = []
   }
 
@@ -49,7 +50,7 @@ function saveDependencies(dependencies: String[]) {
   }, 100)
 }
 
-function search(search: String) {
+function search(search: string) {
   search_results.value = fuse.search(search).map((result) => result.item)
   if (search_results.value.length == 0) {
     total_results.value = dependencies.length
@@ -60,7 +61,7 @@ function search(search: String) {
   }
 }
 
-async function getData(url: String) {
+async function getData(url: string) {
   const res = await fetch(url)
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
@@ -86,9 +87,10 @@ let search_results = ref([])
 let loaded_dependencies = ref(dependencies)
 let total_results = ref(dependencies.length)
 
-let config = JSON.parse(localStorage.getItem('config'))
+let rawConfig = localStorage.getItem('config')
 
-if (config) {
+if (rawConfig) {
+  let config: Config = JSON.parse(rawConfig)
   selected = ref(config.dependencies)
 }
 </script>
@@ -140,7 +142,9 @@ if (config) {
             id="default-search"
             class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
             placeholder="Search available dependencies..."
-            @input="(event) => (loaded_dependencies = search(event.target.value))"
+            @input="
+              (event) => (loaded_dependencies = search((event.target as HTMLInputElement).value))
+            "
             required
           />
         </div>

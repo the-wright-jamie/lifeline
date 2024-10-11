@@ -18,16 +18,21 @@ async function getData(array) {
   return data
 }
 
-const config: Config = JSON.parse(localStorage.getItem('config'))
+const config: Config = JSON.parse(localStorage.getItem('config') || '')
 const allDisabled = ref(
   !config.dashboardConfig.latestNews &&
     !config.dashboardConfig.upcomingEOL &&
+    !config.dashboardConfig.pastEOL &&
     !config.dashboardConfig.ganttChart
 )
 const dependencies = config.dependencies
-const showBothTopInfo = ref(config.dashboardConfig.latestNews && config.dashboardConfig.upcomingEOL)
+const showBothTopInfo = ref(
+  config.dashboardConfig.latestNews &&
+    (config.dashboardConfig.upcomingEOL || config.dashboardConfig.pastEOL)
+)
 const showLatest = ref(config.dashboardConfig.latestNews)
 const showUpcoming = ref(config.dashboardConfig.upcomingEOL)
+const showPastEOL = ref(config.dashboardConfig.pastEOL)
 const showGantt = ref(config.dashboardConfig.ganttChart)
 
 let fetchArray = []
@@ -43,30 +48,30 @@ allData.forEach((data) => {
   depJson[`${dependencies[iter]}`] = data
   iter++
 })
-let depJsonString = JSON.stringify(depJson)
+let depJsonstring = JSON.stringify(depJson)
 </script>
 
 <template>
   <div class="grid grid-cols-2" v-if="showBothTopInfo">
     <div>
-      <LatestNews :data="depJsonString" />
+      <LatestNews :data="depJsonstring" />
     </div>
     <div>
-      <UpcomingEOL :data="depJsonString" />
+      <UpcomingEOL :data="depJsonstring" />
     </div>
   </div>
   <div v-else>
     <div v-if="showLatest">
-      <LatestNews :data="depJsonString" />
+      <LatestNews :data="depJsonstring" />
     </div>
-    <div v-if="showUpcoming">
-      <UpcomingEOL :data="depJsonString" />
+    <div v-if="showUpcoming || showPastEOL">
+      <UpcomingEOL :data="depJsonstring" />
     </div>
   </div>
   <br />
   <div v-if="showGantt">
     <h2>Gantt Chart</h2>
-    <!--<GanttChart :tasks="tasks" :data="depJsonString" />-->
+    <!--<GanttChart :tasks="tasks" :data="depJsonstring" />-->
   </div>
   <div v-if="allDisabled">
     <ErrorMessage

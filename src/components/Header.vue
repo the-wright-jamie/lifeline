@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const config: Config = JSON.parse(localStorage.getItem('config'))
+const config: Config = JSON.parse(localStorage.getItem('config') || '')
 
 const showAbout = ref(config.headerConfig.showAbout)
 const showHelp = ref(config.headerConfig.showHelp)

@@ -11,9 +11,9 @@ const props = defineProps({
   data: String
 })
 
-const config = JSON.parse(localStorage.getItem('config'))
+const config: Config = JSON.parse(localStorage.getItem('config') || '')
 const allData = JSON.parse(props.data)
-const showEOL = config.dashboardConfig.upcomingEOL
+const showEOL = config.dashboardConfig.upcomingEOL || config.dashboardConfig.pastEOL
 let someData = []
 
 for (var dependency in allData) {
@@ -39,11 +39,10 @@ for (var dependency in allData) {
 someData.sort((a, b) => b[0] - a[0])
 
 let dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries)
-console.log(dataToDisplay)
 
 function getCorrectClass() {
   let basicClass = 'text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'
-  return config.dashboardConfig.upcomingEOL ? basicClass + ' w-11/12' : basicClass + ' w-full'
+  return showEOL ? basicClass + ' w-11/12' : basicClass + ' w-full'
 }
 </script>
 
@@ -54,7 +53,7 @@ function getCorrectClass() {
       <tr>
         <th scope="col" class="px-6 py-3">Project</th>
         <th scope="col" class="px-6 py-3">Release</th>
-        <th scope="col" class="px-6 py-3">Release Date</th>
+        <th scope="col" class="px-6 py-3">Date</th>
       </tr>
     </thead>
     <tbody v-for="news in dataToDisplay">
@@ -77,25 +76,4 @@ function getCorrectClass() {
       </tr>
     </tbody>
   </table>
-  <!--<table class="table-fixed">
-    <tbody>
-      <tr>
-        <th>Project Name</th>
-        <th>Latest Release</th>
-        <th>Release Date</th>
-      </tr>
-      <tr v-for="news in dataToDisplay">
-        <td>
-          <a class="not-hyperlink" :href="generateExternalLink(news[1])">{{
-            dependencyTitleCase(news[1])
-          }}</a>
-        </td>
-        <td>
-          <a v-if="news[3] !== undefined" :href="news[3]">{{ dependencyTitleCase(news[2]) }}</a>
-          <p v-else>{{ dependencyTitleCase(news[2]) }}</p>
-        </td>
-        <td>{{ unixTimestampToLocalDate(news[0]) }}</td>
-      </tr>
-    </tbody>
-  </table>-->
 </template>
