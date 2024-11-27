@@ -15,29 +15,30 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "chart.js": "^4.4.4",
-    "fuse.js": "^7.0.0",
-    "vue": "^3.4.29",
-    "vue-router": "^4.3.3"
+    "chart.js": "^*",
+    "fuse.js": "^*",
+    "mermaid": "^11.4.1",
+    "vue": "^*",
+    "vue-router": "^*"
   },
   "devDependencies": {
-    "gh-pages": "^6.2.0",
-    "@rushstack/eslint-patch": "^1.8.0",
-    "@tsconfig/node20": "^20.1.4",
-    "@types/node": "^22.7.4",
-    "@vitejs/plugin-vue": "^5.0.5",
-    "@vue/eslint-config-prettier": "^9.0.0",
-    "@vue/eslint-config-typescript": "^13.0.0",
-    "@vue/tsconfig": "^0.5.1",
-    "autoprefixer": "^10.4.20",
-    "eslint": "^9.11.1",
-    "eslint-plugin-vue": "^9.23.0",
-    "npm-run-all2": "^6.2.0",
-    "postcss": "^8.4.47",
-    "prettier": "^3.2.5",
-    "tailwindcss": "^3.4.13",
-    "typescript": "^5.6.2",
-    "vite": "^5.3.1",
-    "vue-tsc": "^2.0.21"
+    "gh-pages": "^*",
+    "@rushstack/eslint-patch": "^*",
+    "@tsconfig/node20": "^*",
+    "@types/node": "^*",
+    "@vitejs/plugin-vue": "^*",
+    "@vue/eslint-config-prettier": "^*",
+    "@vue/eslint-config-typescript": "^*",
+    "@vue/tsconfig": "^*",
+    "autoprefixer": "^*",
+    "eslint": "^*",
+    "eslint-plugin-vue": "^*",
+    "npm-run-all2": "^*",
+    "postcss": "^*",
+    "prettier": "^*",
+    "tailwindcss": "^*",
+    "typescript": "^*",
+    "vite": "^*",
+    "vue-tsc": "^*"
   }
 }

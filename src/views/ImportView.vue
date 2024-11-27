@@ -91,7 +91,7 @@ function checkHealth(rawConfig: string) {
 function saveAndContinue() {
   localStorage.setItem('config', safeConfig.value)
 
-  router.replace('/dashboard')
+  router.replace('/')
   setTimeout(function () {
     location.reload()
   }, 100)

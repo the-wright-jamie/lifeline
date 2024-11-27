@@ -1,5 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import WelcomeView from '../views/WelcomeView.vue'
 import SetupView from '../views/SetupView.vue'
 import ImportView from '../views/ImportView.vue'
@@ -10,13 +9,8 @@ import Settings from '@/views/SettingsView.vue'
 import PathNotFound from '@/components/PathNotFound.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView
-    },
     {
       path: '/welcome',
       name: 'welcome',
@@ -48,7 +42,7 @@ const router = createRouter({
       component: Settings
     },
     {
-      path: '/dashboard',
+      path: '/',
       name: 'dashboard',
       component: DashboardView
     },

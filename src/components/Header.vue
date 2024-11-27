@@ -36,7 +36,7 @@ const showHelp = ref(config.headerConfig.showHelp)
           >
         </h2>
         <h2>
-          <RouterLink to="/dashboard" class="not-hyperlink"
+          <RouterLink to="/" class="not-hyperlink"
             ><span class="material-symbols-rounded material-symbols-rounded-large"
               >&#xe871;</span
             ></RouterLink

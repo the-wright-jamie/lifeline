@@ -44,7 +44,7 @@ function saveDependencies(dependencies: string[]) {
 
   localStorage.setItem('config', JSON.stringify(config))
 
-  router.replace('/dashboard')
+  router.replace('/')
   setTimeout(function () {
     location.reload()
   }, 100)
