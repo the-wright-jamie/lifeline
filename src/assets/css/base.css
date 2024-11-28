@@ -33,6 +33,10 @@
   src: url(../fonts/RobotoCondensed-VariableFont_wght.ttf);
 }
 
+b {
+  font-family: 'Roboto Condensed';
+}
+
 #app {
   max-width: 1280px;
   margin: 0 auto;
@@ -61,6 +65,8 @@
   --vt-c-text-light-2: rgb(11, 11, 11);
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgb(255, 255, 255);
+
+  --mermaid-font-family: 'Roboto';
 }
 
 /* semantic color variables for this project */
@@ -99,7 +105,7 @@ a {
 body {
   color: var(--color-text);
   background: var(--color-background);
-  font-family: 'Roboto';
+  font-family: 'Roboto' !important;
 }
 
 h1 {

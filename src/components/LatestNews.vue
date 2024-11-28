@@ -42,7 +42,7 @@ let dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries)
 
 function getCorrectClass() {
   let basicClass = 'text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'
-  return showEOL ? basicClass + ' w-11/12' : basicClass + ' w-full'
+  return showEOL ? basicClass + ' w-full lg:w-11/12' : basicClass + ' w-full'
 }
 </script>
 

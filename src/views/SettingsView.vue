@@ -10,6 +10,7 @@ let showUpcoming = ref(config.dashboardConfig.upcomingEOL)
 let showPastEOL = ref(config.dashboardConfig.pastEOL)
 let showGantt = ref(config.dashboardConfig.ganttChart)
 let newsEntries = ref(config.dashboardConfig.newsEntries)
+let ganttWidth = ref(config.dashboardConfig.ganttWidth)
 
 let disabledDashboard = ref(checkIfDashboardDisabled())
 
@@ -56,6 +57,16 @@ function updateEntries(input: number) {
   }
   let config: Config = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.newsEntries = input
+  localStorage.setItem('config', JSON.stringify(config))
+}
+
+function updateWidth(input: number) {
+  if (isNaN(input) || input == 0) {
+    input = 10
+  }
+  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboardConfig.ganttWidth = input
+  ganttWidth.value = input
   localStorage.setItem('config', JSON.stringify(config))
 }
 
@@ -127,12 +138,6 @@ function exportConfig() {
       <ToggleButton :active="showPastEOL" /> Show past end-of-life dates
     </button>
   </p>
-  <p>
-    <button @click="updateGantt()"><ToggleButton :active="showGantt" /> Show Gantt Chart</button>
-  </p>
-  <p v-if="disabledDashboard" class="disabled">
-    <span class="material-symbols-rounded">&#xe002;</span> Caution: you've disabled the dashboard...
-  </p>
   <div>
     <p>How many news entries should <i>Lifeline</i> show?</p>
     <div class="relative mt-2 rounded-md shadow-sm">
@@ -146,6 +151,30 @@ function exportConfig() {
       />
     </div>
   </div>
+  <br>
+  <p>
+    <button @click="updateGantt()"><ToggleButton :active="showGantt" /> Show Gantt Chart</button>
+  </p>
+  <div>
+    <p>How many days do you want to show on the chart?</p>
+    <div class="relative mt-2 rounded-md shadow-sm">
+      <input
+        type="text"
+        name="entries"
+        id="entries"
+        class="block w-24 rounded-md border-0 py-1.5 pl-4 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        :value="ganttWidth"
+        @input="(event) => updateWidth(Number((event.target as HTMLInputElement).value))"
+      />
+    </div>
+    <p class="disabled button-info">
+      You will be able to see {{ ganttWidth }} days forwards and back, making the Gantt chart width
+      (at most) {{ ganttWidth * 2 }} days wide
+    </p>
+  </div>
+  <p v-if="disabledDashboard" class="disabled">
+    <span class="material-symbols-rounded">&#xe002;</span> Caution: you've disabled the dashboard...
+  </p>
 
   <br />
 

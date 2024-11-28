@@ -16,9 +16,10 @@
   },
   "dependencies": {
     "chart.js": "^*",
+    "endent": "^2.1.0",
     "fuse.js": "^*",
-    "mermaid": "^11.4.1",
     "vue": "^*",
+    "vue-mermaid-string": "^7.0.0",
     "vue-router": "^*"
   },
   "devDependencies": {

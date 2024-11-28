@@ -7,6 +7,7 @@ type Config = {
     pastEOL: boolean
     ganttChart: boolean
     newsEntries: number
+    ganttWidth: number
   }
   headerConfig: {
     showAbout: boolean

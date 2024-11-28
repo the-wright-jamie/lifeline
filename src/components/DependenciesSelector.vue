@@ -26,7 +26,8 @@ function saveDependencies(dependencies: string[]) {
       upcomingEOL: true,
       pastEOL: true,
       ganttChart: true,
-      newsEntries: 10
+      newsEntries: 10,
+      ganttWidth: 180
     },
     headerConfig: {
       showAbout: false,

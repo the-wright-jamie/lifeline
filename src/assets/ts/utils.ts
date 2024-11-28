@@ -53,6 +53,7 @@ export function dependencyTitleCase(name: string) {
     .replace('Lts', 'LTS')
     .replace('Dotnet', '.NET')
     .replace('.NETfx', '.NET Framework')
+    .replace('Ckeditor', 'CKEditor')
   return name
 }
 
@@ -80,6 +81,16 @@ export function dateToUnixTimestamp(date: string) {
 
 export function unixTimestampToLocalDate(date: string) {
   return new Date(Number(date) * 1000).toLocaleDateString(navigator.language)
+}
+
+export function todayAsISO() {
+  let date = new Date()
+  return date.toISOString().split('T')[0]
+}
+
+export function unixAsISO(timestamp: number) {
+  var date = new Date(timestamp * 1000)
+  return date.toISOString().split('T')[0]
 }
 
 export function isDateAfterToday(date: string) {

@@ -10,6 +10,7 @@ import Header from './components/Header.vue'
 import DependencyInfo from './components/DependencyInfo.vue'
 import ToggleButton from './components/ToggleButton.vue'
 import ErrorMessage from './components/ErrorMessage.vue'
+import VueMermaidString from 'vue-mermaid-string'
 
 const app = createApp(App)
 
@@ -20,6 +21,7 @@ app
   .component('Header', Header)
   .component('Dependency', DependencyInfo)
   .component('ErrorMessage', ErrorMessage)
+  .component('VueMermaidString', VueMermaidString)
 
 app.use(router)
 
