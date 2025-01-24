@@ -4,6 +4,10 @@ import Fuse from 'fuse.js'
 import { dependencyTitleCase } from '@/assets/ts/utils'
 import router from '@/router'
 
+function splicer(array, beginning, end) {
+  return array.slice(beginning, end)
+}
+
 function selectDependency(dependency: string, dependencies: string[]) {
   const found = dependencies.indexOf(dependency)
 
@@ -151,7 +155,7 @@ if (rawConfig) {
         </div>
       </form>
       <ul>
-        <template v-for="dependency in loaded_dependencies.slice(index, index + page_size)">
+        <template v-for="dependency in splicer(loaded_dependencies, index, index + page_size)">
           <li>
             <button @click="selected = selectDependency(dependency, selected)">
               <span v-if="selected.indexOf(dependency) > -1"

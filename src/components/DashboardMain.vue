@@ -138,7 +138,6 @@ for (var data in depJson) {
   })
 }
 let depJsonstring = JSON.stringify(depJson)
-console.log(endent.pretty(diagram))
 </script>
 
 <template>

@@ -54,11 +54,9 @@ function checkHealth(rawConfig: string) {
     }
   })
 
-  console.log(config)
   expectedKeys = ['latestNews', 'upcomingEOL', 'pastEOL', 'ganttChart', 'newsEntries', 'ganttWidth']
 
   expectedKeys.forEach((key) => {
-    console.log(key)
     if (!config.dashboardConfig.hasOwnProperty(key)) {
       errorMessages.value.push(`Dashboard config does not have ${key}`)
       return

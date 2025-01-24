@@ -7,7 +7,7 @@ const props = defineProps({
 })
 
 function pickRandomErrorImage() {
-  return `src/assets/img/error/${getRandomInt(1, 5)}.png`
+  return `https://raw.githubusercontent.com/the-wright-jamie/lifeline/refs/heads/main/src/assets/img/error/${getRandomInt(1, 5)}.png`
 }
 </script>
 
