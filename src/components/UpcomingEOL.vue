@@ -8,6 +8,7 @@ import {
   isDateBeforeToday,
   generateExternalLink
 } from '@/assets/ts/utils'
+import { type Config } from '../assets/ts/types'
 
 const config: Config = JSON.parse(localStorage.getItem('config') || '')
 const props = defineProps({

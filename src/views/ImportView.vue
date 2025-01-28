@@ -2,6 +2,7 @@
 import Spinner from '@/components/Spinner.vue'
 import router from '@/router'
 import { ref } from 'vue'
+import { type Config } from '../assets/ts/types'
 
 let versionCheck = ref(false)
 let dependenciesCheck = ref(false)

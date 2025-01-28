@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { type Config } from '../assets/ts/types'
 
 const config: Config = JSON.parse(localStorage.getItem('config') || '')
 

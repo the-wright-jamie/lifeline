@@ -1,4 +1,4 @@
-type Config = {
+export type Config = {
   version: number
   dependencies: string[]
   dashboardConfig: {

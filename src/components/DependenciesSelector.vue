@@ -3,10 +3,7 @@ import { ref } from 'vue'
 import Fuse from 'fuse.js'
 import { dependencyTitleCase } from '@/assets/ts/utils'
 import router from '@/router'
-
-function splicer(array, beginning, end) {
-  return array.slice(beginning, end)
-}
+import { type Config } from '../assets/ts/types'
 
 function selectDependency(dependency: string, dependencies: string[]) {
   const found = dependencies.indexOf(dependency)
@@ -18,6 +15,28 @@ function selectDependency(dependency: string, dependencies: string[]) {
   }
 
   return dependencies
+}
+
+function returnPagedDependencies(start: number, end: number) {
+  // apparently this nonsense works on prod, and it doesn't care
+  // if it's on dev. maybe a vue bug. super weird behavior.
+  // basically when searching the loaded_deps go inside a value
+  // so you have to call value twice...
+  try {
+    let arrayCopy = [...loaded_dependencies.value]
+    return arrayCopy.slice(start, end)
+  } catch {
+    console.warn('Something went wrong slicing the array. Going to try the scuffed method...')
+  }
+
+  try {
+    let arrayCopy = [...loaded_dependencies.value.value]
+    return arrayCopy.slice(start, end)
+  } catch {
+    console.error(
+      "Scuffed method didn't work. If you see this, please get in touch with the dev: https://github.com/the-wright-jamie/lifeline"
+    )
+  }
 }
 
 function saveDependencies(dependencies: string[]) {
@@ -155,7 +174,7 @@ if (rawConfig) {
         </div>
       </form>
       <ul>
-        <template v-for="dependency in splicer(loaded_dependencies, index, index + page_size)">
+        <template v-for="dependency in returnPagedDependencies(index, index + page_size)">
           <li>
             <button @click="selected = selectDependency(dependency, selected)">
               <span v-if="selected.indexOf(dependency) > -1"

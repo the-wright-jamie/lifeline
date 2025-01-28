@@ -12,6 +12,7 @@ import {
 } from '@/assets/ts/utils'
 import VueMermaidString from 'vue-mermaid-string'
 import endent from 'endent'
+import { type Config } from '../assets/ts/types'
 
 // This is an absolute mess 🤣
 // Surely there's a better way to handle multiple waits...

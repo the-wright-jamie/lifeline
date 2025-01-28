@@ -6,6 +6,7 @@ import {
   toLocalDate,
   unixTimestampToLocalDate
 } from '@/assets/ts/utils'
+import { type Config } from '../assets/ts/types'
 
 const props = defineProps({
   data: String
