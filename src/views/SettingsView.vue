@@ -20,6 +20,10 @@ let showHelp = ref(config.headerConfig.showHelp)
 
 let resetting = ref(false)
 
+function getCurrentYear() {
+  return new Date().getFullYear()
+}
+
 function updateLatest() {
   let config: Config = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.latestNews = !config.dashboardConfig.latestNews
@@ -234,6 +238,13 @@ function exportConfig() {
     </p>
     <h1 v-else>Be careful, this is irreversible!</h1>
   </div>
+
+  <br/>
+  <hr/>
+
+  <p class="disabled button-info">
+      Open Source Software by <a href="https://github.com/the-wright-jamie">the-wright-jamie</a> <br/><i>Lifeline</i> 2024 - {{ getCurrentYear() }}
+    </p>
 </template>
 
 <style>
