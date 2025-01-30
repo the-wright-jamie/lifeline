@@ -174,8 +174,8 @@ function exportConfig() {
     </div>
     <p class="disabled button-info">
       The 'width' of the Gantt chart is measured in days. As such, with a max width of
-      {{ ganttMaxWidth }}, you will be able to see at most {{ ganttMaxWidth / 2 }} days in the past and
-      into the future.
+      {{ ganttMaxWidth }}, you will be able to see at most {{ ganttMaxWidth / 2 }} days in the past
+      and into the future.
     </p>
   </div>
   <p v-if="disabledDashboard" class="disabled">
@@ -243,10 +243,29 @@ function exportConfig() {
   <br />
   <hr />
 
-  <p class="disabled button-info">
-    Open Source Software by <a href="https://github.com/the-wright-jamie">the-wright-jamie</a>
-    <br /><i>Lifeline</i> 2024 - {{ getCurrentYear() }}
-  </p>
+  <div class="disabled button-info">
+    <h6>
+      <span class="material-symbols-rounded material-symbols-rounded-large icon-correction"
+        >&#xe650;</span
+      ><i class="title solid">Lifeline</i>
+      <span class="material-symbols-rounded material-symbols-rounded-large icon-correction"
+        >&#xe650;</span
+      >
+      is an
+      <a href="https://github.com/the-wright-jamie/lifeline" target="_blank">Open Source project</a>
+      <span class="material-symbols-rounded icon-faded">&#xe89e;</span>
+      by <a href="https://github.com/the-wright-jamie" target="_blank">the-wright-jamie</a>
+      <span class="material-symbols-rounded icon-faded">&#xe89e;</span> |
+      <span class="monospace">2024 - {{ getCurrentYear() }}</span>
+    </h6>
+    <p>
+      End of life data is made available by
+      <a href="https://endoflife.date/" target="_blank">endoflife.date</a>
+      <span class="material-symbols-rounded icon-faded">&#xe89e;</span>.
+      <RouterLink to="/attributions">See more attributions</RouterLink>.
+    </p>
+    <RouterLink class="not-hyperlink" to="/thanks">Thank you</RouterLink> for utilizing my work!
+  </div>
 </template>
 
 <style>
@@ -256,5 +275,22 @@ function exportConfig() {
 
 .button-info {
   padding-top: 0.75em;
+}
+
+h6 {
+  font-size: 1rem;
+}
+
+.title {
+  margin-left: -0.18em;
+}
+
+.material-symbols-rounded-large {
+  font-size: 1rem;
+}
+
+.icon {
+  padding-right: 0.25em;
+  font-size: 1.5em;
 }
 </style>

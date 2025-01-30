@@ -4,6 +4,8 @@ import SetupView from '../views/SetupView.vue'
 import ImportView from '../views/ImportView.vue'
 import AboutView from '../views/AboutView.vue'
 import HelpView from '../views/HelpView.vue'
+import ThanksView from '../views/ThanksView.vue'
+import AttributionsView from '../views/AttributionsView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import Settings from '@/views/SettingsView.vue'
 import PathNotFound from '@/components/PathNotFound.vue'
@@ -35,6 +37,16 @@ const router = createRouter({
       path: '/help',
       name: 'help',
       component: HelpView
+    },
+    {
+      path: '/thanks',
+      name: 'thanks',
+      component: ThanksView
+    },
+    {
+      path: '/attributions',
+      name: 'attributions',
+      component: AttributionsView
     },
     {
       path: '/settings',

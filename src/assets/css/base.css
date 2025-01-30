@@ -221,3 +221,12 @@ hr {
 .spacer {
   padding-bottom: 0.65em;
 }
+
+.stickyHeader {
+  position: sticky;
+  top: 0;
+}
+
+.monospace {
+  font-family: monospace;
+}

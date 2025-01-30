@@ -50,7 +50,8 @@ function saveDependencies(dependencies: string[]) {
       pastEOL: true,
       ganttChart: true,
       newsEntries: 10,
-      ganttWidth: 180
+      ganttWidth: 356,
+      ganttMaxWidth: 730
     },
     headerConfig: {
       showAbout: false,

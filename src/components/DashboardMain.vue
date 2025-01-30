@@ -97,7 +97,7 @@ function ganttChartLiveUpdate() {
     // get the current Unix timestamp
     let unixCurrentTime = Math.trunc(Date.now() / 1000)
     // convert the days to unix time
-    let unixChartWidth = unixOneDay * userChartWidth.value
+    let unixChartWidth = unixOneDay * (userChartWidth.value / 2)
     // calculate the seek back in unix
     let unixSeekback = unixCurrentTime - unixChartWidth
     // calculate the seek forward in unix
@@ -181,7 +181,7 @@ let depJsonstring = JSON.stringify(depJson)
   <div v-if="showGantt">
     <h2>Gantt Chart</h2>
     <div class="relative mb-6">
-      <label for="labels-range-input">Chart Width: {{ userChartWidth }}</label>
+      <label for="labels-range-input">Chart Width: {{ userChartWidth }} days</label>
       <input
         id="labels-range-input"
         type="range"
@@ -197,9 +197,7 @@ let depJsonstring = JSON.stringify(depJson)
         userChartMaxWidth
       }}</span>
     </div>
-    <div>
-      <vue-mermaid-string :value="diagram" />
-    </div>
+    <vue-mermaid-string :value="diagram" />
   </div>
   <div v-if="allDisabled">
     <ErrorMessage
