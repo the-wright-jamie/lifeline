@@ -8,6 +8,7 @@ export type Config = {
     ganttChart: boolean
     newsEntries: number
     ganttWidth: number
+    ganttMaxWidth: number
   }
   headerConfig: {
     showAbout: boolean

@@ -11,7 +11,7 @@ let showUpcoming = ref(config.dashboardConfig.upcomingEOL)
 let showPastEOL = ref(config.dashboardConfig.pastEOL)
 let showGantt = ref(config.dashboardConfig.ganttChart)
 let newsEntries = ref(config.dashboardConfig.newsEntries)
-let ganttWidth = ref(config.dashboardConfig.ganttWidth)
+let ganttMaxWidth = ref(config.dashboardConfig.ganttMaxWidth)
 
 let disabledDashboard = ref(checkIfDashboardDisabled())
 
@@ -66,12 +66,12 @@ function updateEntries(input: number) {
 }
 
 function updateWidth(input: number) {
-  if (isNaN(input) || input == 0) {
-    input = 10
+  if (isNaN(input) || input == 0 || input < 30) {
+    input = 30
   }
   let config: Config = JSON.parse(localStorage.getItem('config') || '')
-  config.dashboardConfig.ganttWidth = input
-  ganttWidth.value = input
+  config.dashboardConfig.ganttMaxWidth = input
+  ganttMaxWidth.value = input
   localStorage.setItem('config', JSON.stringify(config))
 }
 
@@ -156,25 +156,26 @@ function exportConfig() {
       />
     </div>
   </div>
-  <br>
+  <br />
   <p>
     <button @click="updateGantt()"><ToggleButton :active="showGantt" /> Show Gantt Chart</button>
   </p>
   <div>
-    <p>How many days do you want to show on the chart?</p>
+    <p>What should be the maximum amount of days you can see on the chart?</p>
     <div class="relative mt-2 rounded-md shadow-sm">
       <input
         type="text"
         name="entries"
         id="entries"
         class="block w-24 rounded-md border-0 py-1.5 pl-4 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-        :value="ganttWidth"
+        :value="ganttMaxWidth"
         @input="(event) => updateWidth(Number((event.target as HTMLInputElement).value))"
       />
     </div>
     <p class="disabled button-info">
-      You will be able to see {{ ganttWidth }} days forwards and back, making the Gantt chart width
-      (at most) {{ ganttWidth * 2 }} days wide
+      The 'width' of the Gantt chart is measured in days. As such, with a max width of
+      {{ ganttMaxWidth }}, you will be able to see at most {{ ganttMaxWidth / 2 }} days in the past and
+      into the future.
     </p>
   </div>
   <p v-if="disabledDashboard" class="disabled">
@@ -239,12 +240,13 @@ function exportConfig() {
     <h1 v-else>Be careful, this is irreversible!</h1>
   </div>
 
-  <br/>
-  <hr/>
+  <br />
+  <hr />
 
   <p class="disabled button-info">
-      Open Source Software by <a href="https://github.com/the-wright-jamie">the-wright-jamie</a> <br/><i>Lifeline</i> 2024 - {{ getCurrentYear() }}
-    </p>
+    Open Source Software by <a href="https://github.com/the-wright-jamie">the-wright-jamie</a>
+    <br /><i>Lifeline</i> 2024 - {{ getCurrentYear() }}
+  </p>
 </template>
 
 <style>
