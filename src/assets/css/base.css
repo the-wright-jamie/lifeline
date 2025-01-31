@@ -230,3 +230,16 @@ hr {
 .monospace {
   font-family: monospace;
 }
+
+.beta-pill {
+  font-family: 'Roboto Black';
+  background-color: #ffce1b;
+  color:#000000;
+  font-size: 60%;
+  margin-left: 0.5em;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+  border-radius: 15px;
+}

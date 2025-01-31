@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import LatestNews from './LatestNews.vue'
 import UpcomingEOL from './UpcomingEOL.vue'
-import GanttChart from './GanttChart.vue'
 import {
   getRandomInt,
   dependencyTitleCase,
@@ -13,6 +12,7 @@ import {
 import VueMermaidString from 'vue-mermaid-string'
 import endent from 'endent'
 import { type Config } from '../assets/ts/types'
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 
 // This is an absolute mess 🤣
 // Surely there's a better way to handle multiple waits...
@@ -35,6 +35,11 @@ function updateWidth(input: number) {
   userChartWidth.value = input
   ganttChartLiveUpdate()
   localStorage.setItem('config', JSON.stringify(config))
+}
+
+function updateOffset(input: number) {
+  userChartOffset.value = input
+  ganttChartLiveUpdate()
 }
 
 let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -60,12 +65,18 @@ const showGantt = ref(config.dashboardConfig.ganttChart)
 const userChartMaxWidth = ref(config.dashboardConfig.ganttMaxWidth)
 // set the width of the chart in days
 const userChartWidth = ref(config.dashboardConfig.ganttWidth)
+const userChartOffset = ref(0)
+const focusedDependency = ref('all')
 
 let fetchArray = []
 
-dependencies.forEach((dependency) => {
-  fetchArray.push(fetch(`https://endoflife.date/api/${dependency}.json`))
-})
+try {
+  dependencies.forEach((dependency) => {
+    fetchArray.push(fetch(`https://endoflife.date/api/${dependency}.json`))
+  })
+} catch {
+  console.error('Failed to fetch')
+}
 
 let depJson = {}
 const allData = await getData(fetchArray)
@@ -74,6 +85,11 @@ allData.forEach((data) => {
   depJson[`${dependencies[iter]}`] = data
   iter++
 })
+
+function setFocusedDependency(dependency: string) {
+  focusedDependency.value = dependency
+  ganttChartLiveUpdate()
+}
 
 function ganttChartLiveUpdate() {
   diagram.value = ``
@@ -91,17 +107,21 @@ function ganttChartLiveUpdate() {
     `
   }
 
+  // One day = 86400 seconds
+  let unixOneDay = 86400
+  // get the current Unix timestamp
+  let unixCurrentTime = Math.trunc(Date.now() / 1000) - userChartOffset.value * unixOneDay
+  // convert the days to unix time
+  let unixChartWidth = unixOneDay * (userChartWidth.value / 2)
+  // calculate the seek back in unix
+  let unixSeekback = unixCurrentTime - unixChartWidth
+  // calculate the seek forward in unix
+  let unixSeekforwad = unixCurrentTime + unixChartWidth
+
   for (var data in depJson) {
-    // One day = 86400 seconds
-    let unixOneDay = 86400
-    // get the current Unix timestamp
-    let unixCurrentTime = Math.trunc(Date.now() / 1000)
-    // convert the days to unix time
-    let unixChartWidth = unixOneDay * (userChartWidth.value / 2)
-    // calculate the seek back in unix
-    let unixSeekback = unixCurrentTime - unixChartWidth
-    // calculate the seek forward in unix
-    let unixSeekforwad = unixCurrentTime + unixChartWidth
+    if (focusedDependency.value != "all" && data != focusedDependency.value) {
+      continue
+    }
 
     // for each entry in the array for each of the KEYS in the dependency JSON
     depJson[`${data}`].forEach((eolData) => {
@@ -138,18 +158,23 @@ function ganttChartLiveUpdate() {
         }
       }
       if (!eolData.eol) {
-        if (dateToUnixTimestamp(eolData.releaseDate) > unixSeekback) {
+        if (
+          dateToUnixTimestamp(eolData.releaseDate) > unixSeekback &&
+          dateToUnixTimestamp(eolData.releaseDate) < unixCurrentTime + unixChartWidth
+        ) {
           diagram.value =
             diagram.value +
             `
     section ${dependencyTitleCase(data)}
         ${dependencyTitleCase(eolData.cycle)} (Supported, unknown EOL): milestone, ${eolData.releaseDate}, 0d`
         } else {
-          diagram.value =
-            diagram.value +
-            `
+          if (dateToUnixTimestamp(eolData.releaseDate) < unixCurrentTime + unixChartWidth) {
+            diagram.value =
+              diagram.value +
+              `
     section ${dependencyTitleCase(data)}
         ← ${dependencyTitleCase(eolData.cycle)} (Supported, unknown EOL): ${unixAsISO(unixSeekback)}, 0d`
+          }
         }
       }
     })
@@ -180,22 +205,99 @@ let depJsonstring = JSON.stringify(depJson)
   <br />
   <div v-if="showGantt">
     <h2>Gantt Chart</h2>
-    <div class="relative mb-6">
-      <label for="labels-range-input">Chart Width: {{ userChartWidth }} days</label>
-      <input
-        id="labels-range-input"
-        type="range"
-        :value="userChartWidth"
-        min="30"
-        :max="userChartMaxWidth"
-        step="1"
-        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-        @input="(event) => updateWidth(Number((event.target as HTMLInputElement).value))"
-      />
-      <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-0 -bottom-6">30</span>
-      <span class="text-sm text-gray-500 dark:text-gray-400 absolute end-0 -bottom-6">{{
-        userChartMaxWidth
-      }}</span>
+    <h2>Chart controls <span class="beta-pill">BETA</span></h2>
+    <Menu as="div" class="relative inline-block text-left">
+      <div>
+        <MenuButton
+          class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white dark:bg-gray-900 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 dark:hover:bg-gray-600"
+        >
+          Showing: {{ dependencyTitleCase(focusedDependency) }}
+        </MenuButton>
+      </div>
+
+      <transition
+        enter-active-class="transition ease-out duration-100"
+        enter-from-class="transform opacity-0 scale-95"
+        enter-to-class="transform opacity-100 scale-100"
+        leave-active-class="transition ease-in duration-75"
+        leave-from-class="transform opacity-100 scale-100"
+        leave-to-class="transform opacity-0 scale-95"
+      >
+        <MenuItems
+          class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-gray-900 ring-1 shadow-lg ring-black/5 focus:outline-hidden"
+        >
+          <div class="py-1">
+            <MenuItem>
+              <button
+                @click="setFocusedDependency('all')"
+                class="block px-4 py-2 text-sm not-hyperlink"
+              >
+                Show All
+                <span class="material-symbols-rounded">{{
+                  focusedDependency == 'all' ? '&#xe5ca;' : ''
+                }}</span>
+              </button>
+            </MenuItem>
+            <hr />
+            <MenuItem v-for="dependency in dependencies">
+              <button
+                @click="setFocusedDependency(dependency)"
+                href="#"
+                class="block px-4 py-2 text-sm not-hyperlink"
+              >
+                {{ dependencyTitleCase(dependency) }}
+                <span class="material-symbols-rounded">{{
+                  focusedDependency == dependency ? '&#xe5ca;' : ''
+                }}</span>
+              </button>
+            </MenuItem>
+          </div>
+        </MenuItems>
+      </transition>
+    </Menu>
+    <div class="stickyHeader bg-white dark:bg-black">
+      <br />
+      <div class="grid auto-cols-2 grid-flow-col gap-4">
+        <div class="relative mb-6">
+          <label for="labels-range-input">Chart Width: {{ userChartWidth }} days</label>
+          <input
+            id="labels-range-input"
+            type="range"
+            :value="userChartWidth"
+            min="30"
+            :max="userChartMaxWidth"
+            step="1"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+            @input="(event) => updateWidth(Number((event.target as HTMLInputElement).value))"
+          />
+          <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-0 -bottom-6"
+            >30</span
+          >
+          <span class="text-sm text-gray-500 dark:text-gray-400 absolute end-0 -bottom-6">{{
+            userChartMaxWidth
+          }}</span>
+        </div>
+        <div class="relative mb-6">
+          <label for="labels-range-input">Chart Offset: {{ -userChartOffset }} {{ userChartOffset == 1 ? "day" : "days"}}</label>
+          <input
+            id="labels-range-input"
+            type="range"
+            :value="userChartOffset"
+            :min="-userChartMaxWidth / 2"
+            :max="userChartMaxWidth / 2"
+            step="1"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+            @input="(event) => updateOffset(Number((event.target as HTMLInputElement).value))"
+          />
+          <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-0 -bottom-6">{{
+            userChartMaxWidth / 2
+          }}</span>
+          <span class="text-sm text-gray-500 dark:text-gray-400 absolute end-0 -bottom-6">{{
+            -userChartMaxWidth / 2
+          }}</span>
+        </div>
+      </div>
+      <br />
     </div>
     <vue-mermaid-string :value="diagram" />
   </div>
