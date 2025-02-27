@@ -4,6 +4,7 @@ export function dependencyTitleCase(name: string) {
   }
   // All known corrections and exceptions
   name = name
+    .replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase()) // to title case
     .replace('os', 'OS')
     .replace('pOS', 'Pos')
     .replace('micrOS', 'Micros')
@@ -26,7 +27,6 @@ export function dependencyTitleCase(name: string) {
     .replace('APIsix', 'APISIX')
     .replace('activemq', 'ActiveMQ')
     .replace('linux', ' Linux')
-    .replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase()) // to title case
     .replace('OpenjDK', 'OpenJDK')
     .replace('BuilDS', 'Builds')
     .replace('Redhat', 'Red Hat')
@@ -109,4 +109,8 @@ export function getRandomInt(min, max) {
   const minCeiled = Math.ceil(min)
   const maxFloored = Math.floor(max)
   return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled) // The maximum is exclusive and the minimum is inclusive
+}
+
+export function getCurrentYear() {
+  return new Date().getFullYear()
 }

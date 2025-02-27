@@ -105,13 +105,21 @@ function ganttChartLiveUpdate() {
   diagram.value = ``
   if (isDarkMode) {
     diagram.value = `
-%%{init: {'theme':'dark', 'darkMode': 'true', 'fontFamily': 'Roboto', 'displayMode': 'compact' }}%%
+%%{
+    init: {
+        'theme': 'dark',
+        'fontFamily': 'Roboto',
+        'gantt': {
+              'numberSectionStyles': '2'
+          }
+    }
+}%%
       gantt
     dateFormat YYYY-MM-DD
     `
   } else {
     diagram.value = `
-%%{init: {'theme':'neutral', 'darkMode': 'true', 'fontFamily': 'Roboto', 'displayMode': 'compact' }}%%
+%%{init: {'theme':'neutral', 'fontFamily': 'Roboto' }}%%
       gantt
     dateFormat YYYY-MM-DD
     `
@@ -189,6 +197,13 @@ function ganttChartLiveUpdate() {
       }
     })
   }
+
+  diagram.value =
+    diagram.value +
+    `
+    section Info
+         Start - ${unixAsISO(unixSeekback)}: ${unixAsISO(unixSeekback)}, 0d
+         End - ${unixAsISO(unixSeekforwad)}: ${unixAsISO(unixSeekforwad)}, 0d`
 }
 
 ganttChartLiveUpdate()
@@ -278,7 +293,7 @@ let depJsonstring = JSON.stringify(depJson)
       <br />
       <div class="grid auto-cols-2 grid-flow-col gap-4">
         <div class="relative mb-6">
-          <label for="labels-range-input">Chart Width: {{ userChartWidth }} days</label>
+          <label for="labels-range-input">Chart Zoom: {{ userChartWidth }} days</label>
           <input
             id="labels-range-input"
             type="range"

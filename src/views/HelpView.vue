@@ -1,8 +1,9 @@
 <template>
   <h1>Help</h1>
-  <h2 id="privacy">Does <i>Lifeline</i> work on mobile device?</h2>
+  <h2>Does <i>Lifeline</i> work on mobile?</h2>
   <p>
-    You're welcome to try, however <i>Lifeline</i> is not designed for nor tested on mobile devices. It is primarily designed to be used on larger screens.
+    You're welcome to try, however <i>Lifeline</i> is not designed for nor tested on mobile devices.
+    It is primarily designed to be used on larger screens.
   </p>
   <br />
   <h2 id="privacy">Does <i>Lifeline</i> send any of my information to a server?</h2>
@@ -21,7 +22,7 @@
   <br />
   <p>
     <b
-      >We do access the API servers of
+      ><i>Lifeline</i> does access the API servers of
       <a href="https://endoflife.date/" target="_blank">endoflife.date</a>
       <span class="material-symbols-rounded icon-faded">&#xe89e;</span> via your browser</b
     >
@@ -65,7 +66,46 @@
     Some of the names of dependencies look a little weird. Why is this?
   </h2>
   <p>
-    Info about how <i>Lifeline</i> handles info from the API and how it's parsed and displayed to
-    the user
+    <a href="https://endoflife.date/" target="_blank">endoflife.date</a>
+    <span class="material-symbols-rounded icon-faded">&#xe89e;</span> provides the names of
+    dependencies in <span style="font-family: monospace">a-format-like-this</span>. There is no
+    option to get the 'friendly' name of the dependency from the API, and it would be untenable to
+    manage a list of 'friendly' names as the data from the API is subject to change at any time (<i
+      >Lifeline</i
+    >
+    is a side project with one developer).
+  </p>
+  <br />
+  <p>
+    So, instead, <i>Lifeline</i> has a custom 'semi-generic' function that turns '<span
+      style="font-family: monospace"
+      >a-format-like-this</span
+    >' into 'A Format Like This' (so, replace hyphens with spaces, and capitalise each word). Next,
+    <i>Lifeline</i> then handles any special names (or part of names) that it's aware of, such
+    as '<span style="font-family: monospace">macos</span>' which becomes 'macOS' (os → OS) or '<span
+      style="font-family: monospace"
+      >pixel-proxl</span
+    >' which becomes 'Pixel Pro XL' (<span style="font-family: monospace">pixel-proxl</span> → Pixel
+    Proxl → Pixel Pro XL). One of the most drastic exceptions is for
+    '<span style="font-family: monospace">dotnetfx</span>' which renders as '.NET Framework' (<span
+      style="font-family: monospace"
+      >dotnetfx</span
+    >
+    → Dotnetfx → .NETfx → .NET Framework). If you're interested, you can
+    <a
+      href="https://github.com/the-wright-jamie/lifeline/blob/main/src/assets/ts/utils.ts#L1"
+      target="_blank"
+      >view the list of exceptions and the logic here</a
+    ><span class="material-symbols-rounded icon-faded">&#xe89e;</span> (beware - spaghetti code!)
+  </p>
+  <br />
+  <p>
+    So, to get back to the question, the answer is this: Simply, <i>Lifeline</i>'s developer hasn't
+    had a chance to go through all 362 dependencies tracked by the API provider and ensure that they
+    are formatted correctly, or if they need an exception to add it (and then ensure the exception
+    hasn't broken anything else). <i>Lifeline</i> currently has a list of 50 corrections and
+    exceptions, and many dependencies still don't render correctly. The most popular dependencies
+    have had exceptions introduced, but if you use a dependency that isn't rendering correctly you
+    should raise an issue on GitHub (or, even better, provide your own exception by opening a PR).
   </p>
 </template>
