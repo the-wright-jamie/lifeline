@@ -141,12 +141,12 @@ function exportConfig() {
   </p>
   <div>
     <p>How many news entries should <i>Lifeline</i> show?</p>
-    <div class="relative mt-2 rounded-md shadow-sm">
+    <div class="relative mt-2 rounded-md shadow-xs">
       <input
         type="text"
         name="entries"
         id="entries"
-        class="block w-24 rounded-md border-0 py-1.5 pl-4 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        class="block w-24 p-2 ps-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
         :value="newsEntries"
         @input="(event) => updateEntries(Number((event.target as HTMLInputElement).value))"
       />
@@ -158,12 +158,12 @@ function exportConfig() {
   </p>
   <div>
     <p>What should be the maximum amount of days you can see on the chart?</p>
-    <div class="relative mt-2 rounded-md shadow-sm">
+    <div class="relative mt-2 rounded-md shadow-xs">
       <input
         type="text"
         name="entries"
         id="entries"
-        class="block w-24 rounded-md border-0 py-1.5 pl-4 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        class="block w-24 p-2 ps-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
         :value="ganttMaxWidth"
         @input="(event) => updateWidth(Number((event.target as HTMLInputElement).value))"
       />
@@ -183,9 +183,9 @@ function exportConfig() {
   <h3>Other Preferences</h3>
 
   <div>
-    <RouterLink to="/setup">
+    <RouterLink class="not-hyperlink" to="/setup">
       <button
-        class="bg-black hover:bg-gray-600 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black py-2 px-4 rounded-full"
+        class="block p-2 pr-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-white"
       >
         <span class="material-symbols-rounded">&#xf1fe;</span> Change Tracked Dependencies
       </button>
@@ -200,7 +200,7 @@ function exportConfig() {
   <div>
     <button
       @click="exportConfig()"
-      class="bg-black hover:bg-gray-600 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black py-2 px-4 rounded-full"
+      class="block p-2 pr-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-white"
     >
       <span class="material-symbols-rounded">&#xf09b;</span> Export config
     </button>
@@ -216,7 +216,7 @@ function exportConfig() {
     <button
       v-if="resetting == false"
       @click="aboutToReset()"
-      class="bg-black hover:bg-gray-600 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black py-2 px-4 rounded-full"
+      class="block p-2 pr-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-white"
     >
       <span class="material-symbols-rounded">&#xf053;</span> Reset <i>Lifeline</i>
     </button>
@@ -224,7 +224,7 @@ function exportConfig() {
     <button
       v-else
       @click="resetLifeline()"
-      class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded-full"
+      class="block p-2 pr-3 text-gray-900 rounded-lg bg-red-500 hover:bg-red-700 dark:border-gray-600 dark:text-white"
     >
       <span class="material-symbols-rounded">&#xe002;</span> Are you sure?
     </button>

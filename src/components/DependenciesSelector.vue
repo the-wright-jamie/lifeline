@@ -136,17 +136,11 @@ if (rawConfig) {
       </ul>
       <div class="center">
         <button
-          v-if="selected.length == 0"
-          class="bg-slate-600 text-gray-300 dark:bg-gray-300 dark:text-gray-500 py-2 px-4 rounded-full no-click"
-        >
-          Save
-        </button>
-        <button
-          v-else
+          v-if="selected.length != 0"
           @click="saveDependencies(selected)"
-          class="bg-black hover:bg-gray-600 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black py-2 px-4 rounded-full"
+          class="relative inline-block p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-white"
         >
-          Save
+          <span class="material-symbols-rounded">&#xe161;</span>
         </button>
       </div>
     </div>

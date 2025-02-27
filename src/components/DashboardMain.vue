@@ -235,7 +235,7 @@ let depJsonstring = JSON.stringify(depJson)
       <Menu as="div" class="relative inline-block text-left">
         <div>
           <MenuButton
-            class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white dark:bg-gray-900 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 dark:hover:bg-gray-600"
+            class="inline-flex w-full justify-center p-2 pr-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-white"
           >
             Showing: {{ dependencyTitleCase(focusedDependency) }}
           </MenuButton>
@@ -283,7 +283,7 @@ let depJsonstring = JSON.stringify(depJson)
       </Menu>
       <button
         @click="resetSliders()"
-        class="relative inline-block text-center w-full justify-center gap-x-1.5 rounded-md bg-white dark:bg-gray-900 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 dark:hover:bg-gray-600"
+        class="relative inline-block p-2 pr-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-white"
       >
         Reset Chart
       </button>
