@@ -1,6 +1,6 @@
 # _Lifeline_
 
-_Lifeline_ is a single page web application that allows you to select dependencies from [endoflife.date](https://endoflife.date/) and view important information about them in an all-in-one easy-to-use dashboard.
+_Lifeline_ is a single page web application that allows you to select dependencies from [endoflife.date](https://endoflife.date/) and view important information about them in an all-in-one easy-to-use dashboard. Read [more info here](https://the-wright-jamie.dev/lifeline/#/about)!
 
 ## How to use
 
