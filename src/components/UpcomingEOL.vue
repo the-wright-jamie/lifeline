@@ -9,6 +9,7 @@ import {
   generateExternalLink
 } from '@/assets/ts/utils'
 import { type Config } from '../assets/ts/types'
+import { DEPENDENCY_STRING_TYPE } from '@/assets/ts/enums'
 
 const config: Config = JSON.parse(localStorage.getItem('config') || '')
 const props = defineProps({
@@ -128,8 +129,8 @@ if (!config.dashboardConfig.upcomingEOL) {
             }}</a>
           </th>
           <td class="px-6 py-2">
-            <a v-if="news[3] !== undefined" :href="news[3]">{{ dependencyTitleCase(news[2]) }}</a>
-            <p v-else>{{ dependencyTitleCase(news[2]) }}</p>
+            <a v-if="news[3] !== undefined" :href="news[3]">{{ dependencyTitleCase(news[2], DEPENDENCY_STRING_TYPE.RELEASE) }}</a>
+            <p v-else>{{ dependencyTitleCase(news[2], DEPENDENCY_STRING_TYPE.RELEASE) }}</p>
           </td>
           <td class="px-6 py-2">
             {{ unixTimestampToLocalDate(news[0]) }}
@@ -166,8 +167,8 @@ if (!config.dashboardConfig.upcomingEOL) {
             }}</a>
           </th>
           <td class="px-6 py-2">
-            <a v-if="news[3] !== undefined" :href="news[3]">{{ dependencyTitleCase(news[2]) }}</a>
-            <p v-else>{{ dependencyTitleCase(news[2]) }}</p>
+            <a v-if="news[3] !== undefined" :href="news[3]">{{ dependencyTitleCase(news[2], DEPENDENCY_STRING_TYPE.RELEASE) }}</a>
+            <p v-else>{{ dependencyTitleCase(news[2], DEPENDENCY_STRING_TYPE.RELEASE) }}</p>
           </td>
           <td class="px-6 py-2">
             {{ unixTimestampToLocalDate(news[0]) }}

@@ -13,6 +13,7 @@ import VueMermaidString from 'vue-mermaid-string'
 import endent from 'endent'
 import { type Config } from '../assets/ts/types'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import { DEPENDENCY_STRING_TYPE } from '@/assets/ts/enums'
 
 // This is an absolute mess 🤣
 // Surely there's a better way to handle multiple waits...
@@ -154,25 +155,25 @@ function ganttChartLiveUpdate() {
             diagram.value +
             `
     section ${dependencyTitleCase(data)}
-        ← ${dependencyTitleCase(eolData.cycle)} →: ${unixAsISO(unixSeekback)}, ${unixAsISO(unixSeekforwad)}`
+        ← ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)} →: ${unixAsISO(unixSeekback)}, ${unixAsISO(unixSeekforwad)}`
         } else if (dateToUnixTimestamp(eolData.releaseDate) < unixSeekback) {
           diagram.value =
             diagram.value +
             `
     section ${dependencyTitleCase(data)}
-        ← ${dependencyTitleCase(eolData.cycle)}: ${unixAsISO(unixSeekback)}, ${eolData.eol}`
+        ← ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)}: ${unixAsISO(unixSeekback)}, ${eolData.eol}`
         } else if (dateToUnixTimestamp(eolData.eol) > unixSeekforwad) {
           diagram.value =
             diagram.value +
             `
     section ${dependencyTitleCase(data)}
-        ${dependencyTitleCase(eolData.cycle)} →: ${eolData.releaseDate}, ${unixAsISO(unixSeekforwad)}`
+        ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)} →: ${eolData.releaseDate}, ${unixAsISO(unixSeekforwad)}`
         } else {
           diagram.value =
             diagram.value +
             `
     section ${dependencyTitleCase(data)}
-        ${dependencyTitleCase(eolData.cycle)}: ${eolData.releaseDate}, ${eolData.eol}`
+        ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)}: ${eolData.releaseDate}, ${eolData.eol}`
         }
       }
       if (!eolData.eol) {
@@ -184,14 +185,14 @@ function ganttChartLiveUpdate() {
             diagram.value +
             `
     section ${dependencyTitleCase(data)}
-        ${dependencyTitleCase(eolData.cycle)} (Supported, unknown EOL): milestone, ${eolData.releaseDate}, 0d`
+        ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)} (Supported, unknown EOL): milestone, ${eolData.releaseDate}, 0d`
         } else {
           if (dateToUnixTimestamp(eolData.releaseDate) < unixCurrentTime + unixChartWidth) {
             diagram.value =
               diagram.value +
               `
     section ${dependencyTitleCase(data)}
-        ← ${dependencyTitleCase(eolData.cycle)} (Supported, unknown EOL): ${unixAsISO(unixSeekback)}, 0d`
+        ← ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)} (Supported, unknown EOL): ${unixAsISO(unixSeekback)}, 0d`
           }
         }
       }
