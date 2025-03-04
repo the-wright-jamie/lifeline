@@ -1,6 +1,6 @@
 import { DEPENDENCY_STRING_TYPE } from './enums'
 
-export function dependencyTitleCase(name: string, type: DEPENDENCY_STRING_TYPE) {
+export function dependencyTitleCase(name: string, type?: DEPENDENCY_STRING_TYPE) {
   while (name.includes('-')) {
     // first, replace all hyphens with spaces
     name = name.replace('-', ' ')

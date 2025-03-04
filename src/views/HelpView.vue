@@ -101,11 +101,18 @@
   <br />
   <p>
     So, to get back to the question, the answer is this: Simply, <i>Lifeline</i>'s developer hasn't
-    had a chance to go through all 362 dependencies tracked by the API provider and ensure that they
+    had a chance to go through all 360+ dependencies tracked by the API provider and ensure that they
     are formatted correctly, or if they need an exception to add it (and then ensure the exception
-    hasn't broken anything else). <i>Lifeline</i> currently has a list of 50 corrections and
-    exceptions, and many dependencies still don't render correctly. The most popular dependencies
+    hasn't broken anything else). <i>Lifeline</i> currently has a list of ~150 corrections and
+    exceptions, and some dependencies still don't render correctly. Most  dependencies
     have had exceptions introduced, but if you use a dependency that isn't rendering correctly you
     should raise an issue on GitHub (or, even better, provide your own exception by opening a PR).
+  </p>
+  <br />
+  <h2 id="parsing-from-eol-api">
+    <i>Lifeline</i>'s performance is poor on my machine, why?
+  </h2>
+  <p>
+    A bit of black magic had to go into getting this to work. As mentioned in the previous section - there is a lot of cleaning up of the data that comes from the API. The data is barebones, just enough to work with, so in order for the data to display correctly there's a lot of preprocessing that needs to be done before the data is displayed (which all happens on your device, as <i>Lifeline</i> is a technically a static, single page, client-side web application). If you are struggling with long load times, it might help to reduce the amount of dependencies you are tracking. Even on an M1 MacBook Pro, tracking as many as 30 dependencies results in a small but noticeable reduction in performance, and live updates of the chart (when changing it's settings, for example), isn't as smooth as when tracking half as many projects.
   </p>
 </template>
