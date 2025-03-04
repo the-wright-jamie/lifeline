@@ -41,16 +41,11 @@ for (var dependency in allData) {
 someData.sort((a, b) => b[0] - a[0])
 
 let dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries)
-
-function getCorrectClass() {
-  let basicClass = 'text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'
-  return showEOL ? basicClass + ' w-full lg:w-11/12' : basicClass + ' w-full'
-}
 </script>
 
 <template>
   <h2>Latest Releases</h2>
-  <table :class="getCorrectClass()">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
       <tr>
         <th scope="col" class="px-6 py-3">Project</th>

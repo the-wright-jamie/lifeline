@@ -212,7 +212,7 @@ let depJsonstring = JSON.stringify(depJson)
 </script>
 
 <template>
-  <div class="grid grid-cols-1 lg:grid-cols-2" v-if="showBothTopInfo">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" v-if="showBothTopInfo">
     <div>
       <LatestNews :data="depJsonstring" />
     </div>
