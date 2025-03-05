@@ -14,7 +14,7 @@ function selectDependency(dependency: string, dependencies: string[]) {
     dependencies.splice(found, 1)
   }
 
-  return dependencies
+  return dependencies.sort()
 }
 
 function returnPagedDependencies(start: number, end: number) {
@@ -76,6 +76,7 @@ function saveDependencies(dependencies: string[]) {
 }
 
 function search(search: string) {
+  index.value = 0
   search_results.value = fuse.search(search).map((result) => result.item)
   if (search_results.value.length == 0) {
     total_results.value = dependencies.length
@@ -117,6 +118,13 @@ let rawConfig = localStorage.getItem('config')
 if (rawConfig) {
   let config: Config = JSON.parse(rawConfig)
   selected = ref(config.dependencies)
+}
+
+function goToLastPage() {
+  index.value = total_results.value - page_size.value
+  while (index.value / page_size.value + 1 < Math.ceil(total_results.value / page_size.value)) {
+    index.value = index.value + 1
+  }
 }
 </script>
 
@@ -224,7 +232,7 @@ if (rawConfig) {
           </li>
           <li>
             <button
-              @click="index = total_results - page_size"
+              @click="goToLastPage()"
               :class="{ disabled: index / page_size + 1 == Math.ceil(total_results / page_size) }"
               class="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-s-lg not-hyperlink"
             >
