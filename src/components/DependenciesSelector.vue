@@ -139,7 +139,12 @@ function goToLastPage() {
       <p class="none-selected" v-if="selected.length == 0">None selected</p>
       <ul v-else>
         <template v-for="dependency in selected"
-          ><li>{{ dependencyTitleCase(dependency) }}</li></template
+          ><li>
+            <button @click="selected = selectDependency(dependency, selected)">
+              <span class="material-symbols-rounded">&#xe5cd;</span> {{ ' '
+              }}{{ dependencyTitleCase(dependency) }}
+            </button>
+          </li></template
         >
       </ul>
       <div class="center">
