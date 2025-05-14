@@ -39,6 +39,7 @@ function returnPagedDependencies(start: number, end: number) {
   }
 }
 
+// this should probably be in a library...
 function saveDependencies(dependencies: string[]) {
   let rawConfig = localStorage.getItem('config')
   let config: Config = {

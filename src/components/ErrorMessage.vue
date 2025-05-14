@@ -7,6 +7,8 @@ const props = defineProps({
 })
 
 function pickRandomErrorImage() {
+  // silly cat easter egg when there are errors - another
+  // playful little thing I wanted to do
   return `https://raw.githubusercontent.com/the-wright-jamie/lifeline/refs/heads/main/src/assets/img/error/${getRandomInt(1, 5)}.png`
 }
 </script>

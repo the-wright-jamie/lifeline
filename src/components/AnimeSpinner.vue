@@ -1,4 +1,21 @@
 <script setup lang="ts">
+/*
+Fun fact: this is one of the first things I created for Lifeline!
+Even before I had working netcode, I knew that I wanted to have a
+fun little loading spinner. Turns out, it's really more of an easter
+egg for those with slow internet because the API responds very quickly.
+
+Still, I wanted something playful for users to look at while waiting
+for loading to complete.
+
+Due to its nature, you can't change the text once it's been set or
+the animation will fall apart. 
+
+I will probably reuse this component in the future if I decide to
+do other projects like this. I'll probably upgrade it then to have
+the ability to update the splash text so the user has more info on
+what's going on.
+*/
 import { onMounted } from 'vue'
 
 const props = defineProps({
