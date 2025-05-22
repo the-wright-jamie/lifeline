@@ -7,7 +7,7 @@ const isSetupComplete = localStorage.getItem('config')
 <template>
   <MegaHeader v-if="!isSetupComplete" />
   <Header v-if="isSetupComplete" />
-  <RouterView />
+  <RouterView :key="$route.fullPath" />
 </template>
 
 <style scoped>

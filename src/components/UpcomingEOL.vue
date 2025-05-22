@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import {
   dateToUnixTimestamp,
-  dependencyTitleCase,
+  getFriendlyName,
   toLocalDate,
   unixTimestampToLocalDate,
   isDateAfterToday,
   isDateBeforeToday,
-  generateExternalLink
+  generateAboutLink
 } from '@/assets/ts/utils'
 import { type Config } from '../assets/ts/types'
-import { DEPENDENCY_STRING_TYPE } from '@/assets/ts/enums'
 
 const config: Config = JSON.parse(localStorage.getItem('config') || '')
 const props = defineProps({
@@ -19,12 +18,19 @@ const allData = JSON.parse(props.data)
 let someData = []
 
 for (var dependency in allData) {
-  allData[`${dependency}`].forEach((eolData) => {
-    if (eolData.eol != false && eolData.eol != true && isDateAfterToday(eolData.eol)) {
-      someData.push([dateToUnixTimestamp(eolData.eol), dependency, eolData.cycle, eolData.link])
+  allData[`${dependency}`].releases.forEach((eolData) => {
+    if (eolData.isEol == false && isDateAfterToday(eolData.eolFrom)) {
+      someData.push([
+        dateToUnixTimestamp(eolData.eolFrom),
+        dependency,
+        eolData.label,
+        allData[`${dependency}`].name,
+        eolData.latest.link
+      ])
     }
   })
 }
+
 someData.sort((a, b) => a[0] - b[0])
 let dataToDisplay = []
 if (!config.dashboardConfig.pastEOL) {
@@ -35,12 +41,19 @@ if (!config.dashboardConfig.pastEOL) {
 
 someData = []
 for (var dependency in allData) {
-  allData[`${dependency}`].forEach((eolData) => {
-    if (eolData.eol != false && eolData.eol != true && isDateBeforeToday(eolData.eol)) {
-      someData.push([dateToUnixTimestamp(eolData.eol), dependency, eolData.cycle, eolData.link])
+  allData[`${dependency}`].releases.forEach((eolData) => {
+    if (eolData.isEol == true && isDateBeforeToday(eolData.eolFrom)) {
+      someData.push([
+        dateToUnixTimestamp(eolData.eolFrom),
+        dependency,
+        eolData.label,
+        allData[`${dependency}`].name,
+        eolData.latest.link
+      ])
     }
   })
 }
+
 someData.sort((a, b) => b[0] - a[0])
 let otherDataToDisplay = []
 if (!config.dashboardConfig.upcomingEOL) {
@@ -53,45 +66,12 @@ if (!config.dashboardConfig.upcomingEOL) {
       2
   )
 }
+console.log()
 </script>
 
 <template>
   <h2>Known end-of-life dates</h2>
-
-  <p
-    class="disabled"
-    v-if="
-      !config.dashboardConfig.upcomingEOL &&
-      dataToDisplay.length != 0 &&
-      otherDataToDisplay.length == 0
-    "
-  >
-    The dependencies you are following don't have any known past end-of-life dates, but there is
-    data about future end-of-life dates. However, you have opted to not see these in the settings
-    and as such they will not be shown here.
-  </p>
-  <p
-    class="disabled"
-    v-else-if="
-      !config.dashboardConfig.pastEOL && otherDataToDisplay.length != 0 && dataToDisplay.length == 0
-    "
-  >
-    The dependencies you are following don't have any published future end-of-life dates, but there
-    is data about past end-of-life dates. However, you have opted to not see these in the settings
-    and as such they will not be shown here.
-  </p>
-  <p
-    class="disabled"
-    v-else-if="
-      !config.dashboardConfig.upcomingEOL &&
-      !config.dashboardConfig.pastEOL &&
-      dataToDisplay.length == 0 &&
-      otherDataToDisplay.length == 0
-    "
-  >
-    The dependencies you are following don't haven't published any past end-of-life dates
-  </p>
-  <div v-else>
+  <div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
         <tr>
@@ -124,13 +104,13 @@ if (!config.dashboardConfig.upcomingEOL) {
             scope="row"
             class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
-            <a class="not-hyperlink" :href="generateExternalLink(news[1])">{{
-              dependencyTitleCase(news[1])
-            }}</a>
+            <RouterLink class="not-hyperlink" :to="generateAboutLink(news[3])">{{
+              news[1]
+            }}</RouterLink>
           </th>
           <td class="px-6 py-2">
-            <a v-if="news[3] !== undefined" :href="news[3]">{{ dependencyTitleCase(news[2], DEPENDENCY_STRING_TYPE.RELEASE) }}</a>
-            <p v-else>{{ dependencyTitleCase(news[2], DEPENDENCY_STRING_TYPE.RELEASE) }}</p>
+            <a v-if="news[4] !== undefined" :href="news[4]">{{ news[2] }}</a>
+            <p v-else>{{ news[2] }}</p>
           </td>
           <td class="px-6 py-2">
             {{ unixTimestampToLocalDate(news[0]) }}
@@ -162,13 +142,13 @@ if (!config.dashboardConfig.upcomingEOL) {
             scope="row"
             class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
-            <a class="not-hyperlink" :href="generateExternalLink(news[1])">{{
-              dependencyTitleCase(news[1])
-            }}</a>
+            <RouterLink class="not-hyperlink" :to="generateAboutLink(news[3])">{{
+              news[1]
+            }}</RouterLink>
           </th>
           <td class="px-6 py-2">
-            <a v-if="news[3] !== undefined" :href="news[3]">{{ dependencyTitleCase(news[2], DEPENDENCY_STRING_TYPE.RELEASE) }}</a>
-            <p v-else>{{ dependencyTitleCase(news[2], DEPENDENCY_STRING_TYPE.RELEASE) }}</p>
+            <a v-if="news[4] !== undefined" :href="news[4]">{{ news[2] }}</a>
+            <p v-else>{{ news[2] }}</p>
           </td>
           <td class="px-6 py-2">
             {{ unixTimestampToLocalDate(news[0]) }}

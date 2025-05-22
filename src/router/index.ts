@@ -9,6 +9,7 @@ import AttributionsView from '../views/AttributionsView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import Settings from '@/views/SettingsView.vue'
 import PathNotFound from '@/components/PathNotFound.vue'
+import DependencyView from '@/views/DependencyView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -57,6 +58,11 @@ const router = createRouter({
       path: '/',
       name: 'dashboard',
       component: DashboardView
+    },
+    {
+      path: '/dependency/:dependency',
+      name: 'dependency',
+      component: DependencyView
     },
     {
       path: '/:pathMatch(.*)*',

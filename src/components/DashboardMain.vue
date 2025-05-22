@@ -4,7 +4,8 @@ import LatestNews from './LatestNews.vue'
 import UpcomingEOL from './UpcomingEOL.vue'
 import {
   getRandomInt,
-  dependencyTitleCase,
+  getFriendlyName,
+  getMachineName,
   dateToUnixTimestamp,
   todayAsISO,
   unixAsISO
@@ -13,7 +14,6 @@ import VueMermaidString from 'vue-mermaid-string'
 import endent from 'endent'
 import { type Config } from '../assets/ts/types'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-import { DEPENDENCY_STRING_TYPE } from '@/assets/ts/enums'
 
 // This is an absolute mess 🤣
 // Surely there's a better way to handle multiple waits...
@@ -88,7 +88,7 @@ let fetchArray = []
 
 try {
   dependencies.forEach((dependency) => {
-    fetchArray.push(fetch(`https://endoflife.date/api/${dependency}.json`))
+    fetchArray.push(fetch(`https://endoflife.date/api/v1/products/${getMachineName(dependency)}`))
   })
 } catch {
   console.error('Failed to fetch')
@@ -96,10 +96,8 @@ try {
 
 let depJson = {}
 const allData = await getData(fetchArray)
-let iter = 0
 allData.forEach((data) => {
-  depJson[`${dependencies[iter]}`] = data
-  iter++
+  depJson[`${data.result.label}`] = data.result
 })
 
 function ganttChartLiveUpdate() {
@@ -143,40 +141,39 @@ function ganttChartLiveUpdate() {
     }
 
     // for each entry in the array for each of the KEYS in the dependency JSON
-    depJson[`${data}`].forEach((eolData) => {
+    depJson[`${data}`].releases.forEach((eolData) => {
       // if the EOL is greater than the seekback...
-      if (dateToUnixTimestamp(eolData.eol) > unixSeekback) {
+      if (dateToUnixTimestamp(eolData.eolFrom) > unixSeekback) {
         // ...and
         if (
           dateToUnixTimestamp(eolData.releaseDate) < unixSeekback &&
-          dateToUnixTimestamp(eolData.eol) > unixSeekforwad
+          dateToUnixTimestamp(eolData.eolFrom) > unixSeekforwad
         ) {
           diagram.value =
             diagram.value +
             `
-    section ${dependencyTitleCase(data)}
-        ← ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)} →: ${unixAsISO(unixSeekback)}, ${unixAsISO(unixSeekforwad)}`
+    section ${data}
+        ← ${eolData.label} →: ${unixAsISO(unixSeekback)}, ${unixAsISO(unixSeekforwad)}`
         } else if (dateToUnixTimestamp(eolData.releaseDate) < unixSeekback) {
           diagram.value =
             diagram.value +
             `
-    section ${dependencyTitleCase(data)}
-        ← ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)}: ${unixAsISO(unixSeekback)}, ${eolData.eol}`
-        } else if (dateToUnixTimestamp(eolData.eol) > unixSeekforwad) {
+    section ${data}
+        ← ${eolData.label}: ${unixAsISO(unixSeekback)}, ${eolData.eolFrom}`
+        } else if (dateToUnixTimestamp(eolData.eolFrom) > unixSeekforwad) {
           diagram.value =
             diagram.value +
             `
-    section ${dependencyTitleCase(data)}
-        ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)} →: ${eolData.releaseDate}, ${unixAsISO(unixSeekforwad)}`
+    section ${data}
+        ${eolData.label} →: ${eolData.releaseDate}, ${unixAsISO(unixSeekforwad)}`
         } else {
           diagram.value =
             diagram.value +
             `
-    section ${dependencyTitleCase(data)}
-        ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)}: ${eolData.releaseDate}, ${eolData.eol}`
+    section ${data}
+        ${eolData.label}: ${eolData.releaseDate}, ${eolData.eolFrom}`
         }
-      }
-      if (!eolData.eol) {
+      } else if (!eolData.isEol) {
         if (
           dateToUnixTimestamp(eolData.releaseDate) > unixSeekback &&
           dateToUnixTimestamp(eolData.releaseDate) < unixCurrentTime + unixChartWidth
@@ -184,15 +181,15 @@ function ganttChartLiveUpdate() {
           diagram.value =
             diagram.value +
             `
-    section ${dependencyTitleCase(data)}
-        ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)} (Supported, unknown EOL): milestone, ${eolData.releaseDate}, 0d`
+    section ${data}
+        ${eolData.label} (Supported, unknown EOL): milestone, ${eolData.releaseDate}, 0d`
         } else {
           if (dateToUnixTimestamp(eolData.releaseDate) < unixCurrentTime + unixChartWidth) {
             diagram.value =
               diagram.value +
               `
-    section ${dependencyTitleCase(data)}
-        ← ${dependencyTitleCase(eolData.cycle, DEPENDENCY_STRING_TYPE.RELEASE)} (Supported, unknown EOL): ${unixAsISO(unixSeekback)}, 0d`
+    section ${data}
+        ← ${eolData.label} (Supported, unknown EOL): ${unixAsISO(unixSeekback)}, 0d`
           }
         }
       }
@@ -202,7 +199,7 @@ function ganttChartLiveUpdate() {
   diagram.value =
     diagram.value +
     `
-    section Info
+    section Date Info
          Start - ${unixAsISO(unixSeekback)}: ${unixAsISO(unixSeekback)}, 0d
          End - ${unixAsISO(unixSeekforwad)}: ${unixAsISO(unixSeekforwad)}, 0d`
 }
@@ -238,7 +235,7 @@ let depJsonstring = JSON.stringify(depJson)
           <MenuButton
             class="inline-flex w-full justify-center p-2 pr-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-white"
           >
-            Showing: {{ dependencyTitleCase(focusedDependency) }}
+            Showing: {{ getFriendlyName(focusedDependency) }}
           </MenuButton>
         </div>
 
@@ -272,7 +269,7 @@ let depJsonstring = JSON.stringify(depJson)
                   href="#"
                   class="block px-4 py-2 text-sm not-hyperlink"
                 >
-                  {{ dependencyTitleCase(dependency) }}
+                  {{ getFriendlyName(dependency) }}
                   <span class="material-symbols-rounded">{{
                     focusedDependency == dependency ? '&#xe5ca;' : ''
                   }}</span>

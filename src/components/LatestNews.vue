@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import {
   dateToUnixTimestamp,
-  dependencyTitleCase,
   generateExternalLink,
   toLocalDate,
-  unixTimestampToLocalDate
+  unixTimestampToLocalDate,
+  generateAboutLink
 } from '@/assets/ts/utils'
 import { type Config } from '../assets/ts/types'
-import { DEPENDENCY_STRING_TYPE } from '@/assets/ts/enums'
 
 const props = defineProps({
   data: String
@@ -19,20 +18,33 @@ const showEOL = config.dashboardConfig.upcomingEOL || config.dashboardConfig.pas
 let someData = []
 
 for (var dependency in allData) {
-  allData[`${dependency}`].forEach((eolData) => {
-    if (eolData.latestReleaseDate) {
+  allData[`${dependency}`].releases.forEach((eolData) => {
+    if (eolData.latest != null && eolData.latest.date != null) {
       someData.push([
-        dateToUnixTimestamp(eolData.latestReleaseDate),
+        dateToUnixTimestamp(eolData.latest.date),
         dependency,
-        eolData.latest,
-        eolData.link
+        eolData.latest.name,
+        eolData.latest.link,
+        allData[`${dependency}`].links.html,
+        allData[`${dependency}`].name
+      ])
+    } else if (eolData.latest != null && eolData.latest.link != null) {
+      someData.push([
+        dateToUnixTimestamp(eolData.releaseDate),
+        dependency,
+        `${eolData.label} (${eolData.latest.name})`,
+        eolData.latest.link,
+        allData[`${dependency}`].links.html,
+        allData[`${dependency}`].name
       ])
     } else {
       someData.push([
         dateToUnixTimestamp(eolData.releaseDate),
         dependency,
-        eolData.cycle,
-        eolData.link
+        eolData.label,
+        undefined,
+        allData[`${dependency}`].links.html,
+        allData[`${dependency}`].name
       ])
     }
   })
@@ -59,15 +71,13 @@ let dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries)
           scope="row"
           class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
         >
-          <a class="not-hyperlink" :href="generateExternalLink(news[1])">{{
-            dependencyTitleCase(news[1])
-          }}</a>
+          <RouterLink class="not-hyperlink" :to="generateAboutLink(news[5])">{{
+            news[1]
+          }}</RouterLink>
         </th>
         <td class="px-6 py-2">
-          <a v-if="news[3] !== undefined" :href="news[3]">{{
-            dependencyTitleCase(news[2], DEPENDENCY_STRING_TYPE.RELEASE)
-          }}</a>
-          <p v-else>{{ dependencyTitleCase(news[2], DEPENDENCY_STRING_TYPE.RELEASE) }}</p>
+          <a v-if="news[3] !== undefined" :href="news[3]">{{ news[2] }}</a>
+          <p v-else>{{ news[2] }}</p>
         </td>
         <td class="px-6 py-2">
           {{ unixTimestampToLocalDate(news[0]) }}

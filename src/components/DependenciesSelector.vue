@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Fuse from 'fuse.js'
-import { dependencyTitleCase } from '@/assets/ts/utils'
+import { getFriendlyName, getFriendlyNameFromAPI, getMachineName } from '@/assets/ts/utils'
 import router from '@/router'
 import { type Config } from '../assets/ts/types'
 
 function selectDependency(dependency: string, dependencies: string[]) {
-  const found = dependencies.indexOf(dependency)
+  const found = dependencies.indexOf(getMachineName(dependency))
 
   if (found < 0) {
-    dependencies.push(dependency)
+    dependencies.push(getMachineName(dependency))
   } else {
     dependencies.splice(found, 1)
   }
@@ -65,7 +65,7 @@ function saveDependencies(dependencies: string[]) {
   }
 
   dependencies.forEach((dependency) => {
-    config.dependencies.push(dependency)
+    config.dependencies.push(getMachineName(dependency))
   })
 
   localStorage.setItem('config', JSON.stringify(config))
@@ -101,18 +101,26 @@ async function getData(url: string) {
   return res.json()
 }
 
-let dependencies = await getData('https://endoflife.date/api/all.json')
+let response = await getData('https://endoflife.date/api/v1/products')
+let results = response.result
+// TODO: Need to process the results so that it's compatible with what we expected
+let dependencies = []
+
+results.forEach((result) => {
+  dependencies.push(`${result.name}|${result.label}`)
+})
+
 const fuse = new Fuse(dependencies)
 
 let index = ref(0)
 let index_memory = 0
-let page_size = ref(9)
+let page_size = ref(10)
 let selected = ref([])
 let search_text = ref('')
 let search_results = ref([])
 
 let loaded_dependencies = ref(dependencies)
-let total_results = ref(dependencies.length)
+let total_results = ref(Object.keys(dependencies).length)
 
 let rawConfig = localStorage.getItem('config')
 
@@ -126,6 +134,15 @@ function goToLastPage() {
   while (index.value / page_size.value + 1 < Math.ceil(total_results.value / page_size.value)) {
     index.value = index.value + 1
   }
+}
+
+function updatePageSize(size: number) {
+  page_size.value = size
+  index.value = 0
+}
+
+function checkIfSelected(selected: string[], dependency: string) {
+  return selected.indexOf(getMachineName(dependency)) > -1
 }
 </script>
 
@@ -143,7 +160,7 @@ function goToLastPage() {
           ><li>
             <button @click="selected = selectDependency(dependency, selected)">
               <span class="material-symbols-rounded">&#xe5cd;</span> {{ ' '
-              }}{{ dependencyTitleCase(dependency) }}
+              }}{{ getFriendlyNameFromAPI(dependency, dependencies) }}
             </button>
           </li></template
         >
@@ -186,17 +203,31 @@ function goToLastPage() {
         <template v-for="dependency in returnPagedDependencies(index, index + page_size)">
           <li>
             <button @click="selected = selectDependency(dependency, selected)">
-              <span v-if="selected.indexOf(dependency) > -1"
+              <span v-if="checkIfSelected(selected, dependency)"
                 ><span class="material-symbols-rounded">&#xf1fe;</span> {{ ' '
-                }}<span class="solid">{{ dependencyTitleCase(dependency) }}</span></span
+                }}<span class="solid">{{ getFriendlyName(dependency) }}</span></span
               >
               <span v-else
                 ><span class="material-symbols-rounded">&#xe835;</span>
-                {{ dependencyTitleCase(dependency) }}</span
+                {{ getFriendlyName(dependency) }}</span
               >
             </button>
           </li></template
         >
+        <template v-if="returnPagedDependencies(index, index + page_size).length < page_size">
+          <li
+            class="padder"
+            v-for="i in page_size - returnPagedDependencies(index, index + page_size).length"
+            :key="i"
+          >
+            <button @click="">
+              <span
+                ><span class="material-symbols-rounded">&#xf1fe;</span> {{ ' '
+                }}<span class="solid">test</span></span
+              >
+            </button>
+          </li>
+        </template>
       </ul>
       <nav class="center">
         <br />
@@ -246,22 +277,18 @@ function goToLastPage() {
             </button>
           </li>
         </ul>
+        <div class="mt-2 rounded-md shadow-xs form-group">
+          <input
+            type="text"
+            name="entries"
+            id="entries"
+            class="block w-13 p-2 ps-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+            :value="page_size"
+            @input="(event) => updatePageSize(Number((event.target as HTMLInputElement).value))"
+          />
+          <label style="margin-left: 0.5em">items/page</label>
+        </div>
       </nav>
-      <div class="grid grid-flow-col gap-4 disabled">
-        <div>
-          <span class="material-symbols-rounded">&#xe88e;</span>
-        </div>
-        <div>
-          <p>
-            Due to how <i>Lifeline</i> parses results from
-            <a href="https://endoflife.date/" target="_blank">endoflife.date</a>
-            <span class="material-symbols-rounded icon-faded">&#xe89e;</span>, some of the name
-            might not look correct. We are working on adding as many exceptions to our parser as
-            possible to improve this experience.
-            <RouterLink to="/help#parsing-from-eol-api"> Learn more here</RouterLink>.
-          </p>
-        </div>
-      </div>
     </div>
   </div>
 </template>

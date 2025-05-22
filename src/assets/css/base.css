@@ -152,6 +152,12 @@ hr {
   text-align: center;
 }
 
+.center-with-icons {
+  text-align: center;
+  justify-content: center;
+  display: flex;
+}
+
 .not-hyperlink {
   text-decoration: none;
 }
@@ -227,6 +233,11 @@ hr {
   opacity: 40%;
 }
 
+.dependency-icon {
+  height: 2em;
+  margin-right: 1em;
+}
+
 .error-image {
   height: 15em;
   display: block;
@@ -250,7 +261,7 @@ hr {
 .beta-pill {
   font-family: 'Roboto Black';
   background-color: #ffce1b;
-  color:#000000;
+  color: #000000;
   font-size: 60%;
   margin-left: 0.5em;
   padding-top: 0.25em;
@@ -258,4 +269,25 @@ hr {
   padding-right: 0.5em;
   padding-left: 0.5em;
   border-radius: 15px;
+}
+
+.padder {
+  opacity: 0;
+}
+
+.form-group {
+  margin: 0 auto 1.5rem auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.info-box {
+  background-color: #8957e5;
+  border-radius: 20px;
+  width: 100%;
+  padding-top: 5%;
+  padding-bottom: 5%;
+  padding-right: 5%;
+  padding-left: 5%;
 }
