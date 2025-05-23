@@ -21,7 +21,9 @@ function selectDependency(dependency: string, dependencies: string[]) {
     dependencies.splice(found, 1)
   }
 
-  return dependencies.sort()
+  const sortedDependencies = [...dependencies].sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+
+  return sortedDependencies
 }
 
 function returnPagedDependencies(start: number, end: number) {
@@ -117,7 +119,9 @@ results.forEach((result) => {
   dependencies.push(`${result.label}|${result.name}`)
 })
 
-dependencies.sort()
+let sortedDependencies = [...dependencies].sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+
+dependencies = sortedDependencies
 
 const fuse = new Fuse(dependencies)
 
