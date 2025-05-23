@@ -140,7 +140,7 @@ setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
     <br />
     <div class="center">
       <p>
-        <a :href="eolLink">See on <b>end-of-life.date</b></a> |
+        <a :href="eolLink">See on <b>endoflife.date</b></a> |
         <a :href="releasePolicy">Release Policy</a>
       </p>
     </div>
@@ -274,11 +274,11 @@ setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
             <span class="material-symbols-rounded">&#xe88e;</span>
           </div>
           <div>
-            <p class="info-title">FYI: You can get here from any end-of-life.date info page</p>
+            <p class="info-title">FYI: You can get here from any endoflife.date info page</p>
             <br />
             <p>
-              For example: the <b>end-of-life.date</b> URL for this dependency is
-              <span class="monospace large">end-of-life.date/{{ dependency }}</span
+              For example: the <b>endoflife.date</b> URL for this dependency is
+              <span class="monospace large">endoflife.date/{{ dependency }}</span
               >.
             </p>
             <br />
@@ -292,7 +292,7 @@ setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
             <br />
             <p>Just to be clear, here is an example URL transformation:</p>
             <p>
-              <span class="monospace large">https://end-of-life.date/{{ dependency }}</span> →
+              <span class="monospace large">https://endoflife.date/{{ dependency }}</span> →
               <span class="large monospace">https://{{ host }}/#/dependency/{{ dependency }}</span>
             </p>
             <br />
