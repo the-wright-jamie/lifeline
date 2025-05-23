@@ -42,6 +42,7 @@ let currentVersionSupportLink = ''
 let showSuccessIcon = ref(false)
 let anyKnownEOES = false
 let anyKnownPatches = false
+let host = location.host
 
 let depJson = []
 
@@ -91,9 +92,13 @@ if (!error.value) {
   depJson.shift()
 }
 
-function copyToClipboard() {
+// generate the depJSON as gantt expects it...
+let ganttDepJSON = {}
+ganttDepJSON[`${dependency_info.result.label}`] = dependency_info.result
+
+function copyToClipboard(text: string) {
   try {
-    navigator.clipboard.writeText(howToGetCurrentVersion)
+    navigator.clipboard.writeText(text)
     // Show success icon
     showSuccessIcon.value = true
 
@@ -107,7 +112,7 @@ function copyToClipboard() {
   }
 }
 
-setTabTitle(friendlyName == '' ? "Oops! 😵‍💫" : friendlyName)
+setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
 </script>
 
 <template>
@@ -167,7 +172,7 @@ setTabTitle(friendlyName == '' ? "Oops! 😵‍💫" : friendlyName)
             <div class="code">
               <span class="large monospace"> {{ howToGetCurrentVersion }}</span>
               <button
-                @click="copyToClipboard()"
+                @click="copyToClipboard(howToGetCurrentVersion)"
                 class="text-gray-500 hover:bg-gray-300 copy-button"
               >
                 <span id="default-icon" v-if="!showSuccessIcon"
@@ -252,6 +257,69 @@ setTabTitle(friendlyName == '' ? "Oops! 😵‍💫" : friendlyName)
           </tr>
         </tbody>
       </table>
+    </div>
+    <br />
+    <hr />
+    <br />
+    <div>
+      <GanttChart :dependencies="friendlyName" :depJson="ganttDepJSON"></GanttChart>
+    </div>
+    <br />
+    <hr />
+    <br />
+    <div>
+      <div>
+        <div class="grid gap-4 grid-flow-col info-box">
+          <div>
+            <span class="material-symbols-rounded">&#xe88e;</span>
+          </div>
+          <div>
+            <p class="info-title">FYI: You can get here from any end-of-life.date info page</p>
+            <br />
+            <p>
+              For example: the <b>end-of-life.date</b> URL for this dependency is
+              <span class="monospace large">end-of-life.date/{{ dependency }}</span
+              >.
+            </p>
+            <br />
+            <p>
+              If you take the last part - <span class="monospace large">{{ dependency }}</span> -
+              and place it onto the end of the URL for <i>Lifeline</i>'s dependency info page (which
+              is <span class="monospace large">{{ host }}/#/dependency/</span>), you can view the
+              information for that dependency inside <i>Lifeline</i> (which will give you access to
+              the Gantt chart for that dependency).
+            </p>
+            <br />
+            <p>Just to be clear, here is an example URL transformation:</p>
+            <p>
+              <span class="monospace large">https://end-of-life.date/{{ dependency }}</span> →
+              <span class="large monospace">https://{{ host }}/#/dependency/{{ dependency }}</span>
+            </p>
+            <br />
+            <p>Here's a template to get you started:</p>
+            <div class="code">
+              <span class="large monospace">https://{{ host }}/#/dependency/</span>
+              <button
+                @click="copyToClipboard(`https://${host}/#/dependency`)"
+                class="text-gray-500 hover:bg-gray-300 copy-button"
+              >
+                <span id="default-icon" v-if="!showSuccessIcon"
+                  ><span
+                    class="material-symbols-rounded material-symbols-rounded-large icon-correction"
+                    >&#xe14d;</span
+                  >
+                </span>
+                <span id="success-icon" v-else>
+                  <span
+                    class="material-symbols-rounded material-symbols-rounded-large icon-correction"
+                    >&#xe5ca;</span
+                  >
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

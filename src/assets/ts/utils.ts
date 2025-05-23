@@ -88,3 +88,116 @@ export function getRandomInt(min, max) {
 export function getCurrentYear() {
   return new Date().getFullYear()
 }
+
+export function ganttChartUpdate(
+  userChartOffset: number,
+  userChartWidth: number,
+  depJson: JSON,
+  focusedDependency: string
+): string {
+  let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  let diagram = ``
+
+  if (isDarkMode) {
+    diagram = `
+%%{
+    init: {
+        'theme': 'dark',
+        'fontFamily': 'Roboto',
+        'gantt': {
+              'numberSectionStyles': '2'
+          }
+    }
+}%%
+      gantt
+    dateFormat YYYY-MM-DD
+    `
+  } else {
+    diagram = `
+%%{init: {'theme':'neutral', 'fontFamily': 'Roboto' }}%%
+      gantt
+    dateFormat YYYY-MM-DD
+    `
+  }
+
+  // One day = 86400 seconds
+  let unixOneDay = 86400
+  // get the current Unix timestamp
+  let unixCurrentTime = Math.trunc(Date.now() / 1000) - userChartOffset * unixOneDay
+  // convert the days to unix time
+  let unixChartWidth = unixOneDay * (userChartWidth / 2)
+  // calculate the seek back in unix
+  let unixSeekback = unixCurrentTime - unixChartWidth
+  // calculate the seek forward in unix
+  let unixSeekforwad = unixCurrentTime + unixChartWidth
+
+  for (var data in depJson) {
+    if (focusedDependency != 'all' && depJson[data].name != focusedDependency) {
+      continue
+    }
+
+    // for each entry in the array for each of the KEYS in the dependency JSON
+    depJson[`${data}`].releases.forEach((eolData) => {
+      // if the EOL is greater than the seekback...
+      if (dateToUnixTimestamp(eolData.eolFrom) > unixSeekback) {
+        // ...and
+        if (
+          dateToUnixTimestamp(eolData.releaseDate) < unixSeekback &&
+          dateToUnixTimestamp(eolData.eolFrom) > unixSeekforwad
+        ) {
+          diagram =
+            diagram +
+            `
+    section ${data}
+        ← ${eolData.label} →: ${unixAsISO(unixSeekback)}, ${unixAsISO(unixSeekforwad)}`
+        } else if (dateToUnixTimestamp(eolData.releaseDate) < unixSeekback) {
+          diagram =
+            diagram +
+            `
+    section ${data}
+        ← ${eolData.label}: ${unixAsISO(unixSeekback)}, ${eolData.eolFrom}`
+        } else if (dateToUnixTimestamp(eolData.eolFrom) > unixSeekforwad) {
+          diagram =
+            diagram +
+            `
+    section ${data}
+        ${eolData.label} →: ${eolData.releaseDate}, ${unixAsISO(unixSeekforwad)}`
+        } else {
+          diagram =
+            diagram +
+            `
+    section ${data}
+        ${eolData.label}: ${eolData.releaseDate}, ${eolData.eolFrom}`
+        }
+      } else if (!eolData.isEol) {
+        if (
+          dateToUnixTimestamp(eolData.releaseDate) > unixSeekback &&
+          dateToUnixTimestamp(eolData.releaseDate) < unixCurrentTime + unixChartWidth
+        ) {
+          diagram =
+            diagram +
+            `
+    section ${data}
+        ${eolData.label} (Supported, unknown EOL): milestone, ${eolData.releaseDate}, 0d`
+        } else {
+          if (dateToUnixTimestamp(eolData.releaseDate) < unixCurrentTime + unixChartWidth) {
+            diagram =
+              diagram +
+              `
+    section ${data}
+        ← ${eolData.label} (Supported, unknown EOL): ${unixAsISO(unixSeekback)}, 0d`
+          }
+        }
+      }
+    })
+  }
+
+  diagram =
+    diagram +
+    `
+    section Date Info
+         Start - ${unixAsISO(unixSeekback)}: ${unixAsISO(unixSeekback)}, 0d
+         End - ${unixAsISO(unixSeekforwad)}: ${unixAsISO(unixSeekforwad)}, 0d`
+
+  return diagram
+}
