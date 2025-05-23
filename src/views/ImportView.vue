@@ -3,6 +3,9 @@ import Spinner from '@/components/Spinner.vue'
 import router from '@/router'
 import { ref } from 'vue'
 import { type Config } from '../assets/ts/types'
+import { setTabTitle } from '@/assets/ts/utils'
+
+setTabTitle("Import")
 
 let versionCheck = ref(false)
 let dependenciesCheck = ref(false)

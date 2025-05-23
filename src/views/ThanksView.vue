@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import ErrorMessage from '@/components/ErrorMessage.vue'
+import { setTabTitle } from '@/assets/ts/utils';
+
+setTabTitle("Thanks!")
 </script>
 
 <template>

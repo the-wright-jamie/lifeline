@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { setTabTitle } from '@/assets/ts/utils';
+
+setTabTitle("Credits")
+</script>
+
 <template>
   <h1>Attributions & Technologies Used</h1>
   <ul>

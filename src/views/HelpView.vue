@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { setTabTitle } from '@/assets/ts/utils';
+
+setTabTitle("Help")
+</script>
+
 <template>
   <h1>Help</h1>
   <h2>Does <i>Lifeline</i> work on mobile?</h2>

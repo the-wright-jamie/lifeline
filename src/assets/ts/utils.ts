@@ -1,3 +1,7 @@
+export function setTabTitle(title: string) {
+  document.title = `Lifeline - ${title}`
+}
+
 export function getFriendlyName(name: string) {
   return name.split('|')[1]
 }

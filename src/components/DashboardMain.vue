@@ -8,12 +8,15 @@ import {
   getMachineName,
   dateToUnixTimestamp,
   todayAsISO,
-  unixAsISO
+  unixAsISO,
+  setTabTitle
 } from '@/assets/ts/utils'
 import VueMermaidString from 'vue-mermaid-string'
 import endent from 'endent'
 import { type Config } from '../assets/ts/types'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+
+setTabTitle('Loading...')
 
 // This is an absolute mess 🤣
 // Surely there's a better way to handle multiple waits...
@@ -206,6 +209,7 @@ function ganttChartLiveUpdate() {
 
 ganttChartLiveUpdate()
 let depJsonstring = JSON.stringify(depJson)
+setTabTitle('Dashboard')
 </script>
 
 <template>

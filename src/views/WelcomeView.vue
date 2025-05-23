@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { setTabTitle } from '@/assets/ts/utils';
+
+setTabTitle("Welcome!")
+</script>
+
 <template>
   <h2 class="center">The Dependency End-of-Life Dashboard</h2>
   <h1 class="center">Welcome! 👋</h1>

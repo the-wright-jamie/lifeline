@@ -25,7 +25,7 @@ for (var dependency in allData) {
         dependency,
         eolData.label,
         allData[`${dependency}`].name,
-        eolData.latest.link
+        eolData.latest != null ? eolData.latest.link : ''
       ])
     }
   })
@@ -48,7 +48,7 @@ for (var dependency in allData) {
         dependency,
         eolData.label,
         allData[`${dependency}`].name,
-        eolData.latest.link
+        eolData.latest != null ? eolData.latest.link : ''
       ])
     }
   })
@@ -89,6 +89,7 @@ console.log()
           <th scope="col" class="px-6 py-2 spacer" colspan="3">No known past EOL dates</th>
         </tr>
       </thead>
+      <!-- no known past EOL -->
       <thead
         v-if="config.dashboardConfig.pastEOL && otherDataToDisplay.length != 0"
         class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-600 dark:text-gray-400"
@@ -97,7 +98,6 @@ console.log()
           <th scope="col" class="px-6 py-2 spacer" colspan="3">Recently past EOL Dates</th>
         </tr>
       </thead>
-      <!-- no known past EOL -->
       <tbody v-if="config.dashboardConfig.pastEOL" v-for="news in otherDataToDisplay">
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
           <th
@@ -109,7 +109,9 @@ console.log()
             }}</RouterLink>
           </th>
           <td class="px-6 py-2">
-            <a v-if="news[4] !== undefined" :href="news[4]">{{ news[2] }}</a>
+            <a v-if="news[4] != ''" :href="news[4]">{{
+              news[2]
+            }}</a>
             <p v-else>{{ news[2] }}</p>
           </td>
           <td class="px-6 py-2">
@@ -147,7 +149,7 @@ console.log()
             }}</RouterLink>
           </th>
           <td class="px-6 py-2">
-            <a v-if="news[4] !== undefined" :href="news[4]">{{ news[2] }}</a>
+            <a v-if="news[4] != ''" :href="news[4]">{{ news[2] }}</a>
             <p v-else>{{ news[2] }}</p>
           </td>
           <td class="px-6 py-2">

@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Fuse from 'fuse.js'
-import { getFriendlyName, getFriendlyNameFromAPI, getMachineName } from '@/assets/ts/utils'
+import {
+  getFriendlyName,
+  getFriendlyNameFromAPI,
+  getMachineName,
+  setTabTitle
+} from '@/assets/ts/utils'
 import router from '@/router'
 import { type Config } from '../assets/ts/types'
+
+setTabTitle('Loading...')
 
 function selectDependency(dependency: string, dependencies: string[]) {
   const found = dependencies.indexOf(getMachineName(dependency))
@@ -144,6 +151,8 @@ function updatePageSize(size: number) {
 function checkIfSelected(selected: string[], dependency: string) {
   return selected.indexOf(getMachineName(dependency)) > -1
 }
+
+setTabTitle('Setup')
 </script>
 
 <template>

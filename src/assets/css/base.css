@@ -32,6 +32,12 @@
 }
 
 @font-face {
+  font-family: 'Roboto Flex';
+  font-style: normal;
+  src: url(../fonts/Roboto-Flex.ttf);
+}
+
+@font-face {
   font-family: 'Roboto Black';
   font-style: normal;
   src: url(../fonts/Roboto-Black.ttf);
@@ -284,10 +290,39 @@ hr {
 
 .info-box {
   background-color: #8957e5;
-  border-radius: 20px;
-  width: 100%;
-  padding-top: 5%;
-  padding-bottom: 5%;
-  padding-right: 5%;
-  padding-left: 5%;
+  border-radius: 0.5em;
+  width: fit-content;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-right: 1.5em;
+  padding-left: 1em;
+}
+
+.center-div {
+  display: flex;
+  justify-content: center;
+  margin-top: 1em;
+}
+
+.code {
+  background-color: #282828;
+  width: fit-content;
+  padding: 0.5em 0.5em 0.5em 1em;
+  border-radius: 0.5em;
+  margin-top: 0.25em;
+}
+
+.copy-button {
+  margin-left: 0.5em;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  border-radius: 0.25em;
+}
+
+.info-title {
+  font-family: 'Roboto Flex';
+  text-transform: uppercase;
+  font-weight: 800;
+  font-stretch: 200%;
+  font-optical-sizing: auto;
 }

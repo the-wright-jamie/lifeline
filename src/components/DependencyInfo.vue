@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { getFriendlyName, getData, isDateBeforeToday } from '@/assets/ts/utils'
+import { getFriendlyName, getData, isDateBeforeToday, setTabTitle } from '@/assets/ts/utils'
 import { callWithErrorHandling, ref } from 'vue'
 import ErrorMessage from './ErrorMessage.vue'
 const props = defineProps({
   dependency: String
 })
+
+setTabTitle('Loading...')
 
 function toLocalDate(date: string) {
   date = new Date(date).toLocaleDateString(navigator.language)
@@ -36,6 +38,8 @@ let latestVersion = ''
 let latestPatchRelease = ''
 let dependencyType = ''
 let howToGetCurrentVersion = ''
+let currentVersionSupportLink = ''
+let showSuccessIcon = ref(false)
 let anyKnownEOES = false
 let anyKnownPatches = false
 
@@ -55,6 +59,9 @@ if (!error.value) {
   }
   dependencyType = dependency_info.result.category
   howToGetCurrentVersion = dependency_info.result.versionCommand
+  try {
+    currentVersionSupportLink = dependency_info.result.releases[0].latest.link
+  } catch {}
   anyKnownEOES = false
   anyKnownPatches = false
 
@@ -83,7 +90,24 @@ if (!error.value) {
 
   depJson.shift()
 }
-console.log()
+
+function copyToClipboard() {
+  try {
+    navigator.clipboard.writeText(howToGetCurrentVersion)
+    // Show success icon
+    showSuccessIcon.value = true
+
+    // Reset to default icon after 2 seconds
+    setTimeout(() => {
+      showSuccessIcon.value = false
+    }, 2000)
+  } catch (err) {
+    console.error('Failed to copy text: ', err)
+    // Optionally, handle error feedback to the user
+  }
+}
+
+setTabTitle(friendlyName == '' ? "Oops! 😵‍💫" : friendlyName)
 </script>
 
 <template>
@@ -122,21 +146,45 @@ console.log()
       <h1>{{ latestRelease }}</h1>
       <h3>released on {{ toLocalDate(releaseDate) }}</h3>
       <h5 v-if="anyKnownPatches">
-        Current Patch: {{ latestVersion
-        }}<span v-if="latestPatchRelease != null">
+        Current Patch:
+        <a :href="currentVersionSupportLink" v-if="currentVersionSupportLink != ''">{{
+          latestVersion
+        }}</a
+        ><span v-else>{{ latestVersion }}</span
+        ><span v-if="latestPatchRelease != null">
           released on {{ toLocalDate(latestPatchRelease) }}</span
         >
       </h5>
     </div>
-    <div v-if="howToGetCurrentVersion != null">
-      <br />
-      <div class="grid grid-flow-col info-box">
+    <div class="center-div" v-if="howToGetCurrentVersion != null">
+      <div class="grid gap-4 grid-flow-col info-box">
         <div>
           <span class="material-symbols-rounded">&#xe88e;</span>
         </div>
         <div>
-          <p>Command to get current version:</p>
-          <p>{{ howToGetCurrentVersion }}</p>
+          <p class="info-title">Use the following command to learn your current version</p>
+          <div class="grid gap-2">
+            <div class="code">
+              <span class="large monospace"> {{ howToGetCurrentVersion }}</span>
+              <button
+                @click="copyToClipboard()"
+                class="text-gray-500 hover:bg-gray-300 copy-button"
+              >
+                <span id="default-icon" v-if="!showSuccessIcon"
+                  ><span
+                    class="material-symbols-rounded material-symbols-rounded-large icon-correction"
+                    >&#xe14d;</span
+                  >
+                </span>
+                <span id="success-icon" v-else>
+                  <span
+                    class="material-symbols-rounded material-symbols-rounded-large icon-correction"
+                    >&#xe5ca;</span
+                  >
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -193,8 +241,11 @@ console.log()
               >
             </td>
             <td class="px-6 py-2" v-if="anyKnownPatches">
-              {{ release.latest.name
-              }}<span v-if="release.latest != null && release.latest.date"
+              <a v-if="release.latest.link != null" :href="release.latest.link">{{
+                release.latest.name
+              }}</a
+              ><span v-else>{{ release.latest.name }}</span
+              ><span v-if="release.latest != null && release.latest.date"
                 ><br />({{ toLocalDate(release.latest.date) }})</span
               >
             </td>
