@@ -91,6 +91,7 @@ let fetchArray = []
 
 try {
   dependencies.forEach((dependency) => {
+    console.log(dependency)
     fetchArray.push(fetch(`https://endoflife.date/api/v1/products/${getMachineName(dependency)}`))
   })
 } catch {

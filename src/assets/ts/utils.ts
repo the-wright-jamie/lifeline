@@ -3,7 +3,7 @@ export function setTabTitle(title: string) {
 }
 
 export function getFriendlyName(name: string) {
-  return name.split('|')[1]
+  return name.split('|')[0]
 }
 
 export function getFriendlyNameFromAPI(name: string, listOfProducts: string[]) {
@@ -18,7 +18,13 @@ export function getFriendlyNameFromAPI(name: string, listOfProducts: string[]) {
 }
 
 export function getMachineName(name: string) {
-  return name.split('|')[0]
+  let returnable = name.split('|')
+
+  if (returnable.length > 1) {
+    return name.split('|')[1]
+  }
+
+  return returnable[0]
 }
 
 export async function getData(url: string) {

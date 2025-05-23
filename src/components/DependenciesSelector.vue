@@ -114,8 +114,10 @@ let results = response.result
 let dependencies = []
 
 results.forEach((result) => {
-  dependencies.push(`${result.name}|${result.label}`)
+  dependencies.push(`${result.label}|${result.name}`)
 })
+
+dependencies.sort()
 
 const fuse = new Fuse(dependencies)
 
