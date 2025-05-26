@@ -296,6 +296,7 @@ hr {
   padding-bottom: 1em;
   padding-right: 1.5em;
   padding-left: 1em;
+  color: white
 }
 
 .center-div {
@@ -310,6 +311,7 @@ hr {
   padding: 0.5em 0.5em 0.5em 1em;
   border-radius: 0.5em;
   margin-top: 0.25em;
+  color: white;
 }
 
 .copy-button {

@@ -227,7 +227,7 @@ function exportConfig() {
     <button
       v-else
       @click="resetLifeline()"
-      class="block p-2 pr-3 text-gray-900 rounded-lg bg-red-500 hover:bg-red-700 dark:border-gray-600 dark:text-white"
+      class="block p-2 pr-3 rounded-lg bg-red-500 hover:bg-red-700 dark:border-gray-600 text-white"
     >
       <span class="material-symbols-rounded">&#xe002;</span> Are you sure?
     </button>
