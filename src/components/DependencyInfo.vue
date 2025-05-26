@@ -88,8 +88,6 @@ if (!error.value) {
       }
     }
   }
-
-  depJson.shift()
 }
 
 // generate the depJSON as gantt expects it...
@@ -146,8 +144,8 @@ setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
     </div>
     <br />
     <div class="center">
-      <h2 v-if="checkIfDevice()">The latest device release is the</h2>
-      <h2 v-else>The latest major release is</h2>
+      <h2 class="info-title" v-if="checkIfDevice()">The latest device release is the</h2>
+      <h2 class="info-title" v-else>The latest major release is</h2>
       <h1>{{ latestRelease }}</h1>
       <h3>released on {{ toLocalDate(releaseDate) }}</h3>
       <h5 v-if="anyKnownPatches">
@@ -197,7 +195,7 @@ setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
     <hr />
     <br />
     <div>
-      <h2>Other Releases</h2>
+      <h2>All Known Releases</h2>
       <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead
           class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
@@ -206,7 +204,7 @@ setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
             <th scope="col" class="px-6 py-3">Release</th>
             <th scope="col" class="px-6 py-3">Release Date</th>
             <th scope="col" class="px-6 py-3">End of Life</th>
-            <th scope="col" class="px-6 py-3" v-if="anyKnownEOES">End of Support</th>
+            <th scope="col" class="px-6 py-3" v-if="anyKnownEOES">End of Extended Support</th>
             <th scope="col" class="px-6 py-3" v-if="anyKnownPatches">Latest Patch</th>
           </tr>
         </thead>
@@ -227,11 +225,19 @@ setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
                 isDateBeforeToday(release.eolFrom)
                   ? release.eolFrom != null
                     ? 'text-red-600'
-                    : ''
+                    : release.isEol
+                      ? 'text-red-600'
+                      : ''
                   : 'text-green-500'
               "
             >
-              {{ release.eolFrom != null ? toLocalDate(release.eolFrom) : 'Unknown' }}
+              {{
+                release.eolFrom != null
+                  ? toLocalDate(release.eolFrom)
+                  : release.isEol
+                    ? 'Yes'
+                    : 'Unknown'
+              }}
             </td>
             <td class="px-6 py-2" v-if="anyKnownEOES">
               <span
@@ -239,10 +245,18 @@ setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
                   isDateBeforeToday(release.eoesFrom)
                     ? release.eoesFrom != null
                       ? 'text-red-600'
-                      : ''
+                      : release.isEoes
+                        ? 'text-red-600'
+                        : ''
                     : 'text-green-500'
                 "
-                >{{ release.eoesFrom != null ? toLocalDate(release.eoesFrom) : 'Unknown' }}</span
+                >{{
+                  release.eoesFrom != null
+                    ? toLocalDate(release.eoesFrom)
+                    : release.isEoes
+                      ? 'Yes'
+                      : 'Unknown'
+                }}</span
               >
             </td>
             <td class="px-6 py-2" v-if="anyKnownPatches">
