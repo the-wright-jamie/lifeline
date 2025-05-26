@@ -227,7 +227,7 @@ setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
                     ? 'text-red-600'
                     : release.isEol
                       ? 'text-red-600'
-                      : ''
+                      : 'text-amber-500'
                   : 'text-green-500'
               "
             >
@@ -247,7 +247,7 @@ setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
                       ? 'text-red-600'
                       : release.isEoes
                         ? 'text-red-600'
-                        : ''
+                        : 'text-amber-500'
                     : 'text-green-500'
                 "
                 >{{
