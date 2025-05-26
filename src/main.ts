@@ -13,6 +13,7 @@ import ToggleButton from './components/ToggleButton.vue'
 import ErrorMessage from './components/ErrorMessage.vue'
 import VueMermaidString from 'vue-mermaid-string'
 import GanttChart from './components/GanttChart.vue'
+import ImagePlaceholder from './components/ImagePlaceholder.vue'
 
 const app = createApp(App)
 
@@ -26,6 +27,7 @@ app
   .component('ErrorMessage', ErrorMessage)
   .component('VueMermaidString', VueMermaidString)
   .component('GanttChart', GanttChart)
+  .component('ImagePlaceholder', ImagePlaceholder)
 
 app.use(router)
 

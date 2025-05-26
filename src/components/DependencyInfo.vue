@@ -44,7 +44,8 @@ let anyKnownEOES = false
 let anyKnownPatches = false
 let host = location.host
 
-let depJson = []
+let depJson = []  
+let ganttDepJSON = {}
 
 if (!error.value) {
   isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -88,29 +89,31 @@ if (!error.value) {
       }
     }
   }
-}
 
-// generate the depJSON as gantt expects it...
-let ganttDepJSON = {}
-ganttDepJSON[`${dependency_info.result.label}`] = dependency_info.result
+  // generate the depJSON as gantt expects it...
+  ganttDepJSON[`${dependency_info.result.label}`] = dependency_info.result
 
-function copyToClipboard(text: string) {
-  try {
-    navigator.clipboard.writeText(text)
-    // Show success icon
-    showSuccessIcon.value = true
+  function copyToClipboard(text: string) {
+    try {
+      navigator.clipboard.writeText(text)
+      // Show success icon
+      showSuccessIcon.value = true
 
-    // Reset to default icon after 2 seconds
-    setTimeout(() => {
-      showSuccessIcon.value = false
-    }, 2000)
-  } catch (err) {
-    console.error('Failed to copy text: ', err)
-    // Optionally, handle error feedback to the user
+      // Reset to default icon after 2 seconds
+      setTimeout(() => {
+        showSuccessIcon.value = false
+      }, 2000)
+    } catch (err) {
+      console.error('Failed to copy text: ', err)
+      // Optionally, handle error feedback to the user
+    }
   }
 }
 
 setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
+
+let baseIconClass = `dependency-icon material-symbols-rounded `
+let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
 </script>
 
 <template>
@@ -123,11 +126,9 @@ setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
   <div v-else>
     <br />
     <h1 v-if="iconLink" class="center-with-icons">
-      <img
-        :src="iconLink"
-        class="dependency-icon material-symbols-rounded"
-        :class="isDarkMode ? 'invert' : ''"
-      />
+      <ImagePlaceholder :class="iconClass" :src="iconLink">
+        <Spinner :class="baseIconClass" />
+      </ImagePlaceholder>
       {{ friendlyName }}
     </h1>
     <h1 v-else class="center">

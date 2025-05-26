@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getRandomInt } from '@/assets/ts/utils'
+import Spinner from './Spinner.vue'
 
 const props = defineProps({
   header: String,
@@ -15,7 +16,15 @@ function pickRandomErrorImage() {
 
 <template>
   <div class="middle center">
-    <img class="error-image rounded-xl" :src="pickRandomErrorImage()" />
+    <ImagePlaceholder :class="'error-image rounded-xl'" :src="pickRandomErrorImage()">
+      <br />
+      <br />
+      <br />
+      <div class="center-div"><Spinner /></div>
+      <br />
+      <br />
+      <br />
+    </ImagePlaceholder>
     <br />
     <h1>{{ header }}</h1>
     <p>{{ message }}</p>

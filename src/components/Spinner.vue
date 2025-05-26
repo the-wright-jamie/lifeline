@@ -22,7 +22,7 @@ const props = defineProps({
         fill="currentFill"
       />
     </svg>
-    <p class="spinner-faded-normal">{{ msg }}...</p>
+    <p v-if="msg" class="spinner-faded-normal">{{ msg }}...</p>
     <span class="sr-only">Loading...</span>
   </div>
 </template>
