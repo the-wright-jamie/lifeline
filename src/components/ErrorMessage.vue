@@ -17,7 +17,10 @@ function pickRandomErrorImage() {
 
 <template>
   <div class="middle center">
-    <ImagePlaceholder :class="'error-image rounded-xl'" :src="image ? image : pickRandomErrorImage()">
+    <ImagePlaceholder
+      :class="'error-image rounded-xl'"
+      :src="image ? image : pickRandomErrorImage()"
+    >
       <br />
       <br />
       <br />

@@ -108,9 +108,7 @@ if (!config.dashboardConfig.upcomingEOL) {
             }}</RouterLink>
           </th>
           <td class="px-6 py-2">
-            <a v-if="news[4] != ''" :href="news[4]">{{
-              news[2]
-            }}</a>
+            <a v-if="news[4] != ''" :href="news[4]">{{ news[2] }}</a>
             <p v-else>{{ news[2] }}</p>
           </td>
           <td class="px-6 py-2">

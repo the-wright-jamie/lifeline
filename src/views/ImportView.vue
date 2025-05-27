@@ -5,7 +5,7 @@ import { ref } from 'vue'
 import { type Config } from '../assets/ts/types'
 import { setTabTitle } from '@/assets/ts/utils'
 
-setTabTitle("Import")
+setTabTitle('Import')
 
 let versionCheck = ref(false)
 let dependenciesCheck = ref(false)

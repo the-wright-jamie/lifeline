@@ -71,9 +71,9 @@ try {
 let depJson = {}
 const allData = await getData(fetchArray)
 try {
-allData.forEach((data) => {
-  depJson[`${data.result.label}`] = data.result
-})
+  allData.forEach((data) => {
+    depJson[`${data.result.label}`] = data.result
+  })
 } catch {
   error.value = true
 }
@@ -84,7 +84,11 @@ setTabTitle('Dashboard')
 
 <template>
   <div v-if="error">
-    <ErrorMessage header="Unable to load the Dashboard" message="Lifeline was unable to retreive information from endoflife.date about one or more of your selected dependencies. Please check your tracked dependencies in the settings - the selections that have problems will be highlighted. You may have to reselect some dependencies." image="https://raw.githubusercontent.com/the-wright-jamie/lifeline/refs/heads/main/src/assets/img/error/disconnected.png"/>
+    <ErrorMessage
+      header="Unable to load the Dashboard"
+      message="Lifeline was unable to retreive information from endoflife.date about one or more of your selected dependencies. Please check your tracked dependencies in the settings - the selections that have problems will be highlighted. You may have to reselect some dependencies."
+      image="https://raw.githubusercontent.com/the-wright-jamie/lifeline/refs/heads/main/src/assets/img/error/disconnected.png"
+    />
   </div>
   <div v-else>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" v-if="showBothTopInfo">

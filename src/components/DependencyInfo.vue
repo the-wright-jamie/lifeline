@@ -78,15 +78,13 @@ if (!error.value) {
     if (anyKnownEOES != true) {
       try {
         anyKnownEOES = depJson[i].eoesFrom != null
-      } catch {
-      }
+      } catch {}
     }
 
     if (anyKnownPatches != true) {
       try {
         anyKnownPatches = depJson[i].latest != null
-      } catch {
-      }
+      } catch {}
     }
   }
 

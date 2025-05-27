@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { setTabTitle } from '@/assets/ts/utils';
+import { setTabTitle } from '@/assets/ts/utils'
 
 const isSetupComplete = localStorage.getItem('config')
 
-setTabTitle("About")
+setTabTitle('About')
 </script>
 
 <template>

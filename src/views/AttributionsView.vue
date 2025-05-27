@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { setTabTitle } from '@/assets/ts/utils';
+import { setTabTitle } from '@/assets/ts/utils'
 
-setTabTitle("Credits")
+setTabTitle('Credits')
 </script>
 
 <template>

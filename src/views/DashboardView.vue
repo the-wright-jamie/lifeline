@@ -7,9 +7,7 @@ let loadingMessage = ref(``)
 
 <template>
   <Suspense>
-    <DashboardMain/>
-    <template #fallback>
-      <AnimeSpinner class="middle" msg="Loading dashboard"
-    /></template>
+    <DashboardMain />
+    <template #fallback> <AnimeSpinner class="middle" msg="Loading dashboard" /></template>
   </Suspense>
 </template>
