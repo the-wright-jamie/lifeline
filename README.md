@@ -1,5 +1,7 @@
 # _Lifeline_
 
+[![wakatime](https://wakatime.com/badge/user/604ea863-2306-4cbd-95b6-d2dbf642c915/project/3a60ba7d-55e3-47aa-87b7-f257f225ff3d.svg)](https://wakatime.com/badge/user/604ea863-2306-4cbd-95b6-d2dbf642c915/project/3a60ba7d-55e3-47aa-87b7-f257f225ff3d)
+
 _Lifeline_ is a single page web application that allows you to select dependencies from [endoflife.date](https://endoflife.date/) and view important information about them in an all-in-one easy-to-use dashboard. Read [more info here](https://the-wright-jamie.dev/lifeline/#/about)!
 
 ## How to use
