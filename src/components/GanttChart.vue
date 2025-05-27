@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { ganttChartUpdate, getFriendlyName } from '@/assets/ts/utils'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ref } from 'vue'
 import { type Config } from '../assets/ts/types'
-import { ganttChartUpdate, getFriendlyName } from '@/assets/ts/utils'
 
+// @ts-ignore
 const props = defineProps({
   dependencies: String,
   depJson: JSON

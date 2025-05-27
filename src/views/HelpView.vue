@@ -17,7 +17,7 @@ setTabTitle('Help')
     <i>Lifeline</i> is a <b>wholely client-side web application</b>. As such, the service
     <b
       >does not store or transmit any of your information or requests to servers owned by
-      <i>Lifelife</i></b
+      <i>Lifeline</i></b
     >. Your <b>config is stored on your browser</b> - this means that if you uninstall your browser,
     move to a new computer, change your browser or potentially delete your cookies/reset your
     browser you will most likely lose your config. If it's important to you,

@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-  dateToUnixTimestamp,
-  generateExternalLink,
-  toLocalDate,
-  unixTimestampToLocalDate,
-  generateAboutLink
-} from '@/assets/ts/utils'
+import { dateToUnixTimestamp, generateAboutLink, unixTimestampToLocalDate } from '@/assets/ts/utils'
 import { type Config } from '../assets/ts/types'
 
 const props = defineProps({

@@ -41,6 +41,8 @@ function returnPagedDependencies(start: number, end: number) {
   }
 
   try {
+    //@ts-ignore
+    // ignore because this is some black magic here, even I don't understand this
     let arrayCopy = [...loaded_dependencies.value.value]
     return arrayCopy.slice(start, end)
   } catch {
@@ -95,7 +97,7 @@ function search(search: string) {
     return dependencies
   } else {
     total_results.value = search_results.value.length
-    return search_results
+    return search_results.value
   }
 }
 
@@ -191,7 +193,7 @@ setTabTitle('Setup')
             <p>
               There seems to have been a change in the endoflife.date API, and the stored selected
               dependencies have become de-synced with the names in the API. The dependencies that
-              are casuing issues are highlighted with ⚠️. To fix this problem, remove the
+              are causing issues are highlighted with ⚠️. To fix this problem, remove the
               dependency, optionally re-add it from the list, and the save.
             </p>
             <p>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getFriendlyName, getData, isDateBeforeToday, setTabTitle } from '@/assets/ts/utils'
-import { callWithErrorHandling, ref } from 'vue'
+import { getData, isDateBeforeToday, setTabTitle } from '@/assets/ts/utils'
+import { ref } from 'vue'
 import ErrorMessage from './ErrorMessage.vue'
 const props = defineProps({
   dependency: String
@@ -29,7 +29,7 @@ try {
 
 let helpShowMore = ref(false)
 
-let isDarkMode = ''
+let isDarkMode = true
 let friendlyName = ''
 let iconLink = ''
 let eolLink = ''
@@ -124,7 +124,7 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
   <div v-else>
     <br />
     <h1 v-if="iconLink" class="center-with-icons">
-      <ImagePlaceholder :class="iconClass" :src="iconLink">
+      <ImagePlaceholder :styling="iconClass" :src="iconLink">
         <Spinner :class="baseIconClass" />
       </ImagePlaceholder>
       {{ friendlyName }}

@@ -1,13 +1,13 @@
 <template>
   <div class="image">
-    <img :class="class" :src="src" @load="ready = true" v-show="ready" />
+    <img :class="styling" :src="src" @load="ready = true" v-show="ready" />
     <slot v-if="!ready" />
   </div>
 </template>
 
 <script>
 export default {
-  props: ['src', 'class'],
+  props: ['src', 'styling'],
   data: () => ({
     ready: false
   }),

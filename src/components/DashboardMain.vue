@@ -1,23 +1,11 @@
 <script setup lang="ts">
+import { getMachineName, setTabTitle } from '@/assets/ts/utils'
 import { ref } from 'vue'
+import { type Config } from '../assets/ts/types'
+import ErrorMessage from './ErrorMessage.vue'
+import GanttChart from './GanttChart.vue'
 import LatestNews from './LatestNews.vue'
 import UpcomingEOL from './UpcomingEOL.vue'
-import GanttChart from './GanttChart.vue'
-import {
-  getRandomInt,
-  getFriendlyName,
-  getMachineName,
-  dateToUnixTimestamp,
-  todayAsISO,
-  unixAsISO,
-  setTabTitle,
-  ganttChartUpdate
-} from '@/assets/ts/utils'
-import VueMermaidString from 'vue-mermaid-string'
-import endent from 'endent'
-import { type Config } from '../assets/ts/types'
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-import ErrorMessage from './ErrorMessage.vue'
 
 setTabTitle('Loading...')
 
@@ -78,7 +66,7 @@ try {
   error.value = true
 }
 
-let depJsonstring = JSON.stringify(depJson)
+let depJsonString = JSON.stringify(depJson)
 setTabTitle('Dashboard')
 </script>
 
@@ -86,30 +74,33 @@ setTabTitle('Dashboard')
   <div v-if="error">
     <ErrorMessage
       header="Unable to load the Dashboard"
-      message="Lifeline was unable to retreive information from endoflife.date about one or more of your selected dependencies. Please check your tracked dependencies in the settings - the selections that have problems will be highlighted. You may have to reselect some dependencies."
+      message="Lifeline was unable to retrieve information from endoflife.date about one or more of your selected dependencies. Please check your tracked dependencies in the settings - the selections that have problems will be highlighted. You may have to reselect some dependencies."
       image="https://raw.githubusercontent.com/the-wright-jamie/lifeline/refs/heads/main/src/assets/img/error/disconnected.png"
     />
   </div>
   <div v-else>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" v-if="showBothTopInfo">
       <div>
-        <LatestNews :data="depJsonstring" />
+        <LatestNews :data="depJsonString" />
       </div>
       <div>
-        <UpcomingEOL :data="depJsonstring" />
+        <UpcomingEOL :data="depJsonString" />
       </div>
     </div>
     <div v-else>
       <div v-if="showLatest">
-        <LatestNews :data="depJsonstring" />
+        <LatestNews :data="depJsonString" />
       </div>
       <div v-if="showUpcoming || showPastEOL">
-        <UpcomingEOL :data="depJsonstring" />
+        <UpcomingEOL :data="depJsonString" />
       </div>
     </div>
     <br />
     <div v-if="showGantt">
-      <GanttChart :dependencies="dependencies.toString()" :depJson="depJson"></GanttChart>
+      <GanttChart
+        :dependencies="dependencies.toString()"
+        :depJson="JSON.stringify(depJson)"
+      ></GanttChart>
     </div>
     <div v-if="allDisabled">
       <ErrorMessage

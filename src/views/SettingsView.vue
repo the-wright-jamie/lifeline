@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import router from '@/router'
-import ToggleButton from '@/components/ToggleButton.vue'
-import { type Config } from '../assets/ts/types'
 import { setTabTitle } from '@/assets/ts/utils'
+import ToggleButton from '@/components/ToggleButton.vue'
+import { ref } from 'vue'
+import { type Config } from '../assets/ts/types'
 
 setTabTitle('Settings')
 

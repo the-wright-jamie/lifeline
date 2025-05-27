@@ -1,19 +1,18 @@
 import './assets/css/base.css'
 
 import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
-import Spinner from './components/Spinner.vue'
-import AnimeSpinner from './components/AnimeSpinner.vue'
-import MegaHeader from './components/MegaHeader.vue'
-import AboutFooter from './components/AboutFooter.vue'
-import Header from './components/Header.vue'
-import DependencyInfo from './components/DependencyInfo.vue'
-import ToggleButton from './components/ToggleButton.vue'
-import ErrorMessage from './components/ErrorMessage.vue'
 import VueMermaidString from 'vue-mermaid-string'
+import App from './App.vue'
+import AboutFooter from './components/AboutFooter.vue'
+import AnimeSpinner from './components/AnimeSpinner.vue'
+import DependencyInfo from './components/DependencyInfo.vue'
+import ErrorMessage from './components/ErrorMessage.vue'
 import GanttChart from './components/GanttChart.vue'
+import Header from './components/Header.vue'
 import ImagePlaceholder from './components/ImagePlaceholder.vue'
+import MegaHeader from './components/MegaHeader.vue'
+import Spinner from './components/Spinner.vue'
+import router from './router'
 
 const app = createApp(App)
 

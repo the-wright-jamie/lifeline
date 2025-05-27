@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import {
   dateToUnixTimestamp,
-  getFriendlyName,
-  toLocalDate,
-  unixTimestampToLocalDate,
+  generateAboutLink,
   isDateAfterToday,
   isDateBeforeToday,
-  generateAboutLink
+  unixTimestampToLocalDate
 } from '@/assets/ts/utils'
 import { type Config } from '../assets/ts/types'
 
