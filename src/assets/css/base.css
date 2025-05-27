@@ -299,6 +299,17 @@ hr {
   color: white
 }
 
+.error-box {
+  background-color: #e55757;
+  border-radius: 0.5em;
+  width: fit-content;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-right: 1.5em;
+  padding-left: 1em;
+  color: white
+}
+
 .center-div {
   display: flex;
   justify-content: center;

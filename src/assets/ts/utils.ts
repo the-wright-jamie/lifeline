@@ -15,6 +15,7 @@ export function getFriendlyNameFromAPI(name: string, listOfProducts: string[]) {
       return getFriendlyName(listOfProducts[i])
     }
   }
+  return false
 }
 
 export function getMachineName(name: string) {

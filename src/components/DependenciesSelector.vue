@@ -21,7 +21,9 @@ function selectDependency(dependency: string, dependencies: string[]) {
     dependencies.splice(found, 1)
   }
 
-  const sortedDependencies = [...dependencies].sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+  const sortedDependencies = [...dependencies].sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: 'base' })
+  )
 
   return sortedDependencies
 }
@@ -119,7 +121,9 @@ results.forEach((result) => {
   dependencies.push(`${result.label}|${result.name}`)
 })
 
-let sortedDependencies = [...dependencies].sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+let sortedDependencies = [...dependencies].sort((a, b) =>
+  a.localeCompare(b, undefined, { sensitivity: 'base' })
+)
 
 dependencies = sortedDependencies
 
@@ -131,6 +135,7 @@ let page_size = ref(10)
 let selected = ref([])
 let search_text = ref('')
 let search_results = ref([])
+let unknownSelectedDependencyError = ref(false)
 
 let loaded_dependencies = ref(dependencies)
 let total_results = ref(Object.keys(dependencies).length)
@@ -141,6 +146,12 @@ if (rawConfig) {
   let config: Config = JSON.parse(rawConfig)
   selected = ref(config.dependencies)
 }
+
+selected.value.forEach((dependency) => {
+  if (!getFriendlyNameFromAPI(dependency, dependencies)) {
+    unknownSelectedDependencyError.value = true
+  }
+})
 
 function goToLastPage() {
   index.value = total_results.value - page_size.value
@@ -163,9 +174,36 @@ setTabTitle('Setup')
 
 <template>
   <h1>Please select the dependencies you want to track</h1>
-  <br />
-  <hr />
-  <br />
+  <div v-if="!unknownSelectedDependencyError">
+    <br />
+    <hr />
+    <br />
+  </div>
+  <div v-if="unknownSelectedDependencyError">
+    <div class="center-div">
+      <div class="grid gap-4 grid-flow-col error-box">
+        <div>
+          <span class="material-symbols-rounded">&#xe88e;</span>
+        </div>
+        <div>
+          <p class="info-title">There was an error</p>
+          <div class="grid gap-2">
+            <p>
+              There seems to have been a change in the endoflife.date API, and the stored selected
+              dependencies have become de-synced with the names in the API. The dependencies that
+              are casuing issues are highlighted with ⚠️. To fix this problem, remove the
+              dependency, optionally re-add it from the list, and the save.
+            </p>
+            <p>
+              This is often caused by updates that endoflife.date have made to their API, or changes
+              to the configuration such that it now includes an invalid dependency.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+  </div>
   <div class="grid grid-cols-2">
     <div>
       <h2>Selected dependencies</h2>
@@ -175,7 +213,11 @@ setTabTitle('Setup')
           ><li>
             <button @click="selected = selectDependency(dependency, selected)">
               <span class="material-symbols-rounded">&#xe5cd;</span> {{ ' '
-              }}{{ getFriendlyNameFromAPI(dependency, dependencies) }}
+              }}{{
+                getFriendlyNameFromAPI(dependency, dependencies)
+                  ? getFriendlyNameFromAPI(dependency, dependencies)
+                  : `⚠️ ${dependency}`
+              }}
             </button>
           </li></template
         >
