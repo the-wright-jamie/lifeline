@@ -66,7 +66,6 @@ if (!config.dashboardConfig.upcomingEOL) {
       2
   )
 }
-console.log()
 </script>
 
 <template>

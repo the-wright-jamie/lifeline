@@ -17,6 +17,7 @@ import VueMermaidString from 'vue-mermaid-string'
 import endent from 'endent'
 import { type Config } from '../assets/ts/types'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import ErrorMessage from './ErrorMessage.vue'
 
 setTabTitle('Loading...')
 
@@ -24,16 +25,21 @@ setTabTitle('Loading...')
 // Surely there's a better way to handle multiple waits...
 async function getData(array) {
   const res = await Promise.all(array)
-  const data = await Promise.all(
-    res.map((item) => {
-      return item.json()
-    })
-  )
-  return data
+  try {
+    const data = await Promise.all(
+      res.map((item) => {
+        return item.json()
+      })
+    )
+    return data
+  } catch {
+    error.value = true
+  }
 }
 
 let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
 let diagram = ref(``)
+let error = ref(false)
 
 const config: Config = JSON.parse(localStorage.getItem('config') || '')
 const allDisabled = ref(
@@ -56,7 +62,6 @@ let fetchArray = []
 
 try {
   dependencies.forEach((dependency) => {
-    console.log(dependency)
     fetchArray.push(fetch(`https://endoflife.date/api/v1/products/${getMachineName(dependency)}`))
   })
 } catch {
@@ -65,40 +70,49 @@ try {
 
 let depJson = {}
 const allData = await getData(fetchArray)
+try {
 allData.forEach((data) => {
   depJson[`${data.result.label}`] = data.result
 })
+} catch {
+  error.value = true
+}
 
 let depJsonstring = JSON.stringify(depJson)
 setTabTitle('Dashboard')
 </script>
 
 <template>
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" v-if="showBothTopInfo">
-    <div>
-      <LatestNews :data="depJsonstring" />
-    </div>
-    <div>
-      <UpcomingEOL :data="depJsonstring" />
-    </div>
+  <div v-if="error">
+    <ErrorMessage image="https://raw.githubusercontent.com/the-wright-jamie/lifeline/refs/heads/main/src/assets/img/error/disconnected.png"/>
   </div>
   <div v-else>
-    <div v-if="showLatest">
-      <LatestNews :data="depJsonstring" />
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" v-if="showBothTopInfo">
+      <div>
+        <LatestNews :data="depJsonstring" />
+      </div>
+      <div>
+        <UpcomingEOL :data="depJsonstring" />
+      </div>
     </div>
-    <div v-if="showUpcoming || showPastEOL">
-      <UpcomingEOL :data="depJsonstring" />
+    <div v-else>
+      <div v-if="showLatest">
+        <LatestNews :data="depJsonstring" />
+      </div>
+      <div v-if="showUpcoming || showPastEOL">
+        <UpcomingEOL :data="depJsonstring" />
+      </div>
     </div>
-  </div>
-  <br />
-  <div v-if="showGantt">
-    <GanttChart :dependencies="dependencies.toString()" :depJson="depJson"></GanttChart>
-  </div>
-  <div v-if="allDisabled">
-    <ErrorMessage
-      header="Oops!"
-      message="There's nothing to show here as you've disabled all toggles under the dashboard section in
+    <br />
+    <div v-if="showGantt">
+      <GanttChart :dependencies="dependencies.toString()" :depJson="depJson"></GanttChart>
+    </div>
+    <div v-if="allDisabled">
+      <ErrorMessage
+        header="Oops!"
+        message="There's nothing to show here as you've disabled all toggles under the dashboard section in
       Settings."
-    />
+      />
+    </div>
   </div>
 </template>

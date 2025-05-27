@@ -1,5 +1,5 @@
 export function setTabTitle(title: string) {
-  document.title = `Lifeline - ${title}`
+  document.title = `${title} - Lifeline`
 }
 
 export function getFriendlyName(name: string) {

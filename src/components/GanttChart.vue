@@ -12,7 +12,6 @@ const props = defineProps({
 const config: Config = JSON.parse(localStorage.getItem('config') || '')
 const dependencies = props.dependencies.split(',')
 const depJson = props.depJson
-console.log(dependencies)
 
 function updateWidth(input: number) {
   if (isNaN(input) || input == 0 || input < 30) {

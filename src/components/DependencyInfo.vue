@@ -79,7 +79,6 @@ if (!error.value) {
       try {
         anyKnownEOES = depJson[i].eoesFrom != null
       } catch {
-        console.log('lmao')
       }
     }
 
@@ -87,7 +86,6 @@ if (!error.value) {
       try {
         anyKnownPatches = depJson[i].latest != null
       } catch {
-        console.log('lmao')
       }
     }
   }

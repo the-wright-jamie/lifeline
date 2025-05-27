@@ -4,7 +4,8 @@ import Spinner from './Spinner.vue'
 
 const props = defineProps({
   header: String,
-  message: String
+  message: String,
+  image: String
 })
 
 function pickRandomErrorImage() {
@@ -16,7 +17,7 @@ function pickRandomErrorImage() {
 
 <template>
   <div class="middle center">
-    <ImagePlaceholder :class="'error-image rounded-xl'" :src="pickRandomErrorImage()">
+    <ImagePlaceholder :class="'error-image rounded-xl'" :src="image ? image : pickRandomErrorImage()">
       <br />
       <br />
       <br />
