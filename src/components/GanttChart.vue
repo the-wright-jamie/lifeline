@@ -10,7 +10,29 @@ const props = defineProps({
   depJson: JSON
 })
 
-const config: Config = JSON.parse(localStorage.getItem('config') || '')
+let config: Config = JSON.parse(localStorage.getItem('config') || null)
+let configNotFound = false
+if (config == null) {
+  configNotFound = true
+  // create fake config if it doesn't exist
+  config = {
+    version: 1,
+    dashboardConfig: {
+      ganttWidth: 365,
+      ganttMaxWidth: 730,
+      ganttChart: true,
+      latestNews: true,
+      upcomingEOL: true,
+      pastEOL: true,
+      newsEntries: 10
+    },
+    headerConfig: {
+      showAbout: true,
+      showHelp: true
+    },
+    dependencies: []
+  }
+}
 const dependencies = props.dependencies.split(',')
 const depJson = props.depJson
 
@@ -18,7 +40,7 @@ function updateWidth(input: number) {
   if (isNaN(input) || input == 0 || input < 30) {
     input = 30
   }
-  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  //let config: Config = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.ganttWidth = input
   userChartWidth.value = input
   diagram.value = ganttChartUpdate(
@@ -27,7 +49,7 @@ function updateWidth(input: number) {
     depJson,
     focusedDependency.value
   )
-  localStorage.setItem('config', JSON.stringify(config))
+  if (!configNotFound) localStorage.setItem('config', JSON.stringify(config))
 }
 
 function updateOffset(input: number) {
@@ -51,7 +73,7 @@ function setFocusedDependency(dependency: string) {
 }
 
 function resetSliders() {
-  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  // let config: Config = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.ganttWidth = config.dashboardConfig.ganttMaxWidth / 2
   userChartWidth.value = config.dashboardConfig.ganttMaxWidth / 2
   userChartOffset.value = 0
@@ -62,7 +84,7 @@ function resetSliders() {
     depJson,
     focusedDependency.value
   )
-  localStorage.setItem('config', JSON.stringify(config))
+  if (!configNotFound) localStorage.setItem('config', JSON.stringify(config))
 }
 
 // set the max width of the chart in days
@@ -186,4 +208,21 @@ diagram.value = ganttChartUpdate(
     <br />
   </div>
   <vue-mermaid-string :value="diagram" />
+  <div v-if="configNotFound">
+    <div class="grid gap-4 grid-flow-col">
+      <div>
+        <span class="material-symbols-rounded">&#xe88e;</span>
+      </div>
+      <div>
+        <p class="info-title">Want to be able to seek further back or forward?</p>
+        <br />
+        <p>
+          You'll need to create a configuration by
+          <RouterLink to="/">completing the setup wizard</RouterLink>, and then you'll be able to
+          set the zoom of the Gantt chart to your liking from the settings. No signup or login
+          required!
+        </p>
+      </div>
+    </div>
+  </div>
 </template>
