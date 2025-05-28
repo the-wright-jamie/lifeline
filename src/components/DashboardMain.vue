@@ -50,7 +50,12 @@ let fetchArray = []
 
 try {
   dependencies.forEach((dependency) => {
-    fetchArray.push(fetch(`https://endoflife.date/api/v1/products/${getMachineName(dependency)}`))
+    fetchArray.push(
+      fetch(`https://endoflife.date/api/v1/products/${getMachineName(dependency)}`).catch(() => {
+        console.error(`Failed to fetch data for ${dependency}`)
+        error.value = true
+      })
+    )
   })
 } catch {
   console.error('Failed to fetch')

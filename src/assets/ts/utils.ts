@@ -93,9 +93,10 @@ export function getCurrentYear() {
 export function ganttChartUpdate(
   userChartOffset: number,
   userChartWidth: number,
-  depJson: JSON,
+  depJsonString: string,
   focusedDependency: string
 ): string {
+  let depJson = JSON.parse(depJsonString)
   let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
   let diagram = ``
 

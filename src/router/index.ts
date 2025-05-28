@@ -6,10 +6,10 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import AboutView from '../views/AboutView.vue'
 import AttributionsView from '../views/AttributionsView.vue'
 import HelpView from '../views/HelpView.vue'
+import ImportView from '../views/ImportView.vue'
 import SetupView from '../views/SetupView.vue'
 import ThanksView from '../views/ThanksView.vue'
 import WelcomeView from '../views/WelcomeView.vue'
-import ImportView from '../views/ImportView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -81,7 +81,8 @@ router.beforeEach((to, from, next) => {
     to.name !== 'setup' &&
     to.name !== 'help' &&
     to.name !== 'about' &&
-    to.name !== 'import'
+    to.name !== 'import' &&
+    to.name !== 'dependency'
   ) {
     next({ name: 'welcome' })
   } else if (to.name == 'welcome' && isSetupComplete) {

@@ -109,6 +109,7 @@ function copyToClipboard(text: string) {
 }
 
 setTabTitle(friendlyName == '' ? 'Oops! 😵‍💫' : friendlyName)
+let depJsonString = JSON.stringify(ganttDepJSON)
 
 let baseIconClass = `dependency-icon material-symbols-rounded `
 let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
@@ -275,7 +276,7 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
     <hr />
     <br />
     <div>
-      <GanttChart :dependencies="friendlyName" :depJson="ganttDepJSON"></GanttChart>
+      <GanttChart :dependencies="friendlyName" :depJson="depJsonString"></GanttChart>
     </div>
     <br />
     <hr />
