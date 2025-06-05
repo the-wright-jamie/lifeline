@@ -1,6 +1,7 @@
 import PathNotFound from '@/components/PathNotFound.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import DependencyView from '@/views/DependencyView.vue'
+import GitHubTrackerView from '@/views/GitHubTrackerView.vue'
 import Settings from '@/views/SettingsView.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import AboutView from '../views/AboutView.vue'
@@ -63,6 +64,11 @@ const router = createRouter({
       path: '/dependency/:dependency',
       name: 'dependency',
       component: DependencyView
+    },
+    {
+      path: '/repo/:author/:repo',
+      name: 'repo',
+      component: GitHubTrackerView
     },
     {
       path: '/:pathMatch(.*)*',

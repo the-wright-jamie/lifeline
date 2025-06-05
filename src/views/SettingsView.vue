@@ -2,11 +2,11 @@
 import { setTabTitle } from '@/assets/ts/utils'
 import ToggleButton from '@/components/ToggleButton.vue'
 import { ref } from 'vue'
-import { type Config } from '../assets/ts/types'
+import { type ConfigV1 } from '../assets/ts/types/lifeline'
 
 setTabTitle('Settings')
 
-let config: Config = JSON.parse(localStorage.getItem('config') || '')
+let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
 
 let showLatest = ref(config.dashboardConfig.latestNews)
 let showUpcoming = ref(config.dashboardConfig.upcomingEOL)
@@ -23,7 +23,7 @@ let showHelp = ref(config.headerConfig.showHelp)
 let resetting = ref(false)
 
 function updateLatest() {
-  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.latestNews = !config.dashboardConfig.latestNews
   localStorage.setItem('config', JSON.stringify(config))
   showLatest.value = !showLatest.value
@@ -31,7 +31,7 @@ function updateLatest() {
 }
 
 function updateUpcoming() {
-  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.upcomingEOL = !config.dashboardConfig.upcomingEOL
   localStorage.setItem('config', JSON.stringify(config))
   showUpcoming.value = !showUpcoming.value
@@ -39,7 +39,7 @@ function updateUpcoming() {
 }
 
 function updatePastEOL() {
-  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.pastEOL = !config.dashboardConfig.pastEOL
   localStorage.setItem('config', JSON.stringify(config))
   showPastEOL.value = !showPastEOL.value
@@ -47,7 +47,7 @@ function updatePastEOL() {
 }
 
 function updateGantt() {
-  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.ganttChart = !config.dashboardConfig.ganttChart
   localStorage.setItem('config', JSON.stringify(config))
   showGantt.value = !showGantt.value
@@ -58,7 +58,7 @@ function updateEntries(input: number) {
   if (isNaN(input) || input == 0) {
     input = 10
   }
-  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.newsEntries = input
   localStorage.setItem('config', JSON.stringify(config))
 }
@@ -67,21 +67,21 @@ function updateWidth(input: number) {
   if (isNaN(input) || input == 0 || input < 30) {
     input = 30
   }
-  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
   config.dashboardConfig.ganttMaxWidth = input
   ganttMaxWidth.value = input
   localStorage.setItem('config', JSON.stringify(config))
 }
 
 function updateAbout() {
-  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
   config.headerConfig.showAbout = !config.headerConfig.showAbout
   localStorage.setItem('config', JSON.stringify(config))
   showAbout.value = !showAbout.value
 }
 
 function updateHelp() {
-  let config: Config = JSON.parse(localStorage.getItem('config') || '')
+  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
   config.headerConfig.showHelp = !config.headerConfig.showHelp
   localStorage.setItem('config', JSON.stringify(config))
   showHelp.value = !showHelp.value

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getMachineName, setTabTitle } from '@/assets/ts/utils'
 import { ref } from 'vue'
-import { type Config } from '../assets/ts/types'
+import { type ConfigV1 } from '../assets/ts/types/lifeline'
 import ErrorMessage from './ErrorMessage.vue'
 import GanttChart from './GanttChart.vue'
 import LatestNews from './LatestNews.vue'
@@ -29,7 +29,7 @@ let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
 let diagram = ref(``)
 let error = ref(false)
 
-const config: Config = JSON.parse(localStorage.getItem('config') || '')
+const config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
 const allDisabled = ref(
   !config.dashboardConfig.latestNews &&
     !config.dashboardConfig.upcomingEOL &&

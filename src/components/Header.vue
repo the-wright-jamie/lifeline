@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { type Config } from '../assets/ts/types'
+import { type ConfigV1 } from '../assets/ts/types/lifeline'
 
-const config: Config = JSON.parse(localStorage.getItem('config') || '')
+const config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
 
 const showAbout = ref(config.headerConfig.showAbout)
 const showHelp = ref(config.headerConfig.showHelp)

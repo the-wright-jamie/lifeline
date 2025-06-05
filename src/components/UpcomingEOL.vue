@@ -6,9 +6,9 @@ import {
   isDateBeforeToday,
   unixTimestampToLocalDate
 } from '@/assets/ts/utils'
-import { type Config } from '../assets/ts/types'
+import { type ConfigV1 } from '../assets/ts/types/lifeline'
 
-const config: Config = JSON.parse(localStorage.getItem('config') || '')
+const config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
 const props = defineProps({
   data: String
 })

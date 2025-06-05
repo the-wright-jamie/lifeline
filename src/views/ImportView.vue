@@ -3,7 +3,7 @@ import { setTabTitle } from '@/assets/ts/utils'
 import Spinner from '@/components/Spinner.vue'
 import router from '@/router'
 import { ref } from 'vue'
-import { type Config } from '../assets/ts/types'
+import { type ConfigV1 } from '../assets/ts/types/lifeline'
 
 setTabTitle('Import')
 
@@ -26,7 +26,7 @@ function checkHealth(rawConfig: string) {
   success.value = false
   errorMessages.value = []
 
-  let config: Config
+  let config: ConfigV1
 
   try {
     config = JSON.parse(rawConfig)

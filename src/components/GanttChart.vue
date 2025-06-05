@@ -2,7 +2,7 @@
 import { ganttChartUpdate, getFriendlyName } from '@/assets/ts/utils'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ref } from 'vue'
-import { type Config } from '../assets/ts/types'
+import { type ConfigV1 } from '../assets/ts/types/lifeline'
 
 // @ts-ignore
 const props = defineProps({
@@ -10,7 +10,7 @@ const props = defineProps({
   depJson: JSON
 })
 
-let config: Config = JSON.parse(localStorage.getItem('config') || null)
+let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || null)
 let configNotFound = false
 if (config == null) {
   configNotFound = true

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { dateToUnixTimestamp, generateAboutLink, unixTimestampToLocalDate } from '@/assets/ts/utils'
-import { type Config } from '../assets/ts/types'
+import { type ConfigV1 } from '../assets/ts/types/lifeline'
 
 const props = defineProps({
   data: String
 })
 
-const config: Config = JSON.parse(localStorage.getItem('config') || '')
+const config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
 const allData = JSON.parse(props.data)
 const showEOL = config.dashboardConfig.upcomingEOL || config.dashboardConfig.pastEOL
 let someData = []

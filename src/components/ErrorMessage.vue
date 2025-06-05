@@ -31,6 +31,6 @@ function pickRandomErrorImage() {
     </ImagePlaceholder>
     <br />
     <h1>{{ header }}</h1>
-    <p>{{ message }}</p>
+    <p class="pre-formatted">{{ message }}</p>
   </div>
 </template>

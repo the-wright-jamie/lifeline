@@ -12,5 +12,4 @@ const loading_info = `Loading info on '${dependency}''`
     <DependencyInfo :dependency="dependency" />
     <template #fallback> <AnimeSpinner class="middle" :msg="loading_info" /></template>
   </Suspense>
-  <!-- hey, what are you doing here? this is a secret new feature - it's not ready yet! -->
 </template>

@@ -339,3 +339,7 @@ hr {
   font-stretch: 200%;
   font-optical-sizing: auto;
 }
+
+.pre-formatted {
+  white-space: pre;
+}
