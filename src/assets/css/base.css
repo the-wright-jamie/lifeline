@@ -15,7 +15,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--color-neutral-200, currentColor);
   }
 }
 
@@ -126,7 +126,7 @@ a {
 
 body {
   color: var(--color-text);
-  background: var(--color-background);
+  background: var(--color-background-soft);
   font-family: 'Roboto' !important;
 }
 
@@ -317,7 +317,7 @@ hr {
 }
 
 .code {
-  background-color: #282828;
+  background-color: #121212;
   width: fit-content;
   padding: 0.5em 0.5em 0.5em 1em;
   border-radius: 0.5em;

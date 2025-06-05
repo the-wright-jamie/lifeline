@@ -13,7 +13,7 @@ setTabTitle('About')
     <h1>Welcome! 👋</h1>
     <br />
     <button
-      class="bg-black hover:bg-gray-600 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black py-2 px-4 rounded-full"
+      class="bg-black hover:bg-neutral-600 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-black py-2 px-4 rounded-full"
       @click="$router.go(-1)"
     >
       <span class="material-symbols-rounded">&#xe5c4;</span> Go Back

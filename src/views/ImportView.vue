@@ -134,7 +134,7 @@ function checkOrCross(result: boolean) {
     />
     <button
       @click="clickUpload()"
-      class="bg-black hover:bg-gray-600 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black py-2 px-4 rounded-full"
+      class="bg-black hover:bg-neutral-600 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-black py-2 px-4 rounded-full"
     >
       <h1><span class="material-symbols-rounded large">&#xf090;</span> Import</h1>
     </button>
@@ -144,17 +144,19 @@ function checkOrCross(result: boolean) {
   <Spinner v-if="!uploaded" msg="Waiting for upload" />
   <div v-if="uploaded">
     <table>
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <thead
+        class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400"
+      >
         <tr>
           <th scope="col" class="px-6 py-3">Check</th>
           <th scope="col" class="px-6 py-3">Status</th>
         </tr>
       </thead>
       <tbody>
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+        <tr class="bg-white border-b dark:bg-neutral-800 dark:border-neutral-700">
           <th
             scope="row"
-            class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            class="px-6 py-2 font-medium text-neutral-900 whitespace-nowrap dark:text-white"
           >
             <p>Version</p>
           </th>
@@ -162,10 +164,10 @@ function checkOrCross(result: boolean) {
             <span v-html="checkOrCross(versionCheck).rawHtml"></span>
           </td>
         </tr>
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+        <tr class="bg-white border-b dark:bg-neutral-800 dark:border-neutral-700">
           <th
             scope="row"
-            class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            class="px-6 py-2 font-medium text-neutral-900 whitespace-nowrap dark:text-white"
           >
             <p>Tracked Dependencies</p>
           </th>
@@ -173,10 +175,10 @@ function checkOrCross(result: boolean) {
             <span v-html="checkOrCross(dependenciesCheck).rawHtml"></span>
           </td>
         </tr>
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+        <tr class="bg-white border-b dark:bg-neutral-800 dark:border-neutral-700">
           <th
             scope="row"
-            class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            class="px-6 py-2 font-medium text-neutral-900 whitespace-nowrap dark:text-white"
           >
             <p>Dashboard Preferences</p>
           </th>
@@ -184,10 +186,10 @@ function checkOrCross(result: boolean) {
             <span v-html="checkOrCross(dashboardCheck).rawHtml"></span>
           </td>
         </tr>
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+        <tr class="bg-white border-b dark:bg-neutral-800 dark:border-neutral-700">
           <th
             scope="row"
-            class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            class="px-6 py-2 font-medium text-neutral-900 whitespace-nowrap dark:text-white"
           >
             <p>Header Preferences</p>
           </th>
@@ -205,7 +207,7 @@ function checkOrCross(result: boolean) {
       </h2>
       <button
         @click="saveAndContinue()"
-        class="bg-black hover:bg-gray-600 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black py-2 px-4 rounded-full"
+        class="bg-black hover:bg-neutral-600 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-black py-2 px-4 rounded-full"
       >
         Continue <span class="material-symbols-rounded">&#xe5c8;</span>
       </button>

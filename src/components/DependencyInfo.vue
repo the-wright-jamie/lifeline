@@ -171,7 +171,7 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
               <span class="large monospace"> {{ howToGetCurrentVersion }}</span>
               <button
                 @click="copyToClipboard(howToGetCurrentVersion)"
-                class="text-gray-500 hover:bg-gray-300 copy-button"
+                class="text-neutral-500 hover:bg-neutral-300 copy-button"
               >
                 <span id="default-icon" v-if="!showSuccessIcon"
                   ><span
@@ -196,9 +196,11 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
     <br />
     <div>
       <h2>All Known Releases</h2>
-      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+      <table
+        class="rounded-xl w-full text-sm text-left rtl:text-right text-neutral-500 dark:text-neutral-400"
+      >
         <thead
-          class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+          class="text-xs text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400"
         >
           <tr>
             <th scope="col" class="px-6 py-3">Release</th>
@@ -208,11 +210,14 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
             <th scope="col" class="px-6 py-3" v-if="anyKnownPatches">Latest Patch</th>
           </tr>
         </thead>
-        <tbody v-for="release in depJson">
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+        <tbody v-for="(release, i) in depJson">
+          <tr
+            class="border-b dark:bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+            :class="i % 2 == 0 ? 'bg-neutral-100 dark:bg-neutral-900' : 'bg-white'"
+          >
             <th
               scope="row"
-              class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              class="px-6 py-2 font-medium text-neutral-900 whitespace-nowrap dark:text-white"
             >
               {{ release.label }}
             </th>
@@ -264,8 +269,8 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
                 release.latest.name
               }}</a
               ><span v-else>{{ release.latest.name }}</span
-              ><span v-if="release.latest != null && release.latest.date"
-                ><br />({{ toLocalDate(release.latest.date) }})</span
+              ><span v-if="release.latest != null && release.latest.date" class="text-xs">
+                ({{ toLocalDate(release.latest.date) }})</span
               >
             </td>
           </tr>
@@ -318,7 +323,7 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
                 <span class="large monospace">https://{{ host }}/#/dependency/</span>
                 <button
                   @click="copyToClipboard(`https://${host}/#/dependency`)"
-                  class="text-gray-500 hover:bg-gray-300 copy-button"
+                  class="text-neutral-500 hover:bg-neutral-300 copy-button"
                 >
                   <span id="default-icon" v-if="!showSuccessIcon"
                     ><span
@@ -342,7 +347,7 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
             <div>
               <button
                 @click="helpShowMore = !helpShowMore"
-                class="block p-1 pr-2.5 pl-2 pt-1.5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-white"
+                class="block p-1 pr-2.5 pl-2 pt-1.5 text-neutral-900 border border-neutral-300 rounded-xl bg-neutral-50 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-900 dark:border-neutral-600 dark:text-white"
               >
                 <span class="material-symbols-rounded pr-1.5">{{
                   helpShowMore ? '&#xea19;' : '&#xf53c;'

@@ -5,6 +5,8 @@ import { defineConfig } from 'vite'
 import checker from 'vite-plugin-checker'
 
 // https://vitejs.dev/config/
+// For future reference:
+// vueTsc needs to be defined here or else the error checking won't work
 export default defineConfig({
   plugins: [
     vue(),

@@ -104,12 +104,12 @@ diagram.value = ganttChartUpdate(
 </script>
 
 <template>
-  <h2>Gantt Chart</h2>
-  <div class="grid auto-cols-2 grid-flow-col gap-4">
+  <h2 class="select-none">Gantt Chart</h2>
+  <div class="grid auto-cols-2 grid-flow-col gap-4 select-none">
     <Menu v-if="dependencies.length > 1" as="div" class="relative inline-block text-left">
       <div>
         <MenuButton
-          class="inline-flex w-full justify-center p-2 pr-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-white"
+          class="inline-flex w-full justify-center p-2 pr-3 text-neutral-900 border border-neutral-300 rounded-xl bg-neutral-50 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-900 dark:border-neutral-600 dark:text-white"
         >
           Showing: {{ getFriendlyName(focusedDependency) }}
         </MenuButton>
@@ -124,7 +124,7 @@ diagram.value = ganttChartUpdate(
         leave-to-class="transform opacity-0 scale-95"
       >
         <MenuItems
-          class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-gray-900 ring-1 shadow-lg ring-black/5 focus:outline-hidden"
+          class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-neutral-900 ring-1 shadow-lg ring-black/5 focus:outline-hidden"
         >
           <div class="py-1">
             <MenuItem>
@@ -157,13 +157,14 @@ diagram.value = ganttChartUpdate(
     </Menu>
     <button
       @click="resetSliders()"
-      class="relative inline-block p-2 pr-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-white"
+      class="relative inline-block p-2 pr-3 text-neutral-900 border border-neutral-300 rounded-xl bg-neutral-50 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-900 dark:border-neutral-600 dark:text-white"
     >
       Reset Chart
     </button>
   </div>
 
-  <div class="stickyHeader bg-white dark:bg-black">
+  <!-- TODO: fix header background -->
+  <div class="stickyHeader select-none">
     <br />
     <div class="grid auto-cols-2 grid-flow-col gap-4">
       <div class="relative mb-6">
@@ -175,11 +176,13 @@ diagram.value = ganttChartUpdate(
           min="30"
           :max="userChartMaxWidth"
           step="1"
-          class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+          class="w-full h-2 bg-neutral-200 rounded-xl appearance-none cursor-pointer dark:bg-neutral-700 accent-neutral-600 dark:accent-white"
           @input="(event) => updateWidth(Number((event.target as HTMLInputElement).value))"
         />
-        <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-0 -bottom-6">30</span>
-        <span class="text-sm text-gray-500 dark:text-gray-400 absolute end-0 -bottom-6">{{
+        <span class="text-sm text-neutral-500 dark:text-neutral-400 absolute start-0 -bottom-6"
+          >30</span
+        >
+        <span class="text-sm text-neutral-500 dark:text-neutral-400 absolute end-0 -bottom-6">{{
           userChartMaxWidth
         }}</span>
       </div>
@@ -194,21 +197,21 @@ diagram.value = ganttChartUpdate(
           :min="-userChartMaxWidth / 2"
           :max="userChartMaxWidth / 2"
           step="1"
-          class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+          class="w-full h-2 bg-neutral-200 rounded-xl appearance-none cursor-pointer dark:bg-neutral-700 accent-neutral-600 dark:accent-white"
           @input="(event) => updateOffset(Number((event.target as HTMLInputElement).value))"
         />
-        <span class="text-sm text-gray-500 dark:text-gray-400 absolute start-0 -bottom-6">{{
+        <span class="text-sm text-neutral-500 dark:text-neutral-400 absolute start-0 -bottom-6">{{
           userChartMaxWidth / 2
         }}</span>
-        <span class="text-sm text-gray-500 dark:text-gray-400 absolute end-0 -bottom-6">{{
+        <span class="text-sm text-neutral-500 dark:text-neutral-400 absolute end-0 -bottom-6">{{
           -userChartMaxWidth / 2
         }}</span>
       </div>
     </div>
     <br />
   </div>
-  <vue-mermaid-string :value="diagram" />
-  <div v-if="configNotFound">
+  <vue-mermaid-string :value="diagram" class="select-none" />
+  <div class="select-none" v-if="configNotFound">
     <div class="grid gap-4 grid-flow-col">
       <div>
         <span class="material-symbols-rounded">&#xe88e;</span>

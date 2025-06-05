@@ -20,7 +20,7 @@ setTabTitle('Welcome!')
     <div className="mb-32 grid lg:grid-cols-1 lg:text-left">
       <RouterLink
         to="/setup"
-        className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 dark:hover:border-neutral-700 dark:hover:bg-neutral-800/30 not-hyperlink"
+        className="group rounded-xl border border-transparent px-5 py-4 transition-colors hover:border-neutral-300 hover:bg-neutral-100 dark:hover:border-neutral-700 dark:hover:bg-neutral-800/30 not-hyperlink"
       >
         <h2 className="mb-3 text-2xl font-semibold">
           Start from scratch
@@ -36,7 +36,7 @@ setTabTitle('Welcome!')
       </RouterLink>
       <RouterLink
         to="/import"
-        className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 dark:hover:border-neutral-700 dark:hover:bg-neutral-800/30 not-hyperlink"
+        className="group rounded-xl border border-transparent px-5 py-4 transition-colors hover:border-neutral-300 hover:bg-neutral-100 dark:hover:border-neutral-700 dark:hover:bg-neutral-800/30 not-hyperlink"
       >
         <h2 className="mb-3 text-2xl font-semibold">
           Import JSON

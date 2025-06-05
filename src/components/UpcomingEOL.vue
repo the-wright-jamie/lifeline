@@ -67,10 +67,14 @@ if (!config.dashboardConfig.upcomingEOL) {
 </script>
 
 <template>
-  <h2>Known end-of-life dates</h2>
+  <h2 class="select-none">Known end-of-life dates</h2>
   <div>
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+    <table
+      class="w-full text-sm text-left rtl:text-right text-neutral-500 dark:text-neutral-400 rounded-xl"
+    >
+      <thead
+        class="text-xs text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
+      >
         <tr>
           <th scope="col" class="px-6 py-3">Project</th>
           <th scope="col" class="px-6 py-3">Release</th>
@@ -80,7 +84,7 @@ if (!config.dashboardConfig.upcomingEOL) {
       <!-- actual headers -->
       <thead
         v-if="config.dashboardConfig.pastEOL && otherDataToDisplay.length == 0"
-        class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400"
+        class="text-xs text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
           <th scope="col" class="px-6 py-2 spacer" colspan="3">No known past EOL dates</th>
@@ -89,17 +93,20 @@ if (!config.dashboardConfig.upcomingEOL) {
       <!-- no known past EOL -->
       <thead
         v-if="config.dashboardConfig.pastEOL && otherDataToDisplay.length != 0"
-        class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-600 dark:text-gray-400"
+        class="text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
           <th scope="col" class="px-6 py-2 spacer" colspan="3">Recently past EOL Dates</th>
         </tr>
       </thead>
-      <tbody v-if="config.dashboardConfig.pastEOL" v-for="news in otherDataToDisplay">
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <tbody v-if="config.dashboardConfig.pastEOL" v-for="(news, i) in otherDataToDisplay">
+        <tr
+          class="border-b dark:bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+          :class="i % 2 == 0 ? 'bg-neutral-100 dark:bg-neutral-900' : 'bg-white'"
+        >
           <th
             scope="row"
-            class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            class="px-6 py-2 font-medium text-neutral-900 whitespace-nowrap dark:text-white"
           >
             <RouterLink class="not-hyperlink" :to="generateAboutLink(news[3])">{{
               news[1]
@@ -117,7 +124,7 @@ if (!config.dashboardConfig.upcomingEOL) {
       <!-- body of past EOL -->
       <thead
         v-if="config.dashboardConfig.upcomingEOL && dataToDisplay.length != 0"
-        class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-600 dark:text-gray-400"
+        class="text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
           <th scope="col" class="px-6 py-2 spacer" colspan="3">Future EOL Dates</th>
@@ -126,18 +133,21 @@ if (!config.dashboardConfig.upcomingEOL) {
       <!-- future EOL -->
       <thead
         v-if="config.dashboardConfig.upcomingEOL && dataToDisplay.length == 0"
-        class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-900 dark:text-gray-400"
+        class="text-xs text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
           <th scope="col" class="px-6 py-2 spacer" colspan="3">No known future EOL dates</th>
         </tr>
       </thead>
       <!-- no known future EOL -->
-      <tbody v-if="config.dashboardConfig.upcomingEOL" v-for="news in dataToDisplay">
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <tbody v-if="config.dashboardConfig.upcomingEOL" v-for="(news, i) in dataToDisplay">
+        <tr
+          class="border-b dark:bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+          :class="i % 2 == 0 ? 'bg-neutral-100 dark:bg-neutral-900' : 'bg-white'"
+        >
           <th
             scope="row"
-            class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            class="px-6 py-2 font-medium text-neutral-900 whitespace-nowrap dark:text-white"
           >
             <RouterLink class="not-hyperlink" :to="generateAboutLink(news[3])">{{
               news[1]

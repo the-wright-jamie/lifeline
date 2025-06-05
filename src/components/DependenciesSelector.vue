@@ -228,7 +228,7 @@ setTabTitle('Setup')
         <button
           v-if="selected.length != 0"
           @click="saveDependencies(selected)"
-          class="relative inline-block p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-white"
+          class="relative inline-block p-2 text-neutral-900 border border-neutral-300 rounded-xl bg-neutral-50 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-900 dark:border-neutral-600 dark:text-white"
         >
           <span class="material-symbols-rounded">&#xe161;</span>
         </button>
@@ -239,7 +239,7 @@ setTabTitle('Setup')
       <form class="max-w-md mx-auto padding">
         <label
           for="default-search"
-          class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+          class="mb-2 text-sm font-medium text-neutral-900 sr-only dark:text-white"
           >Search</label
         >
         <div class="relative">
@@ -249,7 +249,7 @@ setTabTitle('Setup')
           <input
             type="search"
             id="default-search"
-            class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+            class="block w-full p-4 ps-10 text-sm text-neutral-900 border border-neutral-300 rounded-xl bg-neutral-50 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-400 dark:text-white"
             placeholder="Search available dependencies..."
             @input="
               (event) => (loaded_dependencies = search((event.target as HTMLInputElement).value))
@@ -341,7 +341,7 @@ setTabTitle('Setup')
             type="text"
             name="entries"
             id="entries"
-            class="block w-13 p-2 ps-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+            class="block w-13 p-2 ps-4 text-sm text-neutral-900 border border-neutral-300 rounded-xl bg-neutral-50 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-400 dark:text-white"
             :value="page_size"
             @input="(event) => updatePageSize(Number((event.target as HTMLInputElement).value))"
           />

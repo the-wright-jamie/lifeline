@@ -1,5 +1,5 @@
 <template>
-  <h1 class="center">
+  <h1 class="center select-none">
     <span class="material-symbols-rounded icon-correction">&#xe650;</span
     ><i class="title">Lifeline</i
     ><span class="material-symbols-rounded icon-correction title">&#xe650;</span>

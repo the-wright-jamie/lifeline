@@ -50,20 +50,25 @@ let dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries)
 </script>
 
 <template>
-  <h2>Latest Releases</h2>
-  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+  <h2 class="select-none">Latest Releases</h2>
+  <table class="w-full text-sm text-left rtl:text-right text-neutral-500 dark:text-neutral-400">
+    <thead
+      class="text-xs text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
+    >
       <tr>
         <th scope="col" class="px-6 py-3">Project</th>
         <th scope="col" class="px-6 py-3">Release</th>
         <th scope="col" class="px-6 py-3">Date</th>
       </tr>
     </thead>
-    <tbody v-for="news in dataToDisplay">
-      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+    <tbody v-for="(news, i) in dataToDisplay">
+      <tr
+        class="border-b dark:bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+        :class="i % 2 == 0 ? 'bg-neutral-100 dark:bg-neutral-900' : 'bg-white'"
+      >
         <th
           scope="row"
-          class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          class="px-6 py-2 font-medium text-neutral-900 whitespace-nowrap dark:text-white"
         >
           <RouterLink class="not-hyperlink" :to="generateAboutLink(news[5])">{{
             news[1]
