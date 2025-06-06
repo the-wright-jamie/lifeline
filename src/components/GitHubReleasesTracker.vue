@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Release } from '@/assets/ts/types/github'
 import { getData, setTabTitle } from '@/assets/ts/utils'
+import { marked } from 'marked'
 import { ref } from 'vue'
 const props = defineProps({
   author: String,
@@ -32,6 +33,27 @@ try {
 
 let releases: Release[] = releases_info
 
+// Compute markdown HTML for each release body
+type ReleaseWithHtml = Release & { bodyHtml?: string }
+let releasesWithHtml: ReleaseWithHtml[] = []
+if (!error.value && releases) {
+  // @ts-expect-error
+  releasesWithHtml = releases.map((release) => {
+    let body = release.body ? String(release.body) : ''
+    // Remove empty lines from markdown
+    let cleanedBody = body
+      .split('\n')
+      .filter((line) => line.trim() !== '')
+      .join('\n')
+    return {
+      ...release,
+      bodyHtml: cleanedBody ? marked.parse(cleanedBody) : ''
+    }
+  })
+} else {
+  releasesWithHtml = []
+}
+
 // let helpShowMore = ref(false)
 
 let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -53,6 +75,43 @@ let host = location.host
 
 let depJson = []
 let ganttDepJSON = {}*/
+
+// Helper: Convert GitHub releases to Gantt-compatible format
+function githubReleasesToGanttJson(releases: Release[], repoLabel: string) {
+  // Sort releases by published date ascending (oldest first)
+  const sorted = [...releases].sort((a, b) => {
+    const aDate = a.published_at
+      ? new Date(a.published_at).getTime()
+      : new Date(a.created_at).getTime()
+    const bDate = b.published_at
+      ? new Date(b.published_at).getTime()
+      : new Date(b.created_at).getTime()
+    return aDate - bDate
+  })
+  return {
+    [repoLabel]: {
+      label: repoLabel,
+      releases: sorted.reverse().map((release, idx, arr) => {
+        const thisReleaseDate = release.published_at || release.created_at
+        // EOL for this release is the release date of the next release, if it exists
+        let eolFrom = null
+        if (idx < arr.length - 1) {
+          eolFrom = arr[idx + 1].published_at || arr[idx + 1].created_at
+        }
+        // For the last release, eolFrom remains null
+        return {
+          label: release.name || release.tag_name,
+          releaseDate: thisReleaseDate,
+          eolFrom: eolFrom,
+          isEol: false, // GitHub doesn't provide EOL
+          latest: null // Not applicable
+        }
+      })
+    }
+  }
+}
+
+let ganttDepJSON = {}
 
 if (!error.value) {
   releases.forEach((release) => {
@@ -99,7 +158,11 @@ if (!error.value) {
 
   // generate the depJSON as gantt expects it...
   ganttDepJSON[`${dependency_info.result.label}`] = dependency_info.result*/
+  ganttDepJSON = githubReleasesToGanttJson(releases, `${props.author}/${props.repo}`)
+  setTabTitle(`${props.author}/${props.repo}`)
 }
+
+let depJsonString = JSON.stringify(ganttDepJSON)
 
 /*function copyToClipboard(text: string) {
   try {
@@ -144,18 +207,56 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
       </ImagePlaceholder>
       {{ author }}/{{ repo }}
     </h1>
-    <div v-for="release in releases">
-      <div class="flex flex-col gap-2 mb-4">
-        <h2 class="text-lg font-semibold">{{ release.name || release.tag_name }}</h2>
-        <p class="text-sm">
-          Published by {{ release.author.login }} on
-          {{ new Date(release.published_at).toLocaleDateString() }}
-        </p>
-        <p v-if="release.body" class="text-sm pre-formatted">{{ release.body }}</p>
-        <a :href="release.html_url" target="_blank" class="text-blue-500 hover:underline"
-          >View Release</a
+    <!-- New: Table of releases at the top -->
+    <div class="mb-8">
+      <h2>All Releases</h2>
+      <table
+        class="rounded-xl w-full text-sm text-left rtl:text-right text-neutral-500 dark:text-neutral-400"
+      >
+        <thead
+          class="text-xs text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400"
         >
-      </div>
+          <tr>
+            <th scope="col" class="px-6 py-3">Version</th>
+            <th scope="col" class="px-6 py-3">Tag</th>
+            <th scope="col" class="px-6 py-3">Release Date</th>
+            <th scope="col" class="px-6 py-3">Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(release, i) in releasesWithHtml"
+            :key="release.id"
+            :class="[
+              'border-b',
+              'dark:bg-neutral-800',
+              'dark:border-neutral-700',
+              'hover:bg-neutral-100',
+              'dark:hover:bg-neutral-700',
+              i % 2 === 0 ? 'bg-neutral-100 dark:bg-neutral-900' : 'bg-white'
+            ]"
+          >
+            <td class="px-6 py-2 font-medium text-neutral-900 whitespace-nowrap dark:text-white">
+              {{ release.name || release.tag_name }}
+            </td>
+            <td class="px-6 py-2 font-mono">
+              {{ release.tag_name }}
+            </td>
+            <td class="px-6 py-2">
+              {{ new Date(release.published_at).toLocaleDateString() }}
+            </td>
+            <td class="px-6 py-2">
+              <a :href="release.html_url" target="_blank" class="text-blue-500 hover:underline"
+                >View Release</a
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- Gantt Chart below the table -->
+    <div>
+      <GanttChart :dependencies="`${author}/${repo}`" :depJson="depJsonString" />
     </div>
   </div>
 </template>
