@@ -80,7 +80,7 @@ export function generateAboutLink(dependency: string) {
   return `/dependency/${dependency}`
 }
 
-export function getRandomInt(min, max) {
+export function getRandomInt(min: number, max: number) {
   const minCeiled = Math.ceil(min)
   const maxFloored = Math.floor(max)
   return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled) // The maximum is exclusive and the minimum is inclusive
@@ -139,7 +139,7 @@ export function ganttChartUpdate(
     }
 
     // for each entry in the array for each of the KEYS in the dependency JSON
-    depJson[`${data}`].releases.forEach((eolData) => {
+    depJson[`${data}`].releases.forEach((eolData: any) => {
       // if the EOL is greater than the seekback...
       if (dateToUnixTimestamp(eolData.eolFrom) > unixSeekback) {
         // ...and

@@ -235,7 +235,9 @@ function exportConfig() {
       unless you have exported your config. Resetting <i>Lifeline</i> will delete your entire config
       and return it to its original settings. This is irreversible, be careful!
     </p>
-    <h1 v-else>Be careful, this is irreversible!</h1>
+    <h1 class="mt-3 uppercase" v-else>
+      Careful: this is irreversible. Ensure you've exported your config.
+    </h1>
   </div>
   <AboutFooter />
 </template>

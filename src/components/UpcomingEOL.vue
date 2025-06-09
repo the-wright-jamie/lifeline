@@ -12,8 +12,8 @@ const config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
 const props = defineProps({
   data: String
 })
-const allData = JSON.parse(props.data)
-let someData = []
+const allData = JSON.parse(props.data || '{}')
+let someData: any[][] = []
 
 for (var dependency in allData) {
   allData[`${dependency}`].releases.forEach((eolData) => {
@@ -39,17 +39,19 @@ if (!config.dashboardConfig.pastEOL) {
 
 someData = []
 for (var dependency in allData) {
-  allData[`${dependency}`].releases.forEach((eolData) => {
-    if (eolData.isEol == true && isDateBeforeToday(eolData.eolFrom)) {
-      someData.push([
-        dateToUnixTimestamp(eolData.eolFrom),
-        dependency,
-        eolData.label,
-        allData[`${dependency}`].name,
-        eolData.latest != null ? eolData.latest.link : ''
-      ])
+  allData[`${dependency}`].releases.forEach(
+    (eolData: { isEol: boolean; eolFrom: string; label: any; latest: string | null }) => {
+      if (eolData.isEol == true && isDateBeforeToday(eolData.eolFrom)) {
+        someData.push([
+          dateToUnixTimestamp(eolData.eolFrom),
+          dependency,
+          eolData.label,
+          allData[`${dependency}`].name,
+          eolData.latest != null ? eolData.latest.link : ''
+        ])
+      }
     }
-  })
+  )
 }
 
 someData.sort((a, b) => b[0] - a[0])

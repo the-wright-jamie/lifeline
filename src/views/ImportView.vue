@@ -13,7 +13,7 @@ let headerCheck = ref(false)
 let dashboardCheck = ref(false)
 let success = ref(false)
 let uploaded = ref(false)
-let errorMessages = ref([])
+let errorMessages = ref<string[]>([])
 let safeConfig = ref('')
 
 function checkHealth(rawConfig: string) {
@@ -102,7 +102,10 @@ function saveAndContinue() {
 }
 
 function clickUpload() {
-  document.getElementById('fileUpload').click()
+  const fileInput = document.getElementById('fileUpload')
+  if (fileInput) {
+    fileInput.click()
+  }
 }
 
 function handleFileUpload(e: any) {
@@ -110,7 +113,9 @@ function handleFileUpload(e: any) {
   var reader = new FileReader()
   reader.readAsText(file, 'UTF-8')
   reader.onload = function (evt) {
-    checkHealth(evt.target.result.toString())
+    if (evt.target && evt.target.result) {
+      checkHealth(evt.target.result.toString())
+    }
   }
 }
 

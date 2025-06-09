@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { setTabTitle } from '@/assets/ts/utils'
 
+function isOriginalDomain(): boolean {
+  return window.location.hostname === 'the-wright-jamie.dev'
+}
+
 setTabTitle('Credits')
 </script>
 
@@ -22,13 +26,18 @@ setTabTitle('Credits')
       <a href="https://www.fusejs.io/">Fuse.js</a> - for providing the fuzzy search engine used in
       the dependency search screen
     </li>
-    <li>
+    <li v-if="isOriginalDomain()">
       <a href="https://pages.github.com/">GitHub Pages</a> - for hosting this instance of Lifeline
     </li>
     <br />
     <li>
       <a href="https://endoflife.date/">endoflife.date</a> - the provider of the data used for
       Lifeline
+    </li>
+
+    <li>
+      The <a href="https://docs.github.com/en/rest">GitHub</a> API - the provider of GitHub
+      repository data
     </li>
   </ul>
 

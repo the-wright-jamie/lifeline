@@ -28,14 +28,14 @@ wavy font effect: https://codepen.io/zachkrall/pen/MWWGMPx
 */
 
 onMounted(() => {
-  let h1 = document.getElementById('animated')
-  let text = h1.innerHTML
+  const h1 = document.getElementById('animated')
+  if (!h1) return
+
+  const text = h1.innerHTML
 
   h1.innerHTML = text
     .split('')
-    .map((letter) => {
-      return `<span>` + letter + `</span>`
-    })
+    .map((letter) => `<span>${letter}</span>`)
     .join('')
 
   Array.from(h1.children).forEach((span, index) => {
