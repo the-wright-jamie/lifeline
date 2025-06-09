@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { getCurrentYear } from '@/assets/ts/utils'
+// @ts-ignore
+const APP_VERSION = import.meta.env.VITE_APP_VERSION
 </script>
 
 <template>
@@ -19,7 +21,7 @@ import { getCurrentYear } from '@/assets/ts/utils'
       <span class="material-symbols-rounded icon-faded">&#xe89e;</span>
       by <a href="https://github.com/the-wright-jamie" target="_blank">the-wright-jamie</a>
       <span class="material-symbols-rounded icon-faded">&#xe89e;</span> |
-      <span class="monospace">v1.5.1</span> |
+      <span class="monospace">v {{ APP_VERSION }}</span> |
       <span class="monospace">2024 - {{ getCurrentYear() }}</span>
     </h6>
     <p>
