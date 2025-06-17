@@ -45,6 +45,15 @@ try {
 
 let releases: Release[] = releases_info
 
+// Sort releases by published_at (or created_at) descending (most recent first)
+if (releases) {
+  releases = releases.slice().sort((a, b) => {
+    const dateA = new Date(a.published_at || a.created_at).getTime()
+    const dateB = new Date(b.published_at || b.created_at).getTime()
+    return dateB - dateA
+  })
+}
+
 let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
 
 // Helper: Convert GitHub releases to Gantt-compatible format

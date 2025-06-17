@@ -19,7 +19,7 @@ function handleProgress(event: Event) {
       <template #fallback> <AnimeSpinner class="middle" msg="Loading dashboard" /></template>
     </Suspense>
   </KeepAlive>
-  <div v-if="progress != 100">
+  <div v-if="progress != 100 && lastLoaded">
     <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700 mt-6">
       <div
         class="bg-black dark:bg-white text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
