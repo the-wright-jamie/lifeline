@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getMachineName, setTabTitle } from '@/assets/ts/utils'
 import { ref, watchEffect } from 'vue'
-import { type ConfigV1 } from '../assets/ts/types/lifeline'
+import { type ConfigV2 } from '../assets/ts/types/lifeline'
 import ErrorMessage from './ErrorMessage.vue'
 import GanttChart from './GanttChart.vue'
 import LatestNews from './LatestNews.vue'
@@ -63,22 +63,22 @@ let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
 let diagram = ref(``)
 let error = ref(false)
 
-const config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
+const config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
 const allDisabled = ref(
-  !config.dashboardConfig.latestNews &&
-    !config.dashboardConfig.upcomingEOL &&
-    !config.dashboardConfig.pastEOL &&
-    !config.dashboardConfig.ganttChart
+  !config.dashboard_config.show_latest_news &&
+    !config.dashboard_config.show_upcoming_EOL &&
+    !config.dashboard_config.show_past_EOL &&
+    !config.dashboard_config.show_gantt_chart
 )
 const dependencies = config.dependencies
 const showBothTopInfo = ref(
-  config.dashboardConfig.latestNews &&
-    (config.dashboardConfig.upcomingEOL || config.dashboardConfig.pastEOL)
+  config.dashboard_config.show_latest_news &&
+    (config.dashboard_config.show_upcoming_EOL || config.dashboard_config.show_past_EOL)
 )
-const showLatest = ref(config.dashboardConfig.latestNews)
-const showUpcoming = ref(config.dashboardConfig.upcomingEOL)
-const showPastEOL = ref(config.dashboardConfig.pastEOL)
-const showGantt = ref(config.dashboardConfig.ganttChart)
+const showLatest = ref(config.dashboard_config.show_latest_news)
+const showUpcoming = ref(config.dashboard_config.show_upcoming_EOL)
+const showPastEOL = ref(config.dashboard_config.show_past_EOL)
+const showGantt = ref(config.dashboard_config.show_gantt_chart)
 
 let fetchArray: Promise<void | Response>[] = []
 

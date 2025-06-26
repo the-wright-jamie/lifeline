@@ -2,64 +2,73 @@
 import { setTabTitle } from '@/assets/ts/utils'
 import ToggleButton from '@/components/ToggleButton.vue'
 import { ref } from 'vue'
-import { type ConfigV1 } from '../assets/ts/types/lifeline'
+import { type ConfigV2 } from '../assets/ts/types/lifeline'
 
 setTabTitle('Settings')
 
-let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
+let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
 
-let showLatest = ref(config.dashboardConfig.latestNews)
-let showUpcoming = ref(config.dashboardConfig.upcomingEOL)
-let showPastEOL = ref(config.dashboardConfig.pastEOL)
-let showGantt = ref(config.dashboardConfig.ganttChart)
-let newsEntries = ref(config.dashboardConfig.newsEntries)
-let ganttMaxWidth = ref(config.dashboardConfig.ganttMaxWidth)
+let showLatest = ref(config.dashboard_config.show_latest_news)
+let showUpcoming = ref(config.dashboard_config.show_upcoming_EOL)
+let showPastEOL = ref(config.dashboard_config.show_past_EOL)
+let showGantt = ref(config.dashboard_config.show_gantt_chart)
+let highlightThisMonthEOL = ref(config.dashboard_config.highlight_this_month_EOL)
+let newsEntries = ref(config.dashboard_config.news_entries)
+let ganttMaxWidth = ref(config.dashboard_config.gantt_max_width)
 
 let disabledDashboard = ref(checkIfDashboardDisabled())
 
-let showAbout = ref(config.headerConfig.showAbout)
-let showHelp = ref(config.headerConfig.showHelp)
+let showAbout = ref(config.header_config.show_about_button)
+let showHelp = ref(config.header_config.show_help_button)
 
 let resetting = ref(false)
 
 function updateLatest() {
-  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
-  config.dashboardConfig.latestNews = !config.dashboardConfig.latestNews
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboard_config.show_latest_news = !config.dashboard_config.show_latest_news
   localStorage.setItem('config', JSON.stringify(config))
   showLatest.value = !showLatest.value
   disabledDashboard.value = checkIfDashboardDisabled()
 }
 
 function updateUpcoming() {
-  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
-  config.dashboardConfig.upcomingEOL = !config.dashboardConfig.upcomingEOL
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboard_config.show_upcoming_EOL = !config.dashboard_config.show_upcoming_EOL
   localStorage.setItem('config', JSON.stringify(config))
   showUpcoming.value = !showUpcoming.value
   disabledDashboard.value = checkIfDashboardDisabled()
 }
 
 function updatePastEOL() {
-  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
-  config.dashboardConfig.pastEOL = !config.dashboardConfig.pastEOL
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboard_config.show_past_EOL = !config.dashboard_config.show_past_EOL
   localStorage.setItem('config', JSON.stringify(config))
   showPastEOL.value = !showPastEOL.value
   disabledDashboard.value = checkIfDashboardDisabled()
 }
 
 function updateGantt() {
-  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
-  config.dashboardConfig.ganttChart = !config.dashboardConfig.ganttChart
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboard_config.show_gantt_chart = !config.dashboard_config.show_gantt_chart
   localStorage.setItem('config', JSON.stringify(config))
   showGantt.value = !showGantt.value
   disabledDashboard.value = checkIfDashboardDisabled()
+}
+
+function updateHighlightThisMonthEOL() {
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboard_config.highlight_this_month_EOL =
+    !config.dashboard_config.highlight_this_month_EOL
+  localStorage.setItem('config', JSON.stringify(config))
+  highlightThisMonthEOL.value = !highlightThisMonthEOL.value
 }
 
 function updateEntries(input: number) {
   if (isNaN(input) || input == 0) {
     input = 10
   }
-  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
-  config.dashboardConfig.newsEntries = input
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboard_config.news_entries = input
   localStorage.setItem('config', JSON.stringify(config))
 }
 
@@ -67,22 +76,22 @@ function updateWidth(input: number) {
   if (isNaN(input) || input == 0 || input < 30) {
     input = 30
   }
-  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
-  config.dashboardConfig.ganttMaxWidth = input
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboard_config.gantt_max_width = input
   ganttMaxWidth.value = input
   localStorage.setItem('config', JSON.stringify(config))
 }
 
 function updateAbout() {
-  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
-  config.headerConfig.showAbout = !config.headerConfig.showAbout
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.header_config.show_about_button = !config.header_config.show_about_button
   localStorage.setItem('config', JSON.stringify(config))
   showAbout.value = !showAbout.value
 }
 
 function updateHelp() {
-  let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
-  config.headerConfig.showHelp = !config.headerConfig.showHelp
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.header_config.show_help_button = !config.header_config.show_help_button
   localStorage.setItem('config', JSON.stringify(config))
   showHelp.value = !showHelp.value
 }
@@ -132,6 +141,11 @@ function exportConfig() {
     </button>
   </p>
   <p>
+    <button @click="updateHighlightThisMonthEOL()">
+      <ToggleButton :active="highlightThisMonthEOL" /> Highlight this month's EOLs
+    </button>
+  </p>
+  <p>
     <button @click="updateUpcoming()">
       <ToggleButton :active="showUpcoming" /> Show future end-of-life dates
     </button>
@@ -141,7 +155,7 @@ function exportConfig() {
       <ToggleButton :active="showPastEOL" /> Show past end-of-life dates
     </button>
   </p>
-  <div>
+  <div v-if="showLatest || showUpcoming || showPastEOL">
     <p>How many news entries should <i>Lifeline</i> show?</p>
     <div class="relative mt-2 rounded-md shadow-xs">
       <input
@@ -158,7 +172,7 @@ function exportConfig() {
   <p>
     <button @click="updateGantt()"><ToggleButton :active="showGantt" /> Show Gantt Chart</button>
   </p>
-  <div>
+  <div v-if="showGantt">
     <p>What should be the maximum amount of days you can see on the chart?</p>
     <div class="relative mt-2 rounded-md shadow-xs">
       <input

@@ -26,6 +26,7 @@ export type ConfigV2 = {
     show_upcoming_EOL: boolean
     show_past_EOL: boolean
     show_gantt_chart: boolean
+    highlight_this_month_EOL: boolean
     news_entries: number
     gantt_width: number
     gantt_max_width: number

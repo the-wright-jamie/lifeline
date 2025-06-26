@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { type ConfigV1 } from '../assets/ts/types/lifeline'
+import { type ConfigV2 } from '../assets/ts/types/lifeline'
 
-const config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
+const config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
 
-const showAbout = ref(config.headerConfig.showAbout)
-const showHelp = ref(config.headerConfig.showHelp)
+const showAbout = ref(config.header_config.show_about_button)
+const showHelp = ref(config.header_config.show_help_button)
 </script>
 
 <template>

@@ -8,7 +8,7 @@ import {
   setTabTitle
 } from '@/assets/ts/utils'
 import router from '@/router'
-import { type ConfigV1 } from '../assets/ts/types/lifeline'
+import { type ConfigV2 } from '../assets/ts/types/lifeline'
 
 setTabTitle('Loading...')
 
@@ -55,21 +55,24 @@ function returnPagedDependencies(start: number, end: number) {
 // this should probably be in a library...
 function saveDependencies(dependencies: string[]) {
   let rawConfig = localStorage.getItem('config')
-  let config: ConfigV1 = {
-    version: 1,
+  let config: ConfigV2 = {
+    version: 2,
     dependencies: [],
-    dashboardConfig: {
-      latestNews: true,
-      upcomingEOL: true,
-      pastEOL: true,
-      ganttChart: true,
-      newsEntries: 10,
-      ganttWidth: 356,
-      ganttMaxWidth: 730
+    tracked_repos: [],
+    personal_access_token: null,
+    dashboard_config: {
+      show_latest_news: true,
+      show_upcoming_EOL: true,
+      show_past_EOL: true,
+      show_gantt_chart: true,
+      highlight_this_month_EOL: false,
+      news_entries: 10,
+      gantt_width: 356,
+      gantt_max_width: 730
     },
-    headerConfig: {
-      showAbout: false,
-      showHelp: true
+    header_config: {
+      show_about_button: false,
+      show_help_button: true
     }
   }
   if (rawConfig) {
@@ -145,7 +148,7 @@ let total_results = ref(Object.keys(dependencies).length)
 let rawConfig = localStorage.getItem('config')
 
 if (rawConfig) {
-  let config: ConfigV1 = JSON.parse(rawConfig)
+  let config: ConfigV2 = JSON.parse(rawConfig)
   selected = ref(config.dependencies)
 }
 

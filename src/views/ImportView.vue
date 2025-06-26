@@ -3,7 +3,7 @@ import { setTabTitle } from '@/assets/ts/utils'
 import Spinner from '@/components/Spinner.vue'
 import router from '@/router'
 import { ref } from 'vue'
-import { type ConfigV1 } from '../assets/ts/types/lifeline'
+import { type ConfigV1, type ConfigV2 } from '../assets/ts/types/lifeline'
 
 setTabTitle('Import')
 
@@ -16,6 +16,29 @@ let uploaded = ref(false)
 let errorMessages = ref<string[]>([])
 let safeConfig = ref('')
 
+function migrateV1toV2(configV1: ConfigV1): ConfigV2 {
+  return {
+    version: 2,
+    dependencies: configV1.dependencies,
+    tracked_repos: [],
+    personal_access_token: null,
+    dashboard_config: {
+      show_latest_news: configV1.dashboardConfig.latestNews,
+      show_upcoming_EOL: configV1.dashboardConfig.upcomingEOL,
+      show_past_EOL: configV1.dashboardConfig.pastEOL,
+      show_gantt_chart: configV1.dashboardConfig.ganttChart,
+      highlight_this_month_EOL: false, // default for migration
+      news_entries: configV1.dashboardConfig.newsEntries,
+      gantt_width: configV1.dashboardConfig.ganttWidth ?? 30,
+      gantt_max_width: configV1.dashboardConfig.ganttMaxWidth
+    },
+    header_config: {
+      show_about_button: configV1.headerConfig.showAbout,
+      show_help_button: configV1.headerConfig.showHelp
+    }
+  }
+}
+
 function checkHealth(rawConfig: string) {
   uploaded.value = true
 
@@ -26,7 +49,8 @@ function checkHealth(rawConfig: string) {
   success.value = false
   errorMessages.value = []
 
-  let config: ConfigV1
+  let config: any
+  let configV2: ConfigV2 | null = null
 
   try {
     config = JSON.parse(rawConfig)
@@ -40,7 +64,12 @@ function checkHealth(rawConfig: string) {
     return
   }
 
-  if (config.version != 1) {
+  if (config.version === 1) {
+    // Migrate V1 to V2
+    configV2 = migrateV1toV2(config as ConfigV1)
+  } else if (config.version === 2) {
+    configV2 = config as ConfigV2
+  } else {
     errorMessages.value.push(
       'Configuration file is reporting that it is a version that is not supported by this instance of Lifeline'
     )
@@ -49,52 +78,48 @@ function checkHealth(rawConfig: string) {
 
   versionCheck.value = true
 
-  let expectedKeys = ['dependencies', 'dashboardConfig', 'headerConfig']
-
-  expectedKeys.forEach((key) => {
-    if (!config.hasOwnProperty(key)) {
-      errorMessages.value.push(`Configuration file does not have ${key}`)
-      return
-    }
-  })
-
-  expectedKeys = ['latestNews', 'upcomingEOL', 'pastEOL', 'ganttChart', 'newsEntries', 'ganttWidth']
-
-  expectedKeys.forEach((key) => {
-    if (!config.dashboardConfig.hasOwnProperty(key)) {
-      errorMessages.value.push(`Dashboard config does not have ${key}`)
-      return
-    }
-  })
-
-  dashboardCheck.value = true
-
-  expectedKeys = ['showAbout', 'showHelp']
-
-  expectedKeys.forEach((key) => {
-    if (!config.headerConfig.hasOwnProperty(key)) {
-      errorMessages.value.push(`Header config does not have ${key}`)
-      return
-    }
-  })
-
-  headerCheck.value = true
-
-  if (config.dependencies.length == 0) {
-    errorMessages.value.push(`Dependencies array is empty`)
+  // Check dependencies
+  if (!Array.isArray(configV2.dependencies) || configV2.dependencies.length === 0) {
+    errorMessages.value.push(`Dependencies array is empty or missing`)
     return
   }
-
   dependenciesCheck.value = true
 
-  success.value = true
+  // Check dashboard_config
+  const dashboardKeys = [
+    'show_latest_news',
+    'show_upcoming_EOL',
+    'show_past_EOL',
+    'show_gantt_chart',
+    'highlight_this_month_EOL',
+    'news_entries',
+    'gantt_width',
+    'gantt_max_width'
+  ]
+  dashboardKeys.forEach((key) => {
+    if (!configV2!.dashboard_config.hasOwnProperty(key)) {
+      errorMessages.value.push(`Dashboard config does not have ${key}`)
+    }
+  })
+  dashboardCheck.value = true
 
-  safeConfig.value = JSON.stringify(config)
+  // Check header_config
+  const headerKeys = ['show_about_button', 'show_help_button']
+  headerKeys.forEach((key) => {
+    if (!configV2!.header_config.hasOwnProperty(key)) {
+      errorMessages.value.push(`Header config does not have ${key}`)
+    }
+  })
+  headerCheck.value = true
+
+  success.value = errorMessages.value.length === 0
+  if (success.value) {
+    safeConfig.value = JSON.stringify(configV2)
+  }
 }
 
 function saveAndContinue() {
   localStorage.setItem('config', safeConfig.value)
-
   router.replace('/')
   setTimeout(function () {
     location.reload()

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { dateToUnixTimestamp, generateAboutLink, unixTimestampToLocalDate } from '@/assets/ts/utils'
-import { type ConfigV1 } from '../assets/ts/types/lifeline'
+import { type ConfigV2 } from '../assets/ts/types/lifeline'
 
 const props = defineProps({
   data: String
 })
 
-const config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
+const config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
 const allData = JSON.parse(props.data)
-const showEOL = config.dashboardConfig.upcomingEOL || config.dashboardConfig.pastEOL
+const showEOL = config.dashboard_config.show_upcoming_EOL || config.dashboard_config.show_past_EOL
 let someData = []
 
 for (var dependency in allData) {
@@ -46,7 +46,7 @@ for (var dependency in allData) {
 
 someData.sort((a, b) => b[0] - a[0])
 
-let dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries)
+let dataToDisplay = someData.slice(0, config.dashboard_config.news_entries)
 </script>
 
 <template>

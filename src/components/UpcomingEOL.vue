@@ -6,9 +6,9 @@ import {
   isDateBeforeToday,
   unixTimestampToLocalDate
 } from '@/assets/ts/utils'
-import { type ConfigV1 } from '../assets/ts/types/lifeline'
+import { type ConfigV2 } from '../assets/ts/types/lifeline'
 
-const config: ConfigV1 = JSON.parse(localStorage.getItem('config') || '')
+const config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
 const props = defineProps({
   data: String
 })
@@ -31,10 +31,10 @@ for (var dependency in allData) {
 
 someData.sort((a, b) => a[0] - b[0])
 let dataToDisplay = []
-if (!config.dashboardConfig.pastEOL) {
-  dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries - 1)
+if (!config.dashboard_config.show_past_EOL) {
+  dataToDisplay = someData.slice(0, config.dashboard_config.news_entries - 1)
 } else {
-  dataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries / 2 - 1)
+  dataToDisplay = someData.slice(0, config.dashboard_config.news_entries / 2 - 1)
 }
 
 someData = []
@@ -56,15 +56,18 @@ for (var dependency in allData) {
 
 someData.sort((a, b) => b[0] - a[0])
 let otherDataToDisplay = []
-if (!config.dashboardConfig.upcomingEOL) {
-  otherDataToDisplay = someData.slice(0, config.dashboardConfig.newsEntries - 1)
+if (!config.dashboard_config.show_upcoming_EOL) {
+  otherDataToDisplay = someData.slice(0, config.dashboard_config.news_entries - 1)
 } else {
-  otherDataToDisplay = someData.slice(
-    0,
-    config.dashboardConfig.newsEntries / 2 +
-      (config.dashboardConfig.newsEntries / 2 - dataToDisplay.length) -
-      2
-  )
+  otherDataToDisplay = someData.slice(0, config.dashboard_config.news_entries / 2 - 1)
+}
+
+const highlightThisMonthEOL = config.dashboard_config.highlight_this_month_EOL
+
+function isThisMonth(unixTimestamp: number) {
+  const date = new Date(unixTimestamp * 1000)
+  const now = new Date()
+  return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth()
 }
 </script>
 
@@ -85,7 +88,7 @@ if (!config.dashboardConfig.upcomingEOL) {
       </thead>
       <!-- actual headers -->
       <thead
-        v-if="config.dashboardConfig.pastEOL && otherDataToDisplay.length == 0"
+        v-if="config.dashboard_config.show_past_EOL && otherDataToDisplay.length == 0"
         class="text-xs text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
@@ -94,14 +97,14 @@ if (!config.dashboardConfig.upcomingEOL) {
       </thead>
       <!-- no known past EOL -->
       <thead
-        v-if="config.dashboardConfig.pastEOL && otherDataToDisplay.length != 0"
+        v-if="config.dashboard_config.show_past_EOL && otherDataToDisplay.length != 0"
         class="text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
           <th scope="col" class="px-6 py-2 spacer" colspan="3">Recently past EOL Dates</th>
         </tr>
       </thead>
-      <tbody v-if="config.dashboardConfig.pastEOL" v-for="(news, i) in otherDataToDisplay">
+      <tbody v-if="config.dashboard_config.show_past_EOL" v-for="(news, i) in otherDataToDisplay">
         <tr
           class="border-b dark:bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700"
           :class="i % 2 == 0 ? 'bg-neutral-100 dark:bg-neutral-900' : 'bg-white'"
@@ -119,13 +122,19 @@ if (!config.dashboardConfig.upcomingEOL) {
             <p v-else>{{ news[2] }}</p>
           </td>
           <td class="px-6 py-2">
-            {{ unixTimestampToLocalDate(news[0]) }}
+            <span
+              :class="
+                highlightThisMonthEOL && isThisMonth(news[0]) ? 'text-amber-500 font-bold' : ''
+              "
+            >
+              {{ unixTimestampToLocalDate(news[0]) }}
+            </span>
           </td>
         </tr>
       </tbody>
       <!-- body of past EOL -->
       <thead
-        v-if="config.dashboardConfig.upcomingEOL && dataToDisplay.length != 0"
+        v-if="config.dashboard_config.show_upcoming_EOL && dataToDisplay.length != 0"
         class="text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
@@ -134,7 +143,7 @@ if (!config.dashboardConfig.upcomingEOL) {
       </thead>
       <!-- future EOL -->
       <thead
-        v-if="config.dashboardConfig.upcomingEOL && dataToDisplay.length == 0"
+        v-if="config.dashboard_config.show_upcoming_EOL && dataToDisplay.length == 0"
         class="text-xs text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
@@ -142,7 +151,7 @@ if (!config.dashboardConfig.upcomingEOL) {
         </tr>
       </thead>
       <!-- no known future EOL -->
-      <tbody v-if="config.dashboardConfig.upcomingEOL" v-for="(news, i) in dataToDisplay">
+      <tbody v-if="config.dashboard_config.show_upcoming_EOL" v-for="(news, i) in dataToDisplay">
         <tr
           class="border-b dark:bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700"
           :class="i % 2 == 0 ? 'bg-neutral-100 dark:bg-neutral-900' : 'bg-white'"
@@ -160,7 +169,13 @@ if (!config.dashboardConfig.upcomingEOL) {
             <p v-else>{{ news[2] }}</p>
           </td>
           <td class="px-6 py-2">
-            {{ unixTimestampToLocalDate(news[0]) }}
+            <span
+              :class="
+                highlightThisMonthEOL && isThisMonth(news[0]) ? 'text-amber-500 font-bold' : ''
+              "
+            >
+              {{ unixTimestampToLocalDate(news[0]) }}
+            </span>
           </td>
         </tr>
       </tbody>

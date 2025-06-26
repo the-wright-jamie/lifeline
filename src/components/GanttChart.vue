@@ -2,7 +2,7 @@
 import { ganttChartUpdate, getFriendlyName } from '@/assets/ts/utils'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ref } from 'vue'
-import { type ConfigV1 } from '../assets/ts/types/lifeline'
+import { type ConfigV2 } from '../assets/ts/types/lifeline'
 
 // @ts-ignore
 const props = defineProps({
@@ -10,27 +10,30 @@ const props = defineProps({
   depJson: JSON
 })
 
-let config: ConfigV1 = JSON.parse(localStorage.getItem('config') || null)
+let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || null)
 let configNotFound = false
 if (config == null) {
   configNotFound = true
   // create fake config if it doesn't exist
   config = {
-    version: 1,
-    dashboardConfig: {
-      ganttWidth: 365,
-      ganttMaxWidth: 730,
-      ganttChart: true,
-      latestNews: true,
-      upcomingEOL: true,
-      pastEOL: true,
-      newsEntries: 10
+    version: 2,
+    dependencies: [],
+    tracked_repos: [],
+    personal_access_token: null,
+    dashboard_config: {
+      show_latest_news: true,
+      show_upcoming_EOL: true,
+      show_past_EOL: true,
+      show_gantt_chart: true,
+      highlight_this_month_EOL: false,
+      news_entries: 10,
+      gantt_width: 365,
+      gantt_max_width: 730
     },
-    headerConfig: {
-      showAbout: true,
-      showHelp: true
-    },
-    dependencies: []
+    header_config: {
+      show_about_button: true,
+      show_help_button: true
+    }
   }
 }
 const dependencies = props.dependencies.split(',')
@@ -40,8 +43,7 @@ function updateWidth(input: number) {
   if (isNaN(input) || input == 0 || input < 30) {
     input = 30
   }
-  //let config: Config = JSON.parse(localStorage.getItem('config') || '')
-  config.dashboardConfig.ganttWidth = input
+  config.dashboard_config.gantt_width = input
   userChartWidth.value = input
   diagram.value = ganttChartUpdate(
     userChartOffset.value,
@@ -73,9 +75,8 @@ function setFocusedDependency(dependency: string) {
 }
 
 function resetSliders() {
-  // let config: Config = JSON.parse(localStorage.getItem('config') || '')
-  config.dashboardConfig.ganttWidth = config.dashboardConfig.ganttMaxWidth / 2
-  userChartWidth.value = config.dashboardConfig.ganttMaxWidth / 2
+  config.dashboard_config.gantt_width = config.dashboard_config.gantt_max_width / 2
+  userChartWidth.value = config.dashboard_config.gantt_max_width / 2
   userChartOffset.value = 0
   focusedDependency.value = 'all'
   diagram.value = ganttChartUpdate(
@@ -88,9 +89,9 @@ function resetSliders() {
 }
 
 // set the max width of the chart in days
-const userChartMaxWidth = ref(config.dashboardConfig.ganttMaxWidth)
+const userChartMaxWidth = ref(config.dashboard_config.gantt_max_width)
 // set the width of the chart in days
-const userChartWidth = ref(config.dashboardConfig.ganttWidth)
+const userChartWidth = ref(config.dashboard_config.gantt_width)
 const userChartOffset = ref(0)
 const focusedDependency = ref('all')
 let diagram = ref('')
