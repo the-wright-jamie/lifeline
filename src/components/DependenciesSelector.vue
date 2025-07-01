@@ -67,8 +67,8 @@ function saveDependencies(dependencies: string[]) {
       show_gantt_chart: true,
       highlight_this_month_EOL: false,
       news_entries: 10,
-      gantt_width: 356,
-      gantt_max_width: 730
+      gantt_width: 3650,
+      gantt_max_width: 3650 * 2
     },
     header_config: {
       show_about_button: false,

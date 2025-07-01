@@ -23,6 +23,11 @@ let showHelp = ref(config.header_config.show_help_button)
 
 let resetting = ref(false)
 
+let githubPAT = ref(config.personal_access_token || '')
+let patSaved = ref(false)
+let patWarning = ref(false)
+let patShowMore = ref(false)
+
 function updateLatest() {
   let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
   config.dashboard_config.show_latest_news = !config.dashboard_config.show_latest_news
@@ -113,11 +118,30 @@ function checkIfDashboardDisabled() {
 }
 
 function exportConfig() {
+  let configStr = localStorage.getItem('config') || ''
+  let config: ConfigV2 | null = null
+  try {
+    config = JSON.parse(configStr)
+  } catch {}
+  if (config && config.personal_access_token) {
+    alert(
+      'Warning: Your exported config contains your GitHub Personal Access Token (PAT). Do not share this file unless you have removed the PAT!'
+    )
+  }
   var a = document.createElement('a')
-  var file = new Blob([localStorage.getItem('config') || ''], { type: 'application/json' })
+  var file = new Blob([configStr], { type: 'application/json' })
   a.href = URL.createObjectURL(file)
   a.download = 'Lifeline.json'
   a.click()
+}
+
+function updatePAT(newPAT: string) {
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.personal_access_token = newPAT.trim() || null
+  localStorage.setItem('config', JSON.stringify(config))
+  githubPAT.value = newPAT
+  patSaved.value = true
+  setTimeout(() => (patSaved.value = false), 2000)
 }
 </script>
 
@@ -253,6 +277,84 @@ function exportConfig() {
       Careful: this is irreversible. Ensure you've exported your config.
     </h1>
   </div>
+
+  <br />
+
+  <h3>GitHub Authorisation</h3>
+  <div>
+    <input
+      id="github-pat"
+      type="password"
+      class="block w-96 p-2 ps-4 text-sm text-neutral-900 border border-neutral-300 rounded-xl bg-neutral-50 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-400 dark:text-white"
+      :value="githubPAT"
+      @input="(event) => updatePAT((event.target as HTMLInputElement).value)"
+      placeholder="Paste your GitHub PAT here"
+      autocomplete="off"
+    />
+    <div v-if="patSaved" class="mt-3">
+      <span class="bg-green-600 p-2 pl-5 pr-5 rounded-xl">Changes saved!</span>
+    </div>
+
+    <br />
+
+    <h3 class="disabled">GITHUB PAT AND AUTHORISATION DISCLAIMER</h3>
+    <p class="disabled button-info">
+      <span>
+        <span class="text-amber-600">
+          If you only need to access release data from public repositories, please
+          <u>do not enter a PAT</u>
+        </span>
+        <span v-if="!patShowMore">. </span>
+        <span v-else> as it is unnecessary for accessing API data from public repositories. </span>
+        <br /><br />
+        <p>
+          By submitting a PAT, you confirm that you have read and understood the following
+          information, including the risks associated with improperly scoped tokens and potential
+          credential leakage; you also acknowledge that <i>Lifeline</i> cannot be held liable for
+          any consequences arising from your actions.
+          <span v-if="!patShowMore">If you do not understand this, please continue reading.</span>
+        </p>
+      </span>
+    </p>
+    <div class="disabled button-info" v-if="patShowMore">
+      <h2>If in doubt, do not submit a PAT.</h2>
+      If you do wish to continue please ensure that your token is appropriately scoped, avoiding
+      excessive permissions. It is recommended to use a Personal Access Token (PAT) with the
+      <span class="monospace">repo</span> scope to access private repositories and releases. This
+      token is stored exclusively in your browser's local storage and is used solely to access the
+      GitHub API for fetching release data. It is neither transmitted to any external server nor
+      utilized by any other instance of <i>Lifeline</i>.<br /><br />
+      <i>Lifeline</i>, GitHub, or Microsoft will never request your GitHub PAT via email, text,
+      phone call, or any other form of communication. Any such request is a phishing attempt. Cease
+      communication with the sender immediately and report the incident to GitHub or Microsoft.<br /><br />
+      This token is stored in plain text within your browser's local storage. While this should not
+      pose a significant risk, as it is accessible only to this web application, vulnerabilities in
+      your browser's security could expose the app's memory to other websites. It is strongly
+      advised to use a widely trusted, frequently updated web browser. <i>Lifeline</i> does not
+      endorse any specific browser. If you choose to use a PAT, it is recommended to create a
+      <b>low-privilege token</b> with only the necessary scopes for accessing the repositories you
+      wish to track. Additionally, if you export your configuration, the PAT will be included in the
+      export as plain text. <i>Lifeline</i> will notify you of this before proceeding with the
+      export.<br /><br />
+      A reminder: by submitting a PAT, you confirm that you have read and understood the information
+      provided, including the risks associated with improperly scoped tokens and potential
+      credential leakage; you also acknowledge that <i>Lifeline</i> cannot be held liable for any
+      consequences arising from your actions.
+    </div>
+    <br />
+    <div>
+      <button
+        @click="patShowMore = !patShowMore"
+        class="block p-1 pr-2.5 pl-2 pt-1.5 text-neutral-900 border border-neutral-300 rounded-xl bg-neutral-50 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-900 dark:border-neutral-600 dark:text-white"
+      >
+        <span class="material-symbols-rounded pr-1.5">{{
+          patShowMore ? '&#xea19;' : '&#xf53c;'
+        }}</span>
+        {{ patShowMore ? 'Dismiss' : 'Read more' }}
+      </button>
+    </div>
+  </div>
+
   <AboutFooter />
 </template>
 

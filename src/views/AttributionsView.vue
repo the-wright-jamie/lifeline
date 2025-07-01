@@ -46,9 +46,8 @@ setTabTitle('Credits')
 
 <style scoped>
 ul {
-  list-style-type: '☞ ';
-  margin-left: 1.25em;
-  margin-right: 1em;
+  list-style-type: '→ ';
+  margin-left: 1em;
   font-size: larger;
 }
 </style>

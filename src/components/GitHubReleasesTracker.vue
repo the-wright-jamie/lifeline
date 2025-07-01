@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Release } from '@/assets/ts/types/github'
 import { getData, setTabTitle } from '@/assets/ts/utils'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 const props = defineProps({
   author: String,
   repo: String
@@ -11,6 +11,7 @@ setTabTitle('Loading...')
 
 let error = ref(false)
 let releases_info = undefined
+let repoDescription = ref<string | null>(null)
 
 // Helper: Fetch all pages of releases from GitHub API
 async function fetchAllReleases(author: string, repo: string) {
@@ -34,6 +35,16 @@ async function fetchAllReleases(author: string, repo: string) {
     }
   }
   return allReleases
+}
+
+// Fetch repo description (public API, uses PAT if present)
+async function fetchRepoDescription(author: string, repo: string) {
+  try {
+    const repoData = await getData(`https://api.github.com/repos/${author}/${repo}`)
+    repoDescription.value = repoData.description || null
+  } catch {
+    repoDescription.value = null
+  }
 }
 
 try {
@@ -92,14 +103,42 @@ let depJsonString = JSON.stringify(ganttDepJSON)
 
 let baseIconClass = `dependency-icon material-symbols-rounded `
 let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
+
+// Fetch repo description on load
+await fetchRepoDescription(props.author, props.repo)
+
+// Get news_entries from config (default to 10 if not set)
+let newsEntries = 10
+try {
+  const config = JSON.parse(localStorage.getItem('config') || '{}')
+  if (config.dashboard_config && config.dashboard_config.news_entries) {
+    newsEntries = config.dashboard_config.news_entries
+  }
+} catch {}
+
+const currentPage = ref(1)
+const pageSize = newsEntries
+const totalPages = computed(() => (releases ? Math.ceil(releases.length / pageSize) : 1))
+const pagedReleases = computed(() => {
+  if (!releases) return []
+  const start = (currentPage.value - 1) * pageSize
+  return releases.slice(start, start + pageSize)
+})
+
+function goToPage(page: number) {
+  if (page < 1 || page > totalPages.value) return
+  currentPage.value = page
+}
 </script>
 
 <template>
   <div v-if="error">
     <ErrorMessage
       header="Repository not found!"
-      message="We weren't able to find that repository. It may not exist or you may not have access to it. Please check your spelling and try again.
-      If you do have access to it, please enter your Personal Access Token in the settings."
+      message="<p>We weren't able to find that repository. It may not exist or you may not have access to it. Please check your spelling and try again.</p>
+      <br/>
+      <p>If you do have access to it, please enter your Personal Access Token in the settings.</p>
+      <p>If you have entered your PAT, and you are still seeing this, ensure that you have entered it correctly.</p>"
     />
   </div>
   <div v-else>
@@ -114,7 +153,25 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
       {{ author }}/{{ repo }}
     </h1>
     <!-- New: Table of releases at the top -->
-    <div class="mb-8">
+    <div class="mb-8 flex flex-col gap-2">
+      <div class="center">
+        <p>
+          <a :href="`https://github.com/${author}/${repo}`" target="_blank" class="hover:underline">
+            Open in GitHub
+          </a>
+          |
+          <a
+            :href="`https://github.com/${author}/${repo}/releases`"
+            target="_blank"
+            class="hover:underline"
+          >
+            Releases Page
+          </a>
+        </p>
+      </div>
+      <p v-if="repoDescription" class="mb-4 mt-4 text-neutral-700 dark:text-neutral-300">
+        {{ repoDescription }}
+      </p>
       <h2>All Releases</h2>
       <table
         class="rounded-xl w-full text-sm text-left rtl:text-right text-neutral-500 dark:text-neutral-400"
@@ -130,7 +187,7 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
         </thead>
         <tbody>
           <tr
-            v-for="(release, i) in releases"
+            v-for="(release, i) in pagedReleases"
             :key="release.id"
             :class="[
               'border-b',
@@ -155,10 +212,60 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
           </tr>
         </tbody>
       </table>
+      <div v-if="totalPages > 1">
+        <nav class="center">
+          <br />
+          <p>Page {{ currentPage }} of {{ totalPages }} | {{ releases.length }} releases</p>
+          <ul class="inline-flex -space-x-px text-sm">
+            <li>
+              <button
+                @click="goToPage(1)"
+                :class="{ disabled: currentPage === 1 }"
+                class="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-s-lg not-hyperlink"
+              >
+                <span class="material-symbols-rounded pager">&#xe5dc;</span>
+              </button>
+            </li>
+            <li>
+              <button
+                @click="goToPage(currentPage - 1)"
+                :class="{ disabled: currentPage === 1 }"
+                class="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-s-lg not-hyperlink"
+              >
+                <span class="material-symbols-rounded pager">&#xe5c4;</span>
+              </button>
+            </li>
+            <li>
+              <button
+                @click="goToPage(currentPage + 1)"
+                :class="{ disabled: currentPage === totalPages }"
+                class="flex items-center justify-center px-3 h-8 leading-tight not-hyperlink"
+              >
+                <span class="material-symbols-rounded pager">&#xe5c8;</span>
+              </button>
+            </li>
+            <li>
+              <button
+                @click="goToPage(totalPages)"
+                :class="{ disabled: currentPage === totalPages }"
+                class="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-s-lg not-hyperlink"
+              >
+                <span class="material-symbols-rounded pager">&#xe5dd;</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
     <!-- Gantt Chart below the table -->
     <div>
-      <GanttChart :dependencies="`${author}/${repo}`" :depJson="depJsonString" />
+      <GanttChart mode="custom" :dependencies="`${author}/${repo}`" :depJson="depJsonString" />
     </div>
   </div>
 </template>
+
+<style scoped>
+.pager {
+  font-size: 2em;
+}
+</style>

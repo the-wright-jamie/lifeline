@@ -54,6 +54,6 @@ function resolveErrorImage() {
     </ImagePlaceholder>
     <br />
     <h1>{{ header }}</h1>
-    <p>{{ message }}</p>
+    <p v-html="message"></p>
   </div>
 </template>

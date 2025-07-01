@@ -88,7 +88,8 @@ router.beforeEach((to, from, next) => {
     to.name !== 'help' &&
     to.name !== 'about' &&
     to.name !== 'import' &&
-    to.name !== 'dependency'
+    to.name !== 'dependency' &&
+    to.name !== 'repo'
   ) {
     next({ name: 'welcome' })
   } else if (to.name == 'welcome' && isSetupComplete) {

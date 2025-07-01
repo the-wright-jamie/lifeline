@@ -122,6 +122,7 @@ b {
 
 a {
   text-decoration: underline;
+  cursor: pointer;
 }
 
 body {

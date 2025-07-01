@@ -29,7 +29,13 @@ export function getMachineName(name: string) {
 }
 
 export async function getData(url: string) {
-  const res = await fetch(url)
+  let token: string | null = null
+  try {
+    const config = JSON.parse(localStorage.getItem('config') || '{}')
+    token = config.personal_access_token || null
+  } catch {}
+  const headers: Record<string, string> = token ? { Authorization: `token ${token}` } : {}
+  const res = await fetch(url, { headers })
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
 
@@ -94,7 +100,8 @@ export function ganttChartUpdate(
   userChartOffset: number,
   userChartWidth: number,
   depJsonString: string,
-  focusedDependency: string
+  focusedDependency: string,
+  customMode?: boolean
 ): string {
   let depJson = JSON.parse(depJsonString)
   let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -138,57 +145,56 @@ export function ganttChartUpdate(
       continue
     }
 
-    // for each entry in the array for each of the KEYS in the dependency JSON
     depJson[`${data}`].releases.forEach((eolData: any) => {
-      // if the EOL is greater than the seekback...
+      if (customMode) {
+        // In custom mode, all releases are milestones at their releaseDate
+        const releaseUnix = dateToUnixTimestamp(eolData.releaseDate)
+        // Only show milestones that fall within the current window
+        if (releaseUnix >= unixSeekback && releaseUnix <= unixSeekforwad) {
+          diagram += `\n        section ${data}\n        ${eolData.label}: milestone, ${eolData.releaseDate}, 0d`
+        }
+        return
+      }
+      const isSupported =
+        !eolData.isEol &&
+        (!eolData.eolFrom || dateToUnixTimestamp(eolData.eolFrom) > Math.floor(Date.now() / 1000))
+      // Check if the EOL date is after the seekback window
       if (dateToUnixTimestamp(eolData.eolFrom) > unixSeekback) {
-        // ...and
-        if (
-          dateToUnixTimestamp(eolData.releaseDate) < unixSeekback &&
-          dateToUnixTimestamp(eolData.eolFrom) > unixSeekforwad
-        ) {
-          diagram =
-            diagram +
-            `
-    section ${data}
-        ← ${eolData.label} →: ${unixAsISO(unixSeekback)}, ${unixAsISO(unixSeekforwad)}`
-        } else if (dateToUnixTimestamp(eolData.releaseDate) < unixSeekback) {
-          diagram =
-            diagram +
-            `
-    section ${data}
-        ← ${eolData.label}: ${unixAsISO(unixSeekback)}, ${eolData.eolFrom}`
+        const releaseUnix = dateToUnixTimestamp(eolData.releaseDate)
+        // If the release starts after the end of the chart window, don't show it
+        if (releaseUnix > unixSeekforwad) {
+          return
+        }
+        // Case 1: Release starts before seekback and ends after seekforward (spans the whole window)
+        if (releaseUnix < unixSeekback && dateToUnixTimestamp(eolData.eolFrom) > unixSeekforwad) {
+          diagram += `\n        section ${data}\n        ← ${eolData.label} →:${isSupported ? ' crit,' : ''} ${unixAsISO(unixSeekback)}, ${unixAsISO(unixSeekforwad)}`
+          // Case 2: Release starts before seekback and ends within the window
+        } else if (releaseUnix < unixSeekback) {
+          diagram += `\n        section ${data}\n        ← ${eolData.label}:${isSupported ? ' crit,' : ''} ${unixAsISO(unixSeekback)}, ${eolData.eolFrom}`
+          // Case 3: Release starts within the window and ends after seekforward
         } else if (dateToUnixTimestamp(eolData.eolFrom) > unixSeekforwad) {
-          diagram =
-            diagram +
-            `
-    section ${data}
-        ${eolData.label} →: ${eolData.releaseDate}, ${unixAsISO(unixSeekforwad)}`
+          diagram += `\n        section ${data}\n        ${eolData.label} →:${isSupported ? ' crit,' : ''} ${eolData.releaseDate}, ${unixAsISO(unixSeekforwad)}`
+          // Case 4: Release starts and ends within the window
         } else {
-          diagram =
-            diagram +
-            `
-    section ${data}
-        ${eolData.label}: ${eolData.releaseDate}, ${eolData.eolFrom}`
+          diagram += `\n        section ${data}\n        ${eolData.label}:${isSupported ? ' crit,' : ''} ${eolData.releaseDate}, ${eolData.eolFrom}`
         }
       } else if (!eolData.isEol) {
-        if (
-          dateToUnixTimestamp(eolData.releaseDate) > unixSeekback &&
-          dateToUnixTimestamp(eolData.releaseDate) < unixCurrentTime + unixChartWidth
-        ) {
-          diagram =
-            diagram +
-            `
-    section ${data}
-        ${eolData.label} (Supported, unknown EOL): milestone, ${eolData.releaseDate}, 0d`
-        } else {
-          if (dateToUnixTimestamp(eolData.releaseDate) < unixCurrentTime + unixChartWidth) {
-            diagram =
-              diagram +
-              `
-    section ${data}
-        ← ${eolData.label} (Supported, unknown EOL): ${unixAsISO(unixSeekback)}, 0d`
-          }
+        // For releases that are still supported and have no stated EOL
+        // Show from releaseDate to today, or to the end of the chart window if today is outside the window
+        const releaseUnix = dateToUnixTimestamp(eolData.releaseDate)
+        const todayUnix = Math.floor(Date.now() / 1000)
+        const chartEndUnix = unixCurrentTime + unixChartWidth
+
+        // Determine the end date: either today or chart end, whichever is earlier
+        const endUnix = Math.min(todayUnix, chartEndUnix)
+        const endISO = unixAsISO(endUnix)
+
+        if (releaseUnix > unixSeekback && releaseUnix < chartEndUnix) {
+          // Release starts within the window
+          diagram += `\n        section ${data}\n          ${eolData.label}: crit, ${eolData.releaseDate}, ${endISO}`
+        } else if (releaseUnix < unixSeekback && endUnix > unixSeekback) {
+          // Release starts before window, but is still active in window
+          diagram += `\n        section ${data}\n          ← ${eolData.label}: crit, ${unixAsISO(unixSeekback)}, ${endISO}`
         }
       }
     })
@@ -196,10 +202,7 @@ export function ganttChartUpdate(
 
   diagram =
     diagram +
-    `
-    section Date Info
-         Start - ${unixAsISO(unixSeekback)}: ${unixAsISO(unixSeekback)}, 0d
-         End - ${unixAsISO(unixSeekforwad)}: ${unixAsISO(unixSeekforwad)}, 0d`
+    `\n    section Date Info\n         Start - ${unixAsISO(unixSeekback)}: ${unixAsISO(unixSeekback)}, 0d\n         End - ${unixAsISO(unixSeekforwad)}: ${unixAsISO(unixSeekforwad)}, 0d`
 
   return diagram
 }

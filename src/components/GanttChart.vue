@@ -7,8 +7,15 @@ import { type ConfigV2 } from '../assets/ts/types/lifeline'
 // @ts-ignore
 const props = defineProps({
   dependencies: String,
-  depJson: JSON
+  depJson: JSON,
+  mode: {
+    type: String,
+    default: 'standard', // 'standard' or 'custom'
+    validator: (value: string) => ['standard', 'custom'].includes(value)
+  }
 })
+
+console.log('GanttChart props:', props)
 
 let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || null)
 let configNotFound = false
@@ -27,8 +34,8 @@ if (config == null) {
       show_gantt_chart: true,
       highlight_this_month_EOL: false,
       news_entries: 10,
-      gantt_width: 365,
-      gantt_max_width: 730
+      gantt_width: 3650,
+      gantt_max_width: 3650 * 2
     },
     header_config: {
       show_about_button: true,
@@ -38,55 +45,6 @@ if (config == null) {
 }
 const dependencies = props.dependencies.split(',')
 const depJson = props.depJson
-
-function updateWidth(input: number) {
-  if (isNaN(input) || input == 0 || input < 30) {
-    input = 30
-  }
-  config.dashboard_config.gantt_width = input
-  userChartWidth.value = input
-  diagram.value = ganttChartUpdate(
-    userChartOffset.value,
-    userChartWidth.value,
-    depJson,
-    focusedDependency.value
-  )
-  if (!configNotFound) localStorage.setItem('config', JSON.stringify(config))
-}
-
-function updateOffset(input: number) {
-  userChartOffset.value = input
-  diagram.value = ganttChartUpdate(
-    userChartOffset.value,
-    userChartWidth.value,
-    depJson,
-    focusedDependency.value
-  )
-}
-
-function setFocusedDependency(dependency: string) {
-  focusedDependency.value = dependency
-  diagram.value = ganttChartUpdate(
-    userChartOffset.value,
-    userChartWidth.value,
-    depJson,
-    focusedDependency.value
-  )
-}
-
-function resetSliders() {
-  config.dashboard_config.gantt_width = config.dashboard_config.gantt_max_width / 2
-  userChartWidth.value = config.dashboard_config.gantt_max_width / 2
-  userChartOffset.value = 0
-  focusedDependency.value = 'all'
-  diagram.value = ganttChartUpdate(
-    userChartOffset.value,
-    userChartWidth.value,
-    depJson,
-    focusedDependency.value
-  )
-  if (!configNotFound) localStorage.setItem('config', JSON.stringify(config))
-}
 
 // set the max width of the chart in days
 const userChartMaxWidth = ref(config.dashboard_config.gantt_max_width)
@@ -100,12 +58,70 @@ diagram.value = ganttChartUpdate(
   userChartOffset.value,
   userChartWidth.value,
   depJson,
-  focusedDependency.value
+  focusedDependency.value,
+  props.mode === 'custom'
 )
+
+function updateWidth(input: number) {
+  if (isNaN(input) || input == 0 || input < 30) {
+    input = 30
+  }
+  config.dashboard_config.gantt_width = input
+  userChartWidth.value = input
+  diagram.value = ganttChartUpdate(
+    userChartOffset.value,
+    userChartWidth.value,
+    depJson,
+    focusedDependency.value,
+    props.mode === 'custom'
+  )
+  if (!configNotFound) localStorage.setItem('config', JSON.stringify(config))
+}
+
+function updateOffset(input: number) {
+  userChartOffset.value = input
+  diagram.value = ganttChartUpdate(
+    userChartOffset.value,
+    userChartWidth.value,
+    depJson,
+    focusedDependency.value,
+    props.mode === 'custom'
+  )
+}
+
+function setFocusedDependency(dependency: string) {
+  focusedDependency.value = dependency
+  diagram.value = ganttChartUpdate(
+    userChartOffset.value,
+    userChartWidth.value,
+    depJson,
+    focusedDependency.value,
+    props.mode === 'custom'
+  )
+}
+
+function resetSliders() {
+  config.dashboard_config.gantt_width = config.dashboard_config.gantt_max_width / 2
+  userChartWidth.value = config.dashboard_config.gantt_max_width / 2
+  userChartOffset.value = 0
+  focusedDependency.value = 'all'
+  diagram.value = ganttChartUpdate(
+    userChartOffset.value,
+    userChartWidth.value,
+    depJson,
+    focusedDependency.value,
+    props.mode === 'custom'
+  )
+  if (!configNotFound) localStorage.setItem('config', JSON.stringify(config))
+}
 </script>
 
 <template>
   <h2 class="select-none">Gantt Chart</h2>
+  <p class="opacity-50 pb-4 select-none">
+    <span class="bg-red-600 text-white px-2 rounded-xl pointer-events-none select-none">RED</span>
+    means currently supported
+  </p>
   <div class="grid auto-cols-2 grid-flow-col gap-4 select-none">
     <Menu v-if="dependencies.length > 1" as="div" class="relative inline-block text-left">
       <div>
