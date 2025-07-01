@@ -336,6 +336,14 @@ function updatePAT(newPAT: string) {
       wish to track. Additionally, if you export your configuration, the PAT will be included in the
       export as plain text. <i>Lifeline</i> will notify you of this before proceeding with the
       export.<br /><br />
+      Credential leakage, especially involving improperly scoped tokens, can have severe
+      consequences. Unauthorized access to your repositories could result in data breaches, exposure
+      of sensitive information, or malicious actions such as code tampering or deletion. Always
+      ensure your tokens are scoped with the minimum permissions necessary to perform the required
+      tasks. Regularly review and revoke unused tokens to minimize risks. Never, ever, share your
+      tokens with anyone. The PAT is kept in the exported configuration for your convenience, but if
+      you intend to share your config remove the token from the contents of the file. Treat your
+      token as if it were a password.<br /><br />
       A reminder: by submitting a PAT, you confirm that you have read and understood the information
       provided, including the risks associated with improperly scoped tokens and potential
       credential leakage; you also acknowledge that <i>Lifeline</i> cannot be held liable for any
