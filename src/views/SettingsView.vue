@@ -295,9 +295,7 @@ function updatePAT(newPAT: string) {
       <span class="bg-green-600 p-2 pl-5 pr-5 rounded-xl">Changes saved!</span>
     </div>
 
-    <br />
-
-    <h3 class="disabled">GITHUB PAT AND AUTHORISATION DISCLAIMER</h3>
+    <h3 v-if="">GITHUB PAT AND AUTHORISATION DISCLAIMER</h3>
     <p class="disabled button-info">
       <span>
         <span class="text-amber-600">
@@ -306,8 +304,8 @@ function updatePAT(newPAT: string) {
         </span>
         <span v-if="!patShowMore">. </span>
         <span v-else> as it is unnecessary for accessing API data from public repositories. </span>
-        <br /><br />
-        <p>
+
+        <p class="text-xs pt-2">
           By submitting a PAT, you confirm that you have read and understood the following
           information, including the risks associated with improperly scoped tokens and potential
           credential leakage; you also acknowledge that <i>Lifeline</i> cannot be held liable for
