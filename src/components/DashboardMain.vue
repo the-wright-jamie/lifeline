@@ -4,6 +4,7 @@ import { computed, onMounted, ref, watchEffect } from 'vue'
 import { type ConfigV2 } from '../assets/ts/types/lifeline'
 import ErrorMessage from './ErrorMessage.vue'
 import GanttChart from './GanttChart.vue'
+import GitHubReleasesTable from './GitHubReleasesTable.vue'
 import LatestNews from './LatestNews.vue'
 import UpcomingEOL from './UpcomingEOL.vue'
 setTabTitle('Loading...')
@@ -112,21 +113,33 @@ setTabTitle('Dashboard')
 let releases = ref([])
 let releasesLoading = ref(false)
 
-async function fetchReleases(repo) {
+async function fetchReleases(repos) {
   releasesLoading.value = true
+  let allReleases = []
   try {
     // Get token from config if present
     const config = JSON.parse(localStorage.getItem('config') || '{}')
     const token = config.personal_access_token
     const headers = token ? { Authorization: `token ${token}` } : {}
 
-    const response = await fetch(`https://api.github.com/repos/${repo}/releases`, { headers })
-    if (response.ok) {
-      const data = await response.json()
-      releases.value = data
-    } else {
-      console.error('Failed to fetch releases')
+    for (const repo of repos) {
+      try {
+        const response = await fetch(`https://api.github.com/repos/${repo}/releases`, { headers })
+        if (response.ok) {
+          const data = await response.json()
+          // Attach repo name to each release
+          data.forEach((release) => {
+            release.repo = repo
+          })
+          allReleases = allReleases.concat(data)
+        } else {
+          console.error(`Failed to fetch releases for ${repo}`)
+        }
+      } catch (error) {
+        console.error(`Error fetching releases for ${repo}:`, error)
+      }
     }
+    releases.value = allReleases
   } catch (error) {
     console.error('Error fetching releases:', error)
   } finally {
@@ -137,8 +150,7 @@ async function fetchReleases(repo) {
 onMounted(async () => {
   const config = JSON.parse(localStorage.getItem('config') || '{}')
   if (config.tracked_repos && config.tracked_repos.length > 0) {
-    const firstRepo = config.tracked_repos[0]
-    await fetchReleases(firstRepo)
+    await fetchReleases(config.tracked_repos)
   }
 })
 
@@ -202,20 +214,11 @@ const showBothTopInfo = computed(() => showLatest.value && showUpcoming.value)
     <br />
     <!-- New section for GitHub releases -->
     <section v-if="showGitHubReleases">
-      <h2>GitHub Releases</h2>
-      <div v-if="releasesLoading">
-        <p>Loading releases...</p>
-      </div>
-      <div v-else-if="releases.length != 0">
-        <ul>
-          <li v-for="release in releases" :key="release.id">
-            <a :href="release.html_url" target="_blank">{{ release.repo }} {{ release.name }}</a>
-          </li>
-        </ul>
-      </div>
-      <div v-else>
-        <p>No releases found.</p>
-      </div>
+      <GitHubReleasesTable
+        :releases="releases"
+        :loading="releasesLoading"
+        :limit="config.dashboard_config.news_entries"
+      />
     </section>
     <br />
     <div v-if="showGantt">

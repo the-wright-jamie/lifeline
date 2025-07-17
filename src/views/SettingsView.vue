@@ -169,6 +169,14 @@ function removeRepository(index: number) {
   saveTrackedRepos()
 }
 
+function removeRepositoryByName(repoName: string) {
+  const idx = trackedRepos.value.indexOf(repoName)
+  if (idx > -1) {
+    trackedRepos.value.splice(idx, 1)
+    saveTrackedRepos()
+  }
+}
+
 function saveTrackedRepos() {
   let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
   config.tracked_repos = trackedRepos.value
@@ -449,10 +457,23 @@ function updateHighlightTodayAndYesterday() {
       placeholder="Enter repository (e.g., owner/repo)"
       autocomplete="off"
     />
+    <br />
     <ul>
-      <li v-for="(repo, index) in trackedRepos" :key="index" class="flex items-center">
+      <li
+        v-for="repo in trackedRepos
+          .slice()
+          .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))"
+        :key="repo"
+        class="flex items-center"
+      >
+        <button
+          @click="removeRepositoryByName(repo)"
+          class="text-neutral-900 dark:text-white bg-transparent border-none p-0 m-0"
+          style="background: none; border: none; cursor: pointer"
+        >
+          <span class="material-symbols-rounded">&#xe5cd;</span>
+        </button>
         <span class="mr-2">{{ repo }}</span>
-        <button @click="removeRepository(index)" class="text-red-500">X</button>
       </li>
     </ul>
   </div>
