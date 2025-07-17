@@ -65,7 +65,10 @@ function saveDependencies(dependencies: string[]) {
       show_upcoming_EOL: true,
       show_past_EOL: true,
       show_gantt_chart: true,
+      show_github_releases: false, // Added default for GitHub releases
       highlight_this_month_EOL: false,
+      highlight_recent_releases: false, // Default for highlight recent releases
+      highlight_today_and_yesterday: false, // Highlight releases from today and yesterday
       news_entries: 10,
       gantt_width: 3650,
       gantt_max_width: 3650 * 2
@@ -304,7 +307,7 @@ setTabTitle('Setup')
               :class="{ disabled: index <= 1 }"
               class="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-s-lg not-hyperlink"
             >
-              <span class="material-symbols-rounded pager">&#xe5dc;</span>
+              <
             </button>
           </li>
           <li>

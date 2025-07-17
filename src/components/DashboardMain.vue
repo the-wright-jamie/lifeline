@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getMachineName, setTabTitle } from '@/assets/ts/utils'
-import { ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import { type ConfigV2 } from '../assets/ts/types/lifeline'
 import ErrorMessage from './ErrorMessage.vue'
 import GanttChart from './GanttChart.vue'
@@ -64,26 +64,24 @@ let diagram = ref(``)
 let error = ref(false)
 
 const config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
-const allDisabled = ref(
-  !config.dashboard_config.show_latest_news &&
-    !config.dashboard_config.show_upcoming_EOL &&
-    !config.dashboard_config.show_past_EOL &&
-    !config.dashboard_config.show_gantt_chart
-)
-const dependencies = config.dependencies
-const showBothTopInfo = ref(
-  config.dashboard_config.show_latest_news &&
-    (config.dashboard_config.show_upcoming_EOL || config.dashboard_config.show_past_EOL)
-)
 const showLatest = ref(config.dashboard_config.show_latest_news)
 const showUpcoming = ref(config.dashboard_config.show_upcoming_EOL)
 const showPastEOL = ref(config.dashboard_config.show_past_EOL)
 const showGantt = ref(config.dashboard_config.show_gantt_chart)
+const showGitHubReleases = ref(config.dashboard_config.show_github_releases)
+
+const allDisabled = ref(
+  !config.dashboard_config.show_latest_news &&
+    !config.dashboard_config.show_upcoming_EOL &&
+    !config.dashboard_config.show_past_EOL &&
+    !config.dashboard_config.show_gantt_chart &&
+    !config.dashboard_config.show_github_releases // Include GitHub releases in the disabled check
+)
 
 let fetchArray: Promise<void | Response>[] = []
 
 try {
-  dependencies.forEach((dependency) => {
+  config.dependencies.forEach((dependency) => {
     fetchArray.push(
       fetch(`https://endoflife.date/api/v1/products/${getMachineName(dependency)}`).catch(() => {
         console.error(`Failed to fetch data for ${dependency}`)
@@ -109,6 +107,44 @@ try {
 
 let depJsonString = JSON.stringify(depJson)
 setTabTitle('Dashboard')
+
+// New section for GitHub releases
+let releases = ref([])
+let releasesLoading = ref(false)
+
+async function fetchReleases(repo) {
+  releasesLoading.value = true
+  try {
+    // Get token from config if present
+    const config = JSON.parse(localStorage.getItem('config') || '{}')
+    const token = config.personal_access_token
+    const headers = token ? { Authorization: `token ${token}` } : {}
+
+    const response = await fetch(`https://api.github.com/repos/${repo}/releases`, { headers })
+    if (response.ok) {
+      const data = await response.json()
+      releases.value = data
+    } else {
+      console.error('Failed to fetch releases')
+    }
+  } catch (error) {
+    console.error('Error fetching releases:', error)
+  } finally {
+    releasesLoading.value = false
+  }
+}
+
+onMounted(async () => {
+  const config = JSON.parse(localStorage.getItem('config') || '{}')
+  if (config.tracked_repos && config.tracked_repos.length > 0) {
+    const firstRepo = config.tracked_repos[0]
+    await fetchReleases(firstRepo)
+  }
+})
+
+const dependencies = ref(config.dependencies || [])
+
+const showBothTopInfo = computed(() => showLatest.value && showUpcoming.value)
 </script>
 
 <template>
@@ -163,6 +199,24 @@ setTabTitle('Dashboard')
         <UpcomingEOL :data="depJsonString" />
       </div>
     </div>
+    <br />
+    <!-- New section for GitHub releases -->
+    <section v-if="showGitHubReleases">
+      <h2>GitHub Releases</h2>
+      <div v-if="releasesLoading">
+        <p>Loading releases...</p>
+      </div>
+      <div v-else-if="releases.length != 0">
+        <ul>
+          <li v-for="release in releases" :key="release.id">
+            <a :href="release.html_url" target="_blank">{{ release.repo }} {{ release.name }}</a>
+          </li>
+        </ul>
+      </div>
+      <div v-else>
+        <p>No releases found.</p>
+      </div>
+    </section>
     <br />
     <div v-if="showGantt">
       <GanttChart

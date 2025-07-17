@@ -69,6 +69,22 @@ function isThisMonth(unixTimestamp: number) {
   const now = new Date()
   return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth()
 }
+
+function isWithinLast7Days(unixTimestamp: number) {
+  const date = new Date(unixTimestamp * 1000)
+  const now = new Date()
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+  return date >= sevenDaysAgo && date <= now
+}
+
+function isTodayOrYesterday(unixTimestamp: number) {
+  const date = new Date(unixTimestamp * 1000)
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const yesterday = new Date(today)
+  yesterday.setDate(today.getDate() - 1)
+  return date >= yesterday && date < new Date(today.getTime() + 24 * 60 * 60 * 1000)
+}
 </script>
 
 <template>
@@ -84,6 +100,7 @@ function isThisMonth(unixTimestamp: number) {
           <th scope="col" class="px-6 py-3">Project</th>
           <th scope="col" class="px-6 py-3">Release</th>
           <th scope="col" class="px-6 py-3">EOL Date</th>
+          <th scope="col" class="px-6 py-3"></th>
         </tr>
       </thead>
       <!-- actual headers -->
@@ -92,7 +109,7 @@ function isThisMonth(unixTimestamp: number) {
         class="text-xs text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
-          <th scope="col" class="px-6 py-2 spacer" colspan="3">No known past EOL dates</th>
+          <th scope="col" class="px-6 py-2 spacer" colspan="4">No known past EOL dates</th>
         </tr>
       </thead>
       <!-- no known past EOL -->
@@ -101,7 +118,7 @@ function isThisMonth(unixTimestamp: number) {
         class="text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
-          <th scope="col" class="px-6 py-2 spacer" colspan="3">Recently past EOL Dates</th>
+          <th scope="col" class="px-6 py-2 spacer" colspan="4">Recently past EOL Dates</th>
         </tr>
       </thead>
       <tbody v-if="config.dashboard_config.show_past_EOL" v-for="(news, i) in otherDataToDisplay">
@@ -122,13 +139,14 @@ function isThisMonth(unixTimestamp: number) {
             <p v-else>{{ news[2] }}</p>
           </td>
           <td class="px-6 py-2">
+            {{ unixTimestampToLocalDate(news[0]) }}
+          </td>
+          <td class="px-6 py-2">
             <span
-              :class="
-                highlightThisMonthEOL && isThisMonth(news[0]) ? 'text-amber-500 font-bold' : ''
-              "
-            >
-              {{ unixTimestampToLocalDate(news[0]) }}
-            </span>
+              class="dot"
+              :class="highlightThisMonthEOL && isThisMonth(news[0]) ? 'bg-amber-500' : ''"
+              aria-label="This month's EOL"
+            ></span>
           </td>
         </tr>
       </tbody>
@@ -138,7 +156,7 @@ function isThisMonth(unixTimestamp: number) {
         class="text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
-          <th scope="col" class="px-6 py-2 spacer" colspan="3">Future EOL Dates</th>
+          <th scope="col" class="px-6 py-2 spacer" colspan="4">Future EOL Dates</th>
         </tr>
       </thead>
       <!-- future EOL -->
@@ -147,7 +165,7 @@ function isThisMonth(unixTimestamp: number) {
         class="text-xs text-neutral-700 uppercase bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-400 select-none"
       >
         <tr>
-          <th scope="col" class="px-6 py-2 spacer" colspan="3">No known future EOL dates</th>
+          <th scope="col" class="px-6 py-2 spacer" colspan="4">No known future EOL dates</th>
         </tr>
       </thead>
       <!-- no known future EOL -->
@@ -169,13 +187,14 @@ function isThisMonth(unixTimestamp: number) {
             <p v-else>{{ news[2] }}</p>
           </td>
           <td class="px-6 py-2">
+            {{ unixTimestampToLocalDate(news[0]) }}
+          </td>
+          <td class="px-6 py-2">
             <span
-              :class="
-                highlightThisMonthEOL && isThisMonth(news[0]) ? 'text-amber-500 font-bold' : ''
-              "
-            >
-              {{ unixTimestampToLocalDate(news[0]) }}
-            </span>
+              class="dot"
+              :class="highlightThisMonthEOL && isThisMonth(news[0]) ? 'bg-amber-500' : ''"
+              aria-label="This month's EOL"
+            ></span>
           </td>
         </tr>
       </tbody>

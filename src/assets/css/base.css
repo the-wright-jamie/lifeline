@@ -357,3 +357,11 @@ hr {
 .pre-formatted {
   white-space: pre;
 }
+
+.dot {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 50%;
+  vertical-align: middle;
+}

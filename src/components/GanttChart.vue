@@ -15,8 +15,6 @@ const props = defineProps({
   }
 })
 
-console.log('GanttChart props:', props)
-
 let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || null)
 let configNotFound = false
 if (config == null) {
@@ -32,7 +30,10 @@ if (config == null) {
       show_upcoming_EOL: true,
       show_past_EOL: true,
       show_gantt_chart: true,
+      show_github_releases: false, // Added default for GitHub releases
       highlight_this_month_EOL: false,
+      highlight_recent_releases: false, // Default for highlight recent releases
+      highlight_today_and_yesterday: false, // Highlight releases from today and yesterday
       news_entries: 10,
       gantt_width: 3650,
       gantt_max_width: 3650 * 2

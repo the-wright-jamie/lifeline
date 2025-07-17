@@ -27,7 +27,10 @@ function migrateV1toV2(configV1: ConfigV1): ConfigV2 {
       show_upcoming_EOL: configV1.dashboardConfig.upcomingEOL,
       show_past_EOL: configV1.dashboardConfig.pastEOL,
       show_gantt_chart: configV1.dashboardConfig.ganttChart,
+      show_github_releases: false, // Added default for GitHub releases
       highlight_this_month_EOL: false, // default for migration
+      highlight_recent_releases: false, // Default for highlight recent releases
+      highlight_today_and_yesterday: false, // Highlight releases from today and yesterday
       news_entries: configV1.dashboardConfig.newsEntries,
       gantt_width: configV1.dashboardConfig.ganttWidth ?? 30,
       gantt_max_width: configV1.dashboardConfig.ganttMaxWidth

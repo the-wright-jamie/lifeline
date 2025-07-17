@@ -206,3 +206,36 @@ export function ganttChartUpdate(
 
   return diagram
 }
+
+export async function fetchReleases(repo: string): Promise<any[]> {
+  const [owner, repoName] = repo.split('/')
+  const config = JSON.parse(localStorage.getItem('config') || '{}')
+  const token = config.personal_access_token || null
+  const headers: Record<string, string> = token ? { Authorization: `token ${token}` } : {}
+
+  const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}/releases`, {
+    headers
+  })
+  if (!response.ok) {
+    console.error('Failed to fetch releases:', response.statusText)
+    return []
+  }
+  return await response.json()
+}
+
+export async function fetchDashboardData(config: any): Promise<any> {
+  const dashboardData: any = {}
+
+  if (config.dashboard_config.show_github_releases) {
+    const repos = config.github_repositories || []
+    dashboardData.githubReleases = await Promise.all(
+      repos.map((repo: string) => fetchReleases(repo))
+    )
+  } else {
+    dashboardData.githubReleases = []
+  }
+
+  // ...fetch other dashboard data as needed...
+
+  return dashboardData
+}

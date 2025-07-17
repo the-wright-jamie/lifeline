@@ -129,6 +129,21 @@ function goToPage(page: number) {
   if (page < 1 || page > totalPages.value) return
   currentPage.value = page
 }
+
+// Check config for show_github_releases setting
+let configEnabled = true
+try {
+  const config = JSON.parse(localStorage.getItem('config') || '{}')
+  if (!config.dashboard_config.show_github_releases) {
+    configEnabled = false // Disable fetching if setting is off
+  }
+} catch {}
+
+if (!configEnabled) {
+  error.value = false
+  releases_info = []
+  releases = []
+}
 </script>
 
 <template>

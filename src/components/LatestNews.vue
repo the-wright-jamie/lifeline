@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { dateToUnixTimestamp, generateAboutLink, unixTimestampToLocalDate } from '@/assets/ts/utils'
+import { ref } from 'vue'
 import { type ConfigV2 } from '../assets/ts/types/lifeline'
 
 const props = defineProps({
@@ -47,6 +48,29 @@ for (var dependency in allData) {
 someData.sort((a, b) => b[0] - a[0])
 
 let dataToDisplay = someData.slice(0, config.dashboard_config.news_entries)
+// fallback for highlightRecentReleases if not present in config type
+const showHighlightRecentReleases = ref(false)
+const showHighlightTodayAndYesterday = ref(false)
+try {
+  showHighlightRecentReleases.value = config.dashboard_config.highlight_recent_releases
+  showHighlightTodayAndYesterday.value = config.dashboard_config.highlight_today_and_yesterday
+} catch {}
+
+function isWithinLast7Days(unixTimestamp: number) {
+  const date = new Date(unixTimestamp * 1000)
+  const now = new Date()
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+  return date >= sevenDaysAgo && date <= now
+}
+
+function isTodayOrYesterday(unixTimestamp: number) {
+  const date = new Date(unixTimestamp * 1000)
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const yesterday = new Date(today)
+  yesterday.setDate(today.getDate() - 1)
+  return date >= yesterday && date < new Date(today.getTime() + 24 * 60 * 60 * 1000)
+}
 </script>
 
 <template>
@@ -59,6 +83,7 @@ let dataToDisplay = someData.slice(0, config.dashboard_config.news_entries)
         <th scope="col" class="px-6 py-3">Project</th>
         <th scope="col" class="px-6 py-3">Release</th>
         <th scope="col" class="px-6 py-3">Date</th>
+        <th scope="col" class="px-6 py-3"></th>
       </tr>
     </thead>
     <tbody v-for="(news, i) in dataToDisplay">
@@ -80,6 +105,23 @@ let dataToDisplay = someData.slice(0, config.dashboard_config.news_entries)
         </td>
         <td class="px-6 py-2">
           {{ unixTimestampToLocalDate(news[0]) }}
+        </td>
+        <td class="px-6 py-2">
+          <span
+            v-if="showHighlightRecentReleases && isWithinLast7Days(news[0])"
+            class="dot"
+            :class="
+              showHighlightTodayAndYesterday && isTodayOrYesterday(news[0])
+                ? 'bg-green-400'
+                : 'bg-green-900'
+            "
+            aria-label="New release"
+          ></span>
+          <span
+            v-else-if="showHighlightTodayAndYesterday && isTodayOrYesterday(news[0])"
+            class="dot bg-green-400"
+            aria-label="New release"
+          ></span>
         </td>
       </tr>
     </tbody>

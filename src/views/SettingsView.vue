@@ -12,6 +12,7 @@ let showLatest = ref(config.dashboard_config.show_latest_news)
 let showUpcoming = ref(config.dashboard_config.show_upcoming_EOL)
 let showPastEOL = ref(config.dashboard_config.show_past_EOL)
 let showGantt = ref(config.dashboard_config.show_gantt_chart)
+let showGitHubReleases = ref(config.dashboard_config.show_github_releases)
 let highlightThisMonthEOL = ref(config.dashboard_config.highlight_this_month_EOL)
 let newsEntries = ref(config.dashboard_config.news_entries)
 let ganttMaxWidth = ref(config.dashboard_config.gantt_max_width)
@@ -27,6 +28,11 @@ let githubPAT = ref(config.personal_access_token || '')
 let patSaved = ref(false)
 let patWarning = ref(false)
 let patShowMore = ref(false)
+
+let newRepo = ref('')
+let trackedRepos = ref(config.tracked_repos || [])
+let showHighlightRecentReleases = ref(config.dashboard_config.highlight_recent_releases)
+let showHighlightTodayAndYesterday = ref(config.dashboard_config.highlight_today_and_yesterday)
 
 function updateLatest() {
   let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
@@ -114,7 +120,13 @@ function resetLifeline() {
 }
 
 function checkIfDashboardDisabled() {
-  return !showLatest.value && !showUpcoming.value && !showPastEOL.value && !showGantt.value
+  return (
+    !showLatest.value &&
+    !showUpcoming.value &&
+    !showPastEOL.value &&
+    !showGantt.value &&
+    !showGitHubReleases.value
+  )
 }
 
 function exportConfig() {
@@ -143,6 +155,47 @@ function updatePAT(newPAT: string) {
   patSaved.value = true
   setTimeout(() => (patSaved.value = false), 2000)
 }
+
+function addRepository() {
+  if (newRepo.value.trim() && !trackedRepos.value.includes(newRepo.value.trim())) {
+    trackedRepos.value.push(newRepo.value.trim())
+    saveTrackedRepos()
+    newRepo.value = ''
+  }
+}
+
+function removeRepository(index: number) {
+  trackedRepos.value.splice(index, 1)
+  saveTrackedRepos()
+}
+
+function saveTrackedRepos() {
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.tracked_repos = trackedRepos.value
+  localStorage.setItem('config', JSON.stringify(config))
+}
+
+function updateGitHubReleases() {
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboard_config.show_github_releases = !config.dashboard_config.show_github_releases
+  localStorage.setItem('config', JSON.stringify(config))
+  showGitHubReleases.value = !showGitHubReleases.value
+  disabledDashboard.value = checkIfDashboardDisabled()
+}
+
+function updateHighlightRecentReleases() {
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboard_config.highlight_recent_releases = !showHighlightRecentReleases.value
+  localStorage.setItem('config', JSON.stringify(config))
+  showHighlightRecentReleases.value = !showHighlightRecentReleases.value
+}
+
+function updateHighlightTodayAndYesterday() {
+  let config: ConfigV2 = JSON.parse(localStorage.getItem('config') || '')
+  config.dashboard_config.highlight_today_and_yesterday = !showHighlightTodayAndYesterday.value
+  localStorage.setItem('config', JSON.stringify(config))
+  showHighlightTodayAndYesterday.value = !showHighlightTodayAndYesterday.value
+}
 </script>
 
 <template>
@@ -165,11 +218,6 @@ function updatePAT(newPAT: string) {
     </button>
   </p>
   <p>
-    <button @click="updateHighlightThisMonthEOL()">
-      <ToggleButton :active="highlightThisMonthEOL" /> Highlight this month's EOLs
-    </button>
-  </p>
-  <p>
     <button @click="updateUpcoming()">
       <ToggleButton :active="showUpcoming" /> Show future end-of-life dates
     </button>
@@ -177,6 +225,11 @@ function updatePAT(newPAT: string) {
   <p>
     <button @click="updatePastEOL()">
       <ToggleButton :active="showPastEOL" /> Show past end-of-life dates
+    </button>
+  </p>
+  <p>
+    <button @click="updateGitHubReleases()">
+      <ToggleButton :active="showGitHubReleases" /> Show GitHub releases section
     </button>
   </p>
   <div v-if="showLatest || showUpcoming || showPastEOL">
@@ -192,6 +245,26 @@ function updatePAT(newPAT: string) {
       />
     </div>
   </div>
+  <br />
+  <p>
+    <button @click="updateHighlightTodayAndYesterday()">
+      <ToggleButton :active="showHighlightTodayAndYesterday" /> {{ ' ' }}
+      <span class="dot bg-green-400"></span> Highlight releases from today and yesterday
+    </button>
+  </p>
+  <p>
+    <button @click="updateHighlightRecentReleases()">
+      <ToggleButton :active="showHighlightRecentReleases" /> {{ ' ' }}
+      <span class="dot bg-green-900"></span>
+      Highlight new releases from the last 7 days
+    </button>
+  </p>
+  <p>
+    <button @click="updateHighlightThisMonthEOL()">
+      <ToggleButton :active="highlightThisMonthEOL" /> {{ ' ' }}
+      <span class="dot bg-amber-500"></span> Highlight this month's EOL dates
+    </button>
+  </p>
   <br />
   <p>
     <button @click="updateGantt()"><ToggleButton :active="showGantt" /> Show Gantt Chart</button>
@@ -295,7 +368,7 @@ function updatePAT(newPAT: string) {
       <span class="bg-green-600 p-2 pl-5 pr-5 rounded-xl">Changes saved!</span>
     </div>
 
-    <h3 v-if="">GITHUB PAT AND AUTHORISATION DISCLAIMER</h3>
+    <h3 v-if="patShowMore">GITHUB PAT AND AUTHORISATION DISCLAIMER</h3>
     <p class="disabled button-info">
       <span>
         <span class="text-amber-600">
@@ -327,13 +400,15 @@ function updatePAT(newPAT: string) {
       communication with the sender immediately and report the incident to GitHub or Microsoft.<br /><br />
       This token is stored in plain text within your browser's local storage. While this should not
       pose a significant risk, as it is accessible only to this web application, vulnerabilities in
-      your browser's security could expose the app's memory to other websites. It is strongly
-      advised to use a widely trusted, frequently updated web browser. <i>Lifeline</i> does not
-      endorse any specific browser. If you choose to use a PAT, it is recommended to create a
-      <b>low-privilege token</b> with only the necessary scopes for accessing the repositories you
-      wish to track. Additionally, if you export your configuration, the PAT will be included in the
-      export as plain text. <i>Lifeline</i> will notify you of this before proceeding with the
-      export.<br /><br />
+      your browser's security could expose the app's memory to other websites. Installing malicious
+      extensions may also expose your token (and any other credentials you use on other websites).
+      It is strongly advised to use a widely trusted, frequently updated web browser and only use
+      extension stores that have reliable malicious extension scanning.
+      <i>Lifeline</i> does not endorse any specific browser. If you choose to use a PAT, it is
+      recommended to create a <b>low-privilege token</b> with only the necessary scopes for
+      accessing the repositories you wish to track. Additionally, if you export your configuration,
+      the PAT will be included in the export as plain text. <i>Lifeline</i> will notify you of this
+      before proceeding with the export.<br /><br />
       Credential leakage, especially involving improperly scoped tokens, can have severe
       consequences. Unauthorized access to your repositories could result in data breaches, exposure
       of sensitive information, or malicious actions such as code tampering or deletion. Always
@@ -359,6 +434,27 @@ function updatePAT(newPAT: string) {
         {{ patShowMore ? 'Dismiss' : 'Read more' }}
       </button>
     </div>
+  </div>
+
+  <br />
+
+  <h3>Tracked Repositories</h3>
+  <div>
+    <input
+      id="tracked-repo"
+      type="text"
+      class="block w-96 p-2 ps-4 text-sm text-neutral-900 border border-neutral-300 rounded-xl bg-neutral-50 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-400 dark:text-white"
+      v-model="newRepo"
+      @keyup.enter="addRepository"
+      placeholder="Enter repository (e.g., owner/repo)"
+      autocomplete="off"
+    />
+    <ul>
+      <li v-for="(repo, index) in trackedRepos" :key="index" class="flex items-center">
+        <span class="mr-2">{{ repo }}</span>
+        <button @click="removeRepository(index)" class="text-red-500">X</button>
+      </li>
+    </ul>
   </div>
 
   <AboutFooter />
