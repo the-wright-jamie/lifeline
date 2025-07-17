@@ -112,9 +112,11 @@ setTabTitle('Dashboard')
 // New section for GitHub releases
 let releases = ref([])
 let releasesLoading = ref(false)
+let releasesProgress = ref({ current: 0, total: 0, repo: '' })
 
 async function fetchReleases(repos) {
   releasesLoading.value = true
+  releasesProgress.value = { current: 0, total: repos.length, repo: '' }
   let allReleases = []
   try {
     // Get token from config if present
@@ -122,7 +124,9 @@ async function fetchReleases(repos) {
     const token = config.personal_access_token
     const headers = token ? { Authorization: `token ${token}` } : {}
 
-    for (const repo of repos) {
+    for (let i = 0; i < repos.length; i++) {
+      const repo = repos[i]
+      releasesProgress.value = { current: i + 1, total: repos.length, repo }
       try {
         const response = await fetch(`https://api.github.com/repos/${repo}/releases`, { headers })
         if (response.ok) {
@@ -144,6 +148,11 @@ async function fetchReleases(repos) {
     console.error('Error fetching releases:', error)
   } finally {
     releasesLoading.value = false
+    releasesProgress.value = {
+      current: releasesProgress.value.total,
+      total: releasesProgress.value.total,
+      repo: ''
+    }
   }
 }
 
@@ -218,9 +227,10 @@ const showBothTopInfo = computed(() => showLatest.value && showUpcoming.value)
         :releases="releases"
         :loading="releasesLoading"
         :limit="config.dashboard_config.news_entries"
+        :progress="releasesProgress"
       />
+      <br />
     </section>
-    <br />
     <div v-if="showGantt">
       <GanttChart
         :dependencies="dependencies.toString()"

@@ -23,6 +23,10 @@ const props = defineProps({
   limit: {
     type: Number,
     default: 10
+  },
+  progress: {
+    type: Object as PropType<{ current: number; total: number; repo: string }>,
+    default: () => ({ current: 0, total: 0, repo: '' })
   }
 })
 
@@ -73,7 +77,22 @@ function isTodayOrYesterday(dateString: string) {
     </thead>
     <tbody v-if="loading">
       <tr>
-        <td colspan="6" class="px-6 py-2">Loading releases...</td>
+        <td colspan="6" class="px-6 py-2">
+          <div class="w-full h-2 bg-white dark:bg-neutral-700 rounded-full overflow-hidden">
+            <div
+              class="h-2 bg-green-500 dark:bg-green-400 animate-pulse"
+              :style="{ width: progress.total > 0 ? (progress.current / progress.total) * 100 + '%' : '0%' }"
+            ></div>
+          </div>
+          <span class="block text-xs mt-2 text-center">
+            <template v-if="progress.repo">
+              Currently loading: <b>{{ progress.repo }}</b>
+            </template>
+            <template v-if="progress.total > 0">
+              ({{ progress.current }}/{{ progress.total }})
+            </template>
+          </span>
+        </td>
       </tr>
     </tbody>
     <tbody v-else-if="sortedReleases.length != 0">
