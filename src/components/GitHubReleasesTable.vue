@@ -81,7 +81,9 @@ function isTodayOrYesterday(dateString: string) {
           <div class="w-full h-2 bg-white dark:bg-neutral-700 rounded-full overflow-hidden">
             <div
               class="h-2 bg-green-500 dark:bg-green-400 animate-pulse"
-              :style="{ width: progress.total > 0 ? (progress.current / progress.total) * 100 + '%' : '0%' }"
+              :style="{
+                width: progress.total > 0 ? (progress.current / progress.total) * 100 + '%' : '0%'
+              }"
             ></div>
           </div>
           <span class="block text-xs mt-2 text-center">
