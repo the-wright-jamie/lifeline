@@ -265,7 +265,7 @@ if (!configEnabled) {
                 :class="{ disabled: currentPage === totalPages }"
                 class="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-s-lg not-hyperlink"
               >
-                <span class="material-symbols-rounded pager">&#xe5dd;</span>
+                <span class="material-symbols-rounded pager">last_page</span>
               </button>
             </li>
           </ul>

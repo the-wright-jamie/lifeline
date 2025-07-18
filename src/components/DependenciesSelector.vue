@@ -307,7 +307,7 @@ setTabTitle('Setup')
               :class="{ disabled: index <= 1 }"
               class="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-s-lg not-hyperlink"
             >
-              <
+              <span class="material-symbols-rounded pager">first_page</span>
             </button>
           </li>
           <li>
@@ -338,7 +338,7 @@ setTabTitle('Setup')
               :class="{ disabled: index / page_size + 1 == Math.ceil(total_results / page_size) }"
               class="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-s-lg not-hyperlink"
             >
-              <span class="material-symbols-rounded pager">&#xe5dd;</span>
+              <span class="material-symbols-rounded pager">last_page</span>
             </button>
           </li>
         </ul>
