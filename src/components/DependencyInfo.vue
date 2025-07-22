@@ -44,6 +44,7 @@ let currentVersionSupportLink = ''
 let showSuccessIcon = ref(false)
 let anyKnownEOES = false
 let anyKnownPatches = false
+let anyUnknown = false
 let host = location.host
 
 let depJson = []
@@ -87,6 +88,16 @@ if (!error.value) {
       } catch {}
     }
   }
+
+  depJson.forEach((data) => {
+    // Check for unknowns in EOL, EOES, Patch
+    if (
+      (data.eolFrom == null && !data.isEol) ||
+      (data.eoesFrom == null && anyKnownEOES && !data.isEoes)
+    ) {
+      anyUnknown = true
+    }
+  })
 
   // generate the depJSON as gantt expects it...
   ganttDepJSON[`${dependency_info.result.label}`] = dependency_info.result
@@ -206,7 +217,7 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
             <th scope="col" class="px-6 py-3">Release</th>
             <th scope="col" class="px-6 py-3">Release Date</th>
             <th scope="col" class="px-6 py-3">End of Life</th>
-            <th scope="col" class="px-6 py-3" v-if="anyKnownEOES">End of Extended Support</th>
+            <th scope="col" class="px-6 py-3" v-if="anyKnownEOES">End of Extended Support*</th>
             <th scope="col" class="px-6 py-3" v-if="anyKnownPatches">Latest Patch</th>
           </tr>
         </thead>
@@ -276,6 +287,24 @@ let iconClass = `${baseIconClass} ${isDarkMode ? 'invert' : ''}`
           </tr>
         </tbody>
       </table>
+      <div v-if="anyKnownEOES" class="text-xs text-neutral-500 dark:text-neutral-400">
+        <br />
+        * 'Extended Support' (may also be known as 'Extended Commercial Support') is a support
+        period after the general end of life date during which the vendor may still provide security
+        updates or critical patches, usually for a fee and generally only for commercial users.
+        Please check the vendor's policy for details. As for Lifeline, we consider the 'end of life'
+        date to be the end of the product's life, so the Gantt chart will not show any dates after
+        the 'end of life' date.
+      </div>
+      <div v-if="anyUnknown" class="text-xs text-neutral-500 dark:text-neutral-400">
+        <br />
+        <span class="text-amber-500">Unknown</span> dates represent releases which have no known end
+        of life<span v-if="anyKnownEOES"> or extended support</span> date. This may be due to the
+        vendor not providing this information; the release is still actively supported (with no
+        pre-defined end of life date); or the data being unavailable in the endoflife.date database.
+        This may or may not mean that the release is still be currently supported. Generally
+        however, the older the release is the safer it would be to assume that it is not.
+      </div>
     </div>
     <br />
     <hr />
